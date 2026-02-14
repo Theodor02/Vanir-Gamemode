@@ -113,7 +113,7 @@ function PANEL:Init()
 	local halfHeight = parent:GetTall() * 0.5 - (padding * 2)
 	local modelFOV = (ScrW() > ScrH() * 1.8) and 100 or 78
 
-    -- LEFT SIDE: Character List (Data Panel style) + Return Button
+    -- LEFT SIDE: Character List (Data Panel style) + Info + Return Button
     local leftContainer = self:Add("Panel")
     leftContainer:Dock(LEFT)
     leftContainer:SetWide(halfWidth)
@@ -133,6 +133,69 @@ function PANEL:Init()
         self:SlideDown()
         parent.mainPanel:Undim()
     end    
+
+    -- Info Box (Bottom of Left Container)
+    self.infoPanel = leftContainer:Add("Panel")
+    self.infoPanel:Dock(BOTTOM)
+    self.infoPanel:SetTall(Scale(140))
+    self.infoPanel:DockMargin(0, Scale(8), 0, 0)
+    
+    self.infoPanel.Paint = function(this, w, h)
+        -- Draw Standard Background & Header
+        surface.SetDrawColor(Color(0, 0, 0, 200))
+        surface.DrawRect(0, 0, w, h)
+
+        local headerH = Scale(24)
+        surface.SetDrawColor(THEME.frameSoft)
+        surface.DrawRect(0, 0, w, headerH)
+        surface.DrawOutlinedRect(0, 0, w, h)
+
+        draw.SimpleText("IDENTITY RECORD", "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+
+        if (!self.selectedCharacter) then return end
+        
+        local char = self.selectedCharacter
+        local factionIdx = char:GetFaction()
+        local faction = ix.faction.indices[factionIdx]
+        local factionName = faction and faction.name or "UNKNOWN"
+        -- local factionColor = faction and faction.color or THEME.text
+        
+        local y = headerH + Scale(12)
+        local x = Scale(12)
+        
+        surface.SetFont("ixImpMenuTitle")
+        local name = char:GetName()
+        draw.SimpleText(name, "ixImpMenuTitle", x, y, THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        local _, th = surface.GetTextSize(name)
+        y = y + th + Scale(4) 
+        
+        draw.SimpleText("AFFILIATION: " .. string.upper(factionName), "ixImpMenuLabel", x, y, THEME.accent, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        y = y + Scale(18)
+
+        local desc = char:GetDescription()
+        if (desc and #desc > 0) then
+            -- Simple wrap
+            local wAvail = w - x * 2
+            local words = string.Explode(" ", desc)
+            local line = ""
+            for i, word in ipairs(words) do
+                local test = line .. word .. " "
+                surface.SetFont("ixImpMenuLabel")
+                local tw, _ = surface.GetTextSize(test)
+                if (tw > wAvail) then
+                    draw.SimpleText(line, "ixImpMenuLabel", x, y, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+                    y = y + Scale(14)
+                    line = word .. " "
+                else
+                    line = test
+                end
+            end
+            draw.SimpleText(line, "ixImpMenuLabel", x, y, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        end
+    end
+    
+    self.infoDummy = self.infoPanel:Add("Panel") -- Dummy for invalidation triggers
+    self.infoDummy:SetVisible(false)
 
     -- Data Panel for List
     local leftPanel = leftContainer:Add("Panel")
@@ -200,7 +263,7 @@ function PANEL:Init()
                     self.playButton:SetDisabled(true)
                     self.deleteButton:SetDisabled(true)
                     self.model:SetModel("models/error.mdl")
-                    self.infoPanel:InvalidateLayout()
+                    self.infoDummy:InvalidateLayout()
                     -- Refresh happens automatically via hook usually, or we can force it
                 end,
                 "No", nil
@@ -227,53 +290,7 @@ function PANEL:Init()
     
     ApplyScreeningPanel(modelPanelContainer, "BIOMETRIC SCAN")
 
-    -- Character Info overlay on model
-    self.infoPanel = modelPanelContainer:Add("Panel")
-    self.infoPanel:Dock(BOTTOM)
-    self.infoPanel:SetTall(Scale(140))
-    self.infoPanel:DockMargin(Scale(16), 0, Scale(16), Scale(48))
-    self.infoPanel.Paint = function(this, w, h)
-        if (!self.selectedCharacter) then return end
-        
-        local char = self.selectedCharacter
-        local factionIdx = char:GetFaction()
-        local faction = ix.faction.indices[factionIdx]
-        local factionName = faction and faction.name or "UNKNOWN"
-        local factionColor = faction and faction.color or THEME.text
-        
-        local y = 0
-        local name = char:GetName()
-        draw.SimpleText("IDENTITY RECORD", "ixImpMenuLabel", 0, y, THEME.accent, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-        y = y + Scale(18)
-        
-        surface.SetFont("ixImpMenuTitle")
-        local _, th = surface.GetTextSize(name)
-        draw.SimpleText(name, "ixImpMenuTitle", 0, y, THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-        y = y + th + Scale(4) 
-        
-        draw.SimpleText("AFFILIATION: " .. string.upper(factionName), "ixImpMenuLabel", 0, y, factionColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-        y = y + Scale(18)
-
-        local desc = char:GetDescription()
-        if (desc and #desc > 0) then
-            -- Simple wrap
-            local words = string.Explode(" ", desc)
-            local line = ""
-            for i, word in ipairs(words) do
-                local test = line .. word .. " "
-                surface.SetFont("ixImpMenuLabel")
-                local tw, _ = surface.GetTextSize(test)
-                if (tw > w) then
-                    draw.SimpleText(line, "ixImpMenuLabel", 0, y, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-                    y = y + Scale(14)
-                    line = word .. " "
-                else
-                    line = test
-                end
-            end
-            draw.SimpleText(line, "ixImpMenuLabel", 0, y, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-        end
-    end
+    -- Character Info overlay removed (Moved to left panel)
 end
 
 function PANEL:OnSlideUp()
@@ -319,6 +336,9 @@ function PANEL:Populate()
                 if (child.SetStyle) then child:SetStyle("default") end
             end
             charBtn:SetStyle("accent")
+            
+            -- Redraw info panel
+            self.infoDummy:InvalidateLayout()
         end
     end
 end
