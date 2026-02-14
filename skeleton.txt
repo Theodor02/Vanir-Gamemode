@@ -1,5 +1,5 @@
 
-"HELIX-SKELETON"
+"skeleton"
 {
 	"base" 			"helix"
 	"title" 		"Skeleton"
