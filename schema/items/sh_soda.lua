@@ -5,9 +5,11 @@ ITEM.description = "A blue can filled with some carbonated flavoured water. Deli
 ITEM.category = "Consumables"
 ITEM.width = 1 -- Width and height refer to how many grid spaces this item takes up.
 ITEM.height = 1
+ITEM.weight = 0.5 -- Weight in kilograms.
+
 
 -- Items will be purchasable through the business menu. To disable the purchasing of this item, we specify ITEM.noBusiness.
-ITEM.noBusiness = true
+ITEM.noBusiness = false
 
 -- If you'd rather have the item only purchasable by a specific criteria, then you can specify it as such.
 -- Make sure you haven't defined ITEM.noBusiness if you are going to be doing this.

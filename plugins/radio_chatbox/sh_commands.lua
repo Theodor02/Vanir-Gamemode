@@ -14,6 +14,34 @@ ix.command.Add("Comms", {
 	end
 })
 
+ix.command.Add("RadioYell", {
+	description = "Broadcast a priority radio message.",
+	arguments = {
+		ix.type.string
+	},
+	OnRun = function(self, client, text)
+		local options = {
+			channel = "global",
+			chatClass = "radio_yell"
+		}
+		PLUGIN:SendRadioMessage(client, text, nil, options)
+	end
+})
+
+ix.command.Add("RadioWhisper", {
+	description = "Send a whispered radio message.",
+	arguments = {
+		ix.type.string
+	},
+	OnRun = function(self, client, text)
+		local options = {
+			channel = "whisper",
+			chatClass = "radio_whisper"
+		}
+		PLUGIN:SendRadioMessage(client, text, nil, options)
+	end
+})
+
 ix.command.Add("RadioTest", {
 	description = "Send a test radio message with optional scrambling.",
 	arguments = {

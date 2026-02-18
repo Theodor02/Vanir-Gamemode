@@ -4,7 +4,7 @@
 
 FACTION.name = "Citizen"
 FACTION.description = "An oppressed group of people forced to wear ridiculous blue jumpsuits."
-FACTION.isDefault = true
+FACTION.isDefault = false
 FACTION.color = Color(100, 60, 60)
 
 -- You should define a global variable for this faction's index for easy access wherever you need. FACTION.index is
