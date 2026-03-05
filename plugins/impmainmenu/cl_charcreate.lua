@@ -115,7 +115,7 @@ end
 
 local function CreateFonts()
 	surface.CreateFont("ixImpMenuTitle", {
-		font = "Times New Roman",
+		font = "Orbitron Bold",
 		size = Scale(54),
 		weight = 500,
 		extended = true,
@@ -123,7 +123,7 @@ local function CreateFonts()
 	})
 
 	surface.CreateFont("ixImpMenuSubtitle", {
-		font = "Times New Roman",
+		font = "Orbitron Medium",
 		size = Scale(14),
 		weight = 400,
 		extended = true,
@@ -131,7 +131,7 @@ local function CreateFonts()
 	})
 
 	surface.CreateFont("ixImpMenuLabel", {
-		font = "Roboto",
+		font = "Orbitron Medium",
 		size = Scale(12),
 		weight = 500,
 		extended = true,
@@ -139,7 +139,7 @@ local function CreateFonts()
 	})
 
 	surface.CreateFont("ixImpMenuButton", {
-		font = "Roboto",
+		font = "Orbitron Medium",
 		size = Scale(16),
 		weight = 600,
 		extended = true,
@@ -147,7 +147,7 @@ local function CreateFonts()
 	})
 
 	surface.CreateFont("ixImpMenuStatus", {
-		font = "Roboto",
+		font = "Orbitron Medium",
 		size = Scale(11),
 		weight = 600,
 		extended = true,
@@ -163,7 +163,7 @@ local function CreateFonts()
 	})
 
 	surface.CreateFont("ixImpMenuDiag", {
-		font = "Roboto Condensed",
+		font = "Orbitron Light",
 		size = Scale(11),
 		weight = 500,
 		extended = true,

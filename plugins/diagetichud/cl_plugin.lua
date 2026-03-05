@@ -13,7 +13,7 @@ local THEME = {
 	backgroundStrong = Color(0, 0, 0, 175),
 	text = Color(240, 240, 240, 255),
 	textMuted = Color(200, 200, 200, 220),
-	textDark = Color(155, 155, 155, 200),
+	textDark = Color(183, 183, 183),
 	amber = Color(228, 175, 42, 255),
 	amberDim = Color(194, 144, 21, 225),
 	gold = Color(201, 158, 63, 255),
@@ -52,7 +52,7 @@ local function CreateFonts()
 
 	-- Used for priority/objective titles and active transmission speaker names.
 	surface.CreateFont("ixHUDSerifLarge", {
-		font = "Times New Roman",
+		font = "Orbitron Medium",
 		size = Scale(38),
 		weight = 600,
 		extended = true,
@@ -62,7 +62,7 @@ local function CreateFonts()
 	-- Monospace technical font (military readouts)
 	-- Used for compass labels, waypoint lines, vitals labels, and weapon name/firemode text.
 	surface.CreateFont("ixHUDMono", {
-		font = "Roboto Condensed",
+		font = "Orbitron Medium",
 		size = Scale(11),
 		weight = 500,
 		extended = true,
@@ -71,8 +71,8 @@ local function CreateFonts()
 
 	-- Used for section headers and status lines (mission/comms headers, squad status, warnings).
 	surface.CreateFont("ixHUDMonoSmall", {
-		font = "Roboto Condensed",
-		size = Scale(9),
+		font = "Roboto",
+		size = Scale(10),
 		weight = 500,
 		extended = true,
 		antialias = true
@@ -89,7 +89,7 @@ local function CreateFonts()
 
 	-- Used for the current clip count in the weapon panel.
 	surface.CreateFont("ixHUDMonoHuge", {
-		font = "Roboto Condensed",
+		font = "OCR-A",
 		size = Scale(44),
 		weight = 700,
 		extended = true,
@@ -99,7 +99,7 @@ local function CreateFonts()
 	-- Compass bearing font
 	-- Used for the large compass bearing number.
 	surface.CreateFont("ixHUDBearing", {
-		font = "Roboto Condensed",
+		font = "OCR-A",
 		size = Scale(36),
 		weight = 700,
 		extended = true,
@@ -147,17 +147,17 @@ local function CreateFonts()
 	-- Player name font (serif, formal)
 	-- Used for the player name in the vitals block.
 	surface.CreateFont("ixHUDName", {
-		font = "Times New Roman",
-		size = Scale(14),
-		weight = 600,
+		font = "OCR-A",
+		size = Scale(22),
+		weight = 500,
 		extended = true,
 		antialias = true
 	})
 
 	-- Used for the class/faction line under the player name.
 	surface.CreateFont("ixHUDRank", {
-		font = "Roboto",
-		size = Scale(11),
+		font = "OCR-A",
+		size = Scale(14),
 		weight = 400,
 		extended = true,
 		antialias = true
@@ -1165,9 +1165,12 @@ function PLUGIN:DrawVitals(scrW, scrH, ply, pad, healthFrac)
 	if (!char) then return end
 
 	local x = pad
-	local y = scrH - pad - Scale(100)
+	local y = scrH - pad - Scale(115)
+	local panelW = Scale(220)
 	local barW = Scale(200)
 	local lineH = Scale(14)
+	local borderW = Scale(4)
+	local innerPad = Scale(8)
 
 	-- Player identity
 	local charName = char:GetName() or "UNKNOWN"
@@ -1182,65 +1185,79 @@ function PLUGIN:DrawVitals(scrW, scrH, ply, pad, healthFrac)
 
 	local rankLine = className != "" and (className .. " // " .. faction) or faction
 
-	DrawShadowText(charName, "ixHUDName", x, y, THEME.text)
-
-	y = y + Scale(16)
-
-	DrawShadowText(rankLine, "ixHUDRank", x, y, THEME.textMuted)
-
-	y = y + Scale(16)
-
-	-- Aurebesh personnel decoration (subtle, below rank line)
-	DrawShadowText("personnel ident", "ixHUDAurebeshSmall", x, y, Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 50))
-
-	y = y + Scale(10)
-
-	-- VITALS bar
+	-- Calculate total panel height
+	local panelH = Scale(112)
 	local health = ply:Health()
 	local maxHealth = ply:GetMaxHealth()
 	local vitalCol = GetVitalColor(healthFrac)
 	local barCol = GetBarColor(healthFrac)
 	local pct = math.floor(healthFrac * 100)
 
-	DrawShadowText("VITALS", "ixHUDMono", x, y + Scale(6), THEME.textDark)
-	DrawShadowText(pct .. "%", "ixHUDMonoLarge", x + Scale(50), y - Scale(2), vitalCol)
-
-	y = y + Scale(20)
-
-	DrawBar(x, y, barW, Scale(8), healthFrac, barCol)
-
-	-- Aurebesh "biometrics" right-aligned beside health bar
-	DrawShadowText("biometrics", "ixHUDAurebeshSmall", x + barW + Scale(8), y, Color(vitalCol.r, vitalCol.g, vitalCol.b, 45))
-
-	-- Critical health warning
-	if (healthFrac < 0.3) then
-		y = y + Scale(12)
-
-		local pulse = math.sin(CurTime() * 4) * 0.3 + 0.7
-
-		DrawShadowText("WARNING: MEDICAL ATTENTION REQUIRED", "ixHUDMonoSmall", x, y, ColorAlpha(THEME.red, math.floor(255 * pulse)))
-	end
-
-	y = y + Scale(14)
-
-	-- STAMINA bar
-	local staminaFrac = 1
-
 	-- Read stamina from Helix NetVar (default plugin uses "stm", check common alternatives)
+	local staminaFrac = 1
 	local stamina = ply:GetNetVar("stm", ply:GetNetVar("ixStamina", ply:GetNetVar("stamina", -1)))
 
 	if (stamina >= 0) then
 		staminaFrac = math.Clamp(stamina / 100, 0, 1)
 	end
 
-	DrawShadowText("STAMINA", "ixHUDMono", x, y, THEME.textDark)
-	DrawShadowText(math.floor(staminaFrac * 100) .. "%", "ixHUDMono", x + Scale(55), y, THEME.amberDim)
-	
-	y = y + lineH
-	-- Aurebesh "endurance" right-aligned beside stamina bar
-	DrawShadowText("endurance", "ixHUDAurebeshSmall", x + barW + Scale(8), y - Scale(1), Color(THEME.amberDim.r, THEME.amberDim.g, THEME.amberDim.b, 45))
+	-- Increase height if health is critical (for warning)
+	if (healthFrac < 0.3) then
+		panelH = panelH + Scale(16)
+	end
 
-	DrawBar(x, y, barW, Scale(5), staminaFrac, THEME.amberDim)
+	-- Draw panel with amber border
+	DrawPanel(x, y + Scale(4), panelW, panelH, THEME.borderAmber, 185)
+
+	local innerX = x + borderW + innerPad
+	local innerY = y + innerPad
+
+	-- Player name
+	DrawShadowText(charName, "ixHUDName", innerX, innerY, THEME.text)
+
+	innerY = innerY + Scale(16)
+
+	-- Rank / faction line
+	DrawShadowText(rankLine, "ixHUDRank", innerX, innerY, THEME.textMuted)
+
+	innerY = innerY + Scale(16)
+
+	-- Aurebesh personnel decoration (subtle, below rank line)
+	DrawShadowText("personnel ident", "ixHUDAurebeshSmall", innerX, innerY, Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 50))
+
+	innerY = innerY + Scale(10)
+
+	-- VITALS bar
+	DrawShadowText("VITALS", "ixHUDMono", innerX, innerY + Scale(6), THEME.textDark)
+	DrawShadowText(pct .. "%", "ixHUDMonoLarge", innerX + Scale(50), innerY - Scale(2), vitalCol)
+
+	innerY = innerY + Scale(20)
+
+	DrawBar(innerX, innerY, barW, Scale(8), healthFrac, barCol)
+
+	-- Aurebesh "biometrics" right-aligned beside health bar
+	-- DrawShadowText("biometrics", "ixHUDAurebeshSmall", innerX + barW + Scale(8), innerY, Color(vitalCol.r, vitalCol.g, vitalCol.b, 45))
+
+	-- Critical health warning
+	if (healthFrac < 0.3) then
+		innerY = innerY + Scale(12)
+
+		local pulse = math.sin(CurTime() * 4) * 0.3 + 0.7
+
+		DrawShadowText("WARNING: MEDICAL ATTENTION REQUIRED", "ixHUDMonoSmall", innerX, innerY, ColorAlpha(THEME.red, math.floor(255 * pulse)))
+	end
+
+	innerY = innerY + Scale(14)
+
+	-- STAMINA bar
+	DrawShadowText("STAMINA", "ixHUDMono", innerX, innerY, THEME.textDark)
+	DrawShadowText(math.floor(staminaFrac * 100) .. "%", "ixHUDMono", innerX + Scale(55), innerY, THEME.amberDim)
+	
+	innerY = innerY + lineH
+	-- Aurebesh "endurance" right-aligned beside stamina bar
+	-- DrawShadowText("endurance", "ixHUDAurebeshSmall", innerX + barW + Scale(8), innerY - Scale(1), Color(THEME.amberDim.r, THEME.amberDim.g, THEME.amberDim.b, 45))
+
+	DrawBar(innerX, innerY, barW, Scale(5), staminaFrac, THEME.amberDim)
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════

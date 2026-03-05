@@ -1,8 +1,8 @@
 local PLUGIN = PLUGIN
 
-PLUGIN.name = "Diegetic HUD"
-PLUGIN.author = "Copilot"
-PLUGIN.description = "An immersive, diegetic Imperial HUD system with transparent overlays for health, weapon, compass, comms, squad, and mission status."
+PLUGIN.name = "Theos HUD 3.0"
+PLUGIN.author = "Theodor"
+PLUGIN.description = "An immersive, diegetic Imperial HUD system with transparent overlays for health, weapon, compass, comms, squad, and mission status. Or whatever, feels like a mobile game HUD."
 
 ix.util.Include("libs/sh_api.lua")
 ix.util.Include("sv_plugin.lua")
