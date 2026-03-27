@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLUGIN - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li class="active"><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    
+<article><div class="wrapper">
+
+<div class="module-header">
+    <span class="kind-badge module">Library</span>
+    <h1>PLUGIN</h1>
+    <p class="module-file">plugins/comms_sys/cl_plugin.lua</p>
+</div>
+
+
+<div class="toc"><h3>Functions</h3><ul><li><span class="realm server" title="server"></span><a href="#PLUGIN:CanPlayerJoinClass">PLUGIN:CanPlayerJoinClass</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:CharacterPreSave">PLUGIN:CharacterPreSave</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:ConfigSet">PLUGIN:ConfigSet</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:EntityTakeDamage">PLUGIN:EntityTakeDamage</a></li><li><span class="realm shared" title="shared"></span><a href="#PLUGIN:InitializedPlugins">PLUGIN:InitializedPlugins</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:InitializedPlugins">PLUGIN:InitializedPlugins</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:InitializedPlugins">PLUGIN:InitializedPlugins</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:LoadData">PLUGIN:LoadData</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:OnCharacterCreated">PLUGIN:OnCharacterCreated</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:OnCharacterCreated">PLUGIN:OnCharacterCreated</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerCanHearPlayersVoice">PLUGIN:PlayerCanHearPlayersVoice</a></li><li><span class="realm client" title="client"></span><a href="#PLUGIN:PlayerDeath">PLUGIN:PlayerDeath</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerDeath">PLUGIN:PlayerDeath</a></li><li><span class="realm shared" title="shared"></span><a href="#PLUGIN:PlayerDisconnected">PLUGIN:PlayerDisconnected</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerDisconnected">PLUGIN:PlayerDisconnected</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerDisconnected">PLUGIN:PlayerDisconnected</a></li><li><span class="realm client" title="client"></span><a href="#PLUGIN:PlayerLoadedCharacter">PLUGIN:PlayerLoadedCharacter</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerLoadedCharacter">PLUGIN:PlayerLoadedCharacter</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerLoadedCharacter">PLUGIN:PlayerLoadedCharacter</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerLoadedCharacter">PLUGIN:PlayerLoadedCharacter</a></li><li><span class="realm shared" title="shared"></span><a href="#PLUGIN:PlayerLoadout">PLUGIN:PlayerLoadout</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerSpawn">PLUGIN:PlayerSpawn</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:PlayerSpawn">PLUGIN:PlayerSpawn</a></li><li><span class="realm client" title="client"></span><a href="#PLUGIN:PlayerStartVoice">PLUGIN:PlayerStartVoice</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:SaveData">PLUGIN:SaveData</a></li><li><span class="realm server" title="server"></span><a href="#PLUGIN:ShouldCollide">PLUGIN:ShouldCollide</a></li><li><span class="realm client" title="client"></span><a href="#PLUGIN:ShouldHideBars">PLUGIN:ShouldHideBars</a></li></ul></div>
+<h2>Functions</h2>
+<div class="function-block" id="PLUGIN:CanPlayerJoinClass">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:CanPlayerJoinClass(ply, class, info)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:208</span>
+    </div>
+    <div class="function-desc"><p>Prevent free class switching. Classes are controlled by USMS.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">class</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">info</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:CharacterPreSave">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:CharacterPreSave(character)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:935</span>
+    </div>
+    <div class="function-desc"><p>Called when a character is saved (pre-save hook).
+Persists disease and vaccine data.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">character</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:ConfigSet">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:ConfigSet(key, oldValue, newValue)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_hooks.lua:101</span>
+    </div>
+    <div class="function-desc"><p>React to config changes at runtime.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">key</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">oldValue</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">newValue</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:EntityTakeDamage">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:EntityTakeDamage(entity, dmgInfo)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_hooks.lua:48</span>
+    </div>
+    <div class="function-desc"><p>Handle damage-based disease transmission.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">entity</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">dmgInfo</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:InitializedPlugins">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">PLUGIN:InitializedPlugins()</code>
+            
+        </div>
+        <span class="file-ref">plugins/radio_chatbox/sh_plugin.lua:173</span>
+    </div>
+    <div class="function-desc"><p>Neutralise the default Helix chatbox plugin to prevent duplicate panels/hooks.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:InitializedPlugins">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:InitializedPlugins()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_hooks.lua:12</span>
+    </div>
+    <div class="function-desc"><p>Initialise the disease progression timer on server start.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:InitializedPlugins">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:InitializedPlugins()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:10</span>
+    </div>
+    <div class="function-desc"><p>Load USMS data when the plugin initializes.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:LoadData">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:LoadData()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:20</span>
+    </div>
+    <div class="function-desc"><p>Load USMS data on server start.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:OnCharacterCreated">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:OnCharacterCreated(client, character)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_storage.lua:10</span>
+    </div>
+    <div class="function-desc"><p>When a character is first created, initialise empty unlock data.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">character</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:OnCharacterCreated">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:OnCharacterCreated(ply, char)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:177</span>
+    </div>
+    <div class="function-desc"><p>When a new character is created, auto-assign to faction unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">char</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerCanHearPlayersVoice">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerCanHearPlayersVoice(listener, talker)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:187</span>
+    </div>
+    <div class="function-desc"><p>to default proximity behavior.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">listener</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">talker</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerDeath">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">PLUGIN:PlayerDeath()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_hooks.lua:41</span>
+    </div>
+    <div class="function-desc"><p>Clean up visual effects and client events when player dies.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerDeath">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerDeath(client, inflictor, attacker)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_hooks.lua:62</span>
+    </div>
+    <div class="function-desc"><p>Handle player death — optionally clear diseases on death.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">inflictor</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">attacker</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerDisconnected">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">PLUGIN:PlayerDisconnected(client)</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:619</span>
+    </div>
+    <div class="function-desc"><p>Full cleanup when a player disconnects.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerDisconnected">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerDisconnected(client)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:958</span>
+    </div>
+    <div class="function-desc"><p>Called when a player disconnects.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerDisconnected">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerDisconnected(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:191</span>
+    </div>
+    <div class="function-desc"><p>When a player disconnects, update last seen.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerLoadedCharacter">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">PLUGIN:PlayerLoadedCharacter(client, character, lastChar)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_hooks.lua:12</span>
+    </div>
+    <div class="function-desc"><p>Clear client disease state when switching characters.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">character</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">lastChar</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerLoadedCharacter">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerLoadedCharacter(client, character, lastChar)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:942</span>
+    </div>
+    <div class="function-desc"><p>Called when a player loads a character.
+Restores disease state and applies initial effects.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">character</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">lastChar</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerLoadedCharacter">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerLoadedCharacter(client, character)</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_forcesystem.lua:53</span>
+    </div>
+    <div class="function-desc"><p>On character load, refresh the pool and sync powers after a brief delay
+to let other plugins initialize.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">character</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerLoadedCharacter">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerLoadedCharacter(ply, char)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:83</span>
+    </div>
+    <div class="function-desc"><p>Also auto-assigns to faction unit if not already in one (or transfers if faction changed).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">char</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerLoadout">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">PLUGIN:PlayerLoadout(client)</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:599</span>
+    </div>
+    <div class="function-desc"><p>Ensure storage exists and re-apply all effect types on spawn/respawn.
+Restores engine state (speed, armor, movetype, model scale, etc.) that
+gets reset by the engine on respawn.  Types without active modifiers get
+their unapply callback called, which sets engine defaults (e.g. base speed).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerSpawn">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerSpawn(client)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_hooks.lua:72</span>
+    </div>
+    <div class="function-desc"><p>Handle player spawn — re-sync disease state.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerSpawn">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:PlayerSpawn(client)</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_forcesystem.lua:29</span>
+    </div>
+    <div class="function-desc"><p>Recalculate force pool and sync powers on spawn.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:PlayerStartVoice">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">PLUGIN:PlayerStartVoice(client)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:651</span>
+    </div>
+    <div class="function-desc"><p>Suppress the default voice panel for players who are transmitting on radio.
+Their voice is shown through the diegetic HUD instead.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:SaveData">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:SaveData()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:15</span>
+    </div>
+    <div class="function-desc"><p>Save USMS data periodically (every 10 min) and on shutdown.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:ShouldCollide">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PLUGIN:ShouldCollide(entA, entB)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_hooks.lua:91</span>
+    </div>
+    <div class="function-desc"><p>Handle player collision (ShouldCollide alternative via Touch).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">entA</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">entB</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLUGIN:ShouldHideBars">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">PLUGIN:ShouldHideBars()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_hooks.lua:31</span>
+    </div>
+    <div class="function-desc"><p>Hide the disease HUD during certain conditions.</p></div>
+    
+    
+    
+    
+</div>
+
+
+</div></article>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>

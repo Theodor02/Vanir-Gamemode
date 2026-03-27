@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ix.bacta - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li class="active"><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    
+<article><div class="wrapper">
+
+<div class="module-header">
+    <span class="kind-badge module">Library</span>
+    <h1>ix.bacta</h1>
+    <p class="module-file">plugins/medicalsys/sh_disease_bridge.lua</p>
+</div>
+
+
+<div class="toc"><h3>Functions</h3><ul><li><span class="realm server" title="server"></span><a href="#ix.bacta.ApplyChainPurityBonus">ix.bacta.ApplyChainPurityBonus</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.ApplyEffectDelayed">ix.bacta.ApplyEffectDelayed</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.ApplyEffectProfile">ix.bacta.ApplyEffectProfile</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.ApplyItemEffects">ix.bacta.ApplyItemEffects</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.ApplyPoolInfluence">ix.bacta.ApplyPoolInfluence</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.ApplyTempDisplay">ix.bacta.ApplyTempDisplay</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.BroadcastExperimentalUse">ix.bacta.BroadcastExperimentalUse</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.BuildRecipe">ix.bacta.BuildRecipe</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.CalcProductionCost">ix.bacta.CalcProductionCost</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.CascadeSummary">ix.bacta.CascadeSummary</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.CheckDirectionalAdjacency">ix.bacta.CheckDirectionalAdjacency</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.CleanActiveEffects">ix.bacta.CleanActiveEffects</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.DetermineItemType">ix.bacta.DetermineItemType</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.DetermineUses">ix.bacta.DetermineUses</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.EffectToString">ix.bacta.EffectToString</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.FabricateFromCanister">ix.bacta.FabricateFromCanister</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.FabricateItem">ix.bacta.FabricateItem</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.FindPlayerBySteamID">ix.bacta.FindPlayerBySteamID</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.FlattenPool">ix.bacta.FlattenPool</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.GenerateSessionPool">ix.bacta.GenerateSessionPool</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.GetActiveTailEffects">ix.bacta.GetActiveTailEffects</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.GetAdjacencyRulesFor">ix.bacta.GetAdjacencyRulesFor</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.GetDiseasesByType">ix.bacta.GetDiseasesByType</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.GetMedicineTypesForCategory">ix.bacta.GetMedicineTypesForCategory</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.GetPlayerCanisters">ix.bacta.GetPlayerCanisters</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.GetStrand">ix.bacta.GetStrand</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.GetStrandsByCategory">ix.bacta.GetStrandsByCategory</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.GetStrandsBySubcategory">ix.bacta.GetStrandsBySubcategory</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.IncrementTestCredit">ix.bacta.IncrementTestCredit</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.IsDiseaseSystemAvailable">ix.bacta.IsDiseaseSystemAvailable</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.IsMetaboliser">ix.bacta.IsMetaboliser</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.IsSideEffect">ix.bacta.IsSideEffect</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.IsTailEffect">ix.bacta.IsTailEffect</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.IsTuningStrand">ix.bacta.IsTuningStrand</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.NotifyEffect">ix.bacta.NotifyEffect</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.OpenSequencer">ix.bacta.OpenSequencer</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.RecipeSummary">ix.bacta.RecipeSummary</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.RefineCanister">ix.bacta.RefineCanister</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.RegisterEffectType">ix.bacta.RegisterEffectType</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.RegisterFormula">ix.bacta.RegisterFormula</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.RegisterResonancePattern">ix.bacta.RegisterResonancePattern</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.RegisterStrand">ix.bacta.RegisterStrand</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.ResolveCascade">ix.bacta.ResolveCascade</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.ResolveResonancePatterns">ix.bacta.ResolveResonancePatterns</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.ResolveSequence">ix.bacta.ResolveSequence</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.ScheduleCascadeTails">ix.bacta.ScheduleCascadeTails</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.ScheduleTailEffect">ix.bacta.ScheduleTailEffect</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.ShouldIntegrityCheck">ix.bacta.ShouldIntegrityCheck</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.bacta.ValidateSequence">ix.bacta.ValidateSequence</a></li><li><span class="realm server" title="server"></span><a href="#ix.bacta.ValidateSessionPool">ix.bacta.ValidateSessionPool</a></li></ul></div>
+<h2>Functions</h2>
+<div class="function-block" id="ix.bacta.ApplyChainPurityBonus">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ApplyChainPurityBonus(value, ratio)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:219</span>
+    </div>
+    <div class="function-desc"><p>Apply the Chain Purity bonus to a potency value.
++5% per full 0.20 purity above 0 (max +25% at purity 1.0).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">value</td><td class="param-type"><span class="type">potency number Base potency</span></td><td></td></tr><tr><td class="param-name">ratio</td><td class="param-type"><span class="type">chainPurity number Chain purity</span></td><td>(0-1)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number Modified potency</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ApplyEffectDelayed">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ApplyEffectDelayed(player, instance)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:517</span>
+    </div>
+    <div class="function-desc"><p>Apply a single effect with optional delay handling.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity Target</span></td><td></td></tr><tr><td class="param-name">instance</td><td class="param-type"><span class="type">eff table Effect</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ApplyEffectProfile">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.ApplyEffectProfile(player, profile)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:374</span>
+    </div>
+    <div class="function-desc"><p>Apply a complete effect profile to a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The target</span></td><td></td></tr><tr><td class="param-name">profile</td><td class="param-type"><span class="type">profile table The output</span></td><td>{effects, stability, item_type, uses}</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ApplyItemEffects">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ApplyItemEffects(player, profile, scheduling, flags)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:468</span>
+    </div>
+    <div class="function-desc"><p>Apply effect profile from a synthesised item.
+v2.2: Schedules cascade tail effects after primary effects.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity Target</span></td><td></td></tr><tr><td class="param-name">profile</td><td class="param-type"><span class="type">profile table The bactaSynthData output</span></td><td></td></tr><tr><td class="param-name">scheduling</td><td class="param-type"><span class="type">cascadeSummary table|nil Cascade summary for tail</span></td><td></td></tr><tr><td class="param-name">flags</td><td class="param-type"><span class="type">flags table|nil Synthesis</span></td><td>(criticalThreshold, stackBypass)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ApplyPoolInfluence">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ApplyPoolInfluence(player, from)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:217</span>
+    </div>
+    <div class="function-desc"><p>Apply pool influence: reveal one additional strand from outside the pool.
+Costs POOL_INFLUENCE_COST SGC.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The</span></td><td></td></tr><tr><td class="param-name">from</td><td class="param-type"><span class="type">targetCategory string Category to add a strand</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool success</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>string|nil error</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ApplyTempDisplay">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.ApplyTempDisplay(player, key, add, seconds)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:389</span>
+    </div>
+    <div class="function-desc"><p>Apply a temporary character variable with automatic expiry.
+Used for display-only variables that have no mechanical effect.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity Target</span></td><td></td></tr><tr><td class="param-name">key</td><td class="param-type"><span class="type">key string Character variable</span></td><td></td></tr><tr><td class="param-name">add</td><td class="param-type"><span class="type">value number Value to</span></td><td></td></tr><tr><td class="param-name">seconds</td><td class="param-type"><span class="type">duration number Duration in</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.BroadcastExperimentalUse">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.BroadcastExperimentalUse(compound, formula, summary)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:179</span>
+    </div>
+    <div class="function-desc"><p>Broadcast an experimental compound use to nearby players.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">compound</td><td class="param-type"><span class="type">user Entity The player who used the</span></td><td></td></tr><tr><td class="param-name">formula</td><td class="param-type"><span class="type">formulaName string Name of the</span></td><td></td></tr><tr><td class="param-name">summary</td><td class="param-type"><span class="type">effects table Effects array for</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.BuildRecipe">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.BuildRecipe(Player, array, array, score, score, player, result, flags)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_recipes.lua:181</span>
+    </div>
+    <div class="function-desc"><p>Build a recipe table from synthesis results.
+v2.2: Includes cascade summary and flags.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">name string</span></td><td>-assigned formula name</td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Strand ID</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Resolved effects</span></td><td></td></tr><tr><td class="param-name">score</td><td class="param-type"><span class="type">stability number Stability</span></td><td></td></tr><tr><td class="param-name">score</td><td class="param-type"><span class="type">totalPotency number Total potency</span></td><td></td></tr><tr><td class="param-name">player</td><td class="param-type"><span class="type">steamID string Registering</span></td><td>&#x27;s Steam ID</td></tr><tr><td class="param-name">result</td><td class="param-type"><span class="type">cascadeResult table|nil Cascade resolution</span></td><td></td></tr><tr><td class="param-name">flags</td><td class="param-type"><span class="type">flags table|nil Synthesis</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Recipe table</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.CalcProductionCost">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.CalcProductionCost(IDs, magnitudes)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_recipes.lua:107</span>
+    </div>
+    <div class="function-desc"><p>Calculate the production cost for a sequence.
+v2.0: Metaboliser strands have slightly higher cost weight.
+v2.1: Tuning strands add a fixed surcharge.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">IDs</td><td class="param-type"><span class="type">sequence table Ordered array of strand</span></td><td></td></tr><tr><td class="param-name">magnitudes</td><td class="param-type"><span class="type">totalPotency number Sum of all effect</span></td><td>(normalised 0-100)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number Final SGC cost</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.CascadeSummary">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.CascadeSummary(ResolveCascade)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:251</span>
+    </div>
+    <div class="function-desc"><p>Build a summary table of the cascade for UI display.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ResolveCascade</td><td class="param-type"><span class="type">cascadeResult table Result from</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table {tails = {}, resolutions = {}, depth, purity, suppressed}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.CheckDirectionalAdjacency">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.CheckDirectionalAdjacency(i, i, array, reference, keys)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_adjacency.lua:170</span>
+    </div>
+    <div class="function-desc"><p>Check and apply directional adjacency effects between two strands in sequence order.
+A is at position i, B is at position i+1.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">i</td><td class="param-type"><span class="type">aID string Strand ID at position</span></td><td></td></tr><tr><td class="param-name">i</td><td class="param-type"><span class="type">bID string Strand ID at position</span></td><td>+1</td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr><tr><td class="param-name">reference</td><td class="param-type"><span class="type">stabilityRef table Mutable stability</span></td><td></td></tr><tr><td class="param-name">keys</td><td class="param-type"><span class="type">discoveredHidden table|nil Set of known hidden synergy</span></td><td>(for display)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.CleanActiveEffects">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.CleanActiveEffects()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:1210</span>
+    </div>
+    <div class="function-desc"><p>Clean expired effects from the active list.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.DetermineItemType">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.DetermineItemType(IDs)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_recipes.lua:138</span>
+    </div>
+    <div class="function-desc"><p>Determine the item type from a sequence.
+Bases set the default; modifiers can override.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">IDs</td><td class="param-type"><span class="type">sequence table Ordered array of strand</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>string item_type (&quot;injector&quot;, &quot;aerosol&quot;, &quot;patch&quot;, &quot;capsule&quot;)</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.DetermineUses">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.DetermineUses(IDs)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_recipes.lua:163</span>
+    </div>
+    <div class="function-desc"><p>Determine the number of uses for the output item.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">IDs</td><td class="param-type"><span class="type">sequence table Ordered array of strand</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number Number of uses (1-3)</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.EffectToString">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.EffectToString(instance)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:23</span>
+    </div>
+    <div class="function-desc"><p>Get the human-readable display string for an effect instance.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">instance</td><td class="param-type"><span class="type">eff table Effect</span></td><td>{type, magnitude, duration, ...}</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>string Formatted display string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.FabricateFromCanister">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.FabricateFromCanister(player, canister, confirmed)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:201</span>
+    </div>
+    <div class="function-desc"><p>Fabricate a batch of items from a canister formula.
+v2.0: Uses canister items instead of character recipe data.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The synthesist</span></td><td></td></tr><tr><td class="param-name">canister</td><td class="param-type"><span class="type">canisterItemID number Helix item ID of the</span></td><td></td></tr><tr><td class="param-name">confirmed</td><td class="param-type"><span class="type">bIntegrityConfirmed bool Whether integrity check was</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool Success</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>string|nil Error message on failure</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.FabricateItem">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.FabricateItem(player, table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:380</span>
+    </div>
+    <div class="function-desc"><p>Legacy fabrication from recipe table (backwards compatibility).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">recipe table Recipe</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool success</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>string|nil error</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.FindPlayerBySteamID">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.FindPlayerBySteamID(string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:162</span>
+    </div>
+    <div class="function-desc"><p>Find a connected player by SteamID.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">steamID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>Entity|nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.FlattenPool">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.FlattenPool(Category)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:112</span>
+    </div>
+    <div class="function-desc"><p>Flatten a pool into a single array of strand IDs.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Category</td><td class="param-type"><span class="type">pool table</span></td><td>-keyed pool</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Flat array of all strand IDs in the pool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GenerateSessionPool">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.GenerateSessionPool()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:92</span>
+    </div>
+    <div class="function-desc"><p>Generate a randomised session pool for a player.
+v2.2: Includes metaboliser and tuning strand sub-pools.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Pool mapping category/subcategory to array of strand IDs</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GetActiveTailEffects">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.GetActiveTailEffects()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:1221</span>
+    </div>
+    <div class="function-desc"><p>Get all currently active tail effects for HUD display.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of active tail effect entries</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GetAdjacencyRulesFor">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.GetAdjacencyRulesFor(ID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_adjacency.lua:216</span>
+    </div>
+    <div class="function-desc"><p>Get all adjacency rules that apply to a specific strand (for UI tooltips).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">strandID string Strand</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of {partner, direction, isBonus, modifier, hidden}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GetDiseasesByType">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.GetDiseasesByType(string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:56</span>
+    </div>
+    <div class="function-desc"><p>Get all registered disease IDs matching a given disease type.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">diseaseType</span></td><td>&quot;viral&quot;, &quot;bacterial&quot;, or &quot;psychological&quot;</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of disease ID strings</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GetMedicineTypesForCategory">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.GetMedicineTypesForCategory(string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:73</span>
+    </div>
+    <div class="function-desc"><p>Map a bacta medicine category to SmartDisease medicine type strings.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">category</span></td><td>&quot;antiviral&quot;, &quot;antibiotic&quot;, &quot;antipsychotic&quot;, &quot;antianxiety&quot;, or &quot;broad_spectrum&quot;</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of medicine type strings accepted by ix.disease.ApplyMedicine</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GetPlayerCanisters">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.GetPlayerCanisters(player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:179</span>
+    </div>
+    <div class="function-desc"><p>Get all canister items from a player&#x27;s inventory.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of canister data tables</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GetStrand">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.GetStrand(ID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:47</span>
+    </div>
+    <div class="function-desc"><p>Get a strand definition by ID.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">id string Strand</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table|nil Strand definition or nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GetStrandsByCategory">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.GetStrandsByCategory(key)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:17</span>
+    </div>
+    <div class="function-desc"><p>Get all strands belonging to a specific category.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">key</td><td class="param-type"><span class="type">category string Category</span></td><td>(&quot;base&quot;, &quot;active&quot;, &quot;stabiliser&quot;, &quot;catalyst&quot;, &quot;modifier&quot;)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of strand definitions</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.GetStrandsBySubcategory">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.GetStrandsBySubcategory(key)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:32</span>
+    </div>
+    <div class="function-desc"><p>Get all strands belonging to a specific subcategory (e.g. &quot;metaboliser&quot;, &quot;tuning&quot;).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">key</td><td class="param-type"><span class="type">subcategory string Subcategory</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of strand definitions</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.IncrementTestCredit">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.IncrementTestCredit(ID, user)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:124</span>
+    </div>
+    <div class="function-desc"><p>Increment test credits for a canister after successful use.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">canisterItemID number Helix item</span></td><td></td></tr><tr><td class="param-name">user</td><td class="param-type"><span class="type">userSteamID string SteamID of the</span></td><td>(not the synthesist)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.IsDiseaseSystemAvailable">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.IsDiseaseSystemAvailable()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:48</span>
+    </div>
+    <div class="function-desc"><p>Check if the Smart Disease plugin is loaded and available.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool Whether ix.disease is available with a functioning API</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.IsMetaboliser">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.IsMetaboliser(ID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:54</span>
+    </div>
+    <div class="function-desc"><p>Check if a strand is a metaboliser.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">id string Strand</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.IsSideEffect">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.IsSideEffect(key)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:33</span>
+    </div>
+    <div class="function-desc"><p>Check if an effect type is a side effect / adverse response.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">key</td><td class="param-type"><span class="type">effectTypeID string Effect type</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.IsTailEffect">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.IsTailEffect(key)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:41</span>
+    </div>
+    <div class="function-desc"><p>Check if an effect type is a tail effect (v2.2 Metabolic Cascade).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">key</td><td class="param-type"><span class="type">effectTypeID string Effect type</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.IsTuningStrand">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.IsTuningStrand(ID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:62</span>
+    </div>
+    <div class="function-desc"><p>Check if a strand is a tuning strand.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">id string Strand</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.NotifyEffect">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.NotifyEffect(player, instance)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:414</span>
+    </div>
+    <div class="function-desc"><p>Notify the client about an active effect for HUD display.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity Target</span></td><td></td></tr><tr><td class="param-name">instance</td><td class="param-type"><span class="type">eff table Effect</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.OpenSequencer">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.OpenSequencer(player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:127</span>
+    </div>
+    <div class="function-desc"><p>Open the Compound Sequencer for a player.
+v2.0: Deducts session cost (SGC) on open.
+v2.0: Sends canister data instead of character recipes.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.RecipeSummary">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.RecipeSummary(data)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_recipes.lua:222</span>
+    </div>
+    <div class="function-desc"><p>Get a short summary string for a recipe.
+v2.2: Includes cascade/tail information.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">data</td><td class="param-type"><span class="type">recipe table Recipe</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>string Summary</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.RefineCanister">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.RefineCanister(player, ID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:215</span>
+    </div>
+    <div class="function-desc"><p>Refine a canister to improve its stability.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The</span></td><td></td></tr><tr><td class="param-name">ID</td><td class="param-type"><span class="type">canisterItemID number Helix item</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool success</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>string|nil error</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.RegisterEffectType">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.RegisterEffectType(identifier, containing)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:13</span>
+    </div>
+    <div class="function-desc"><p>Register a new effect type with metadata and handlers.
+name (string), description (string), color (Color),
+isSideEffect (bool), isTailEffect (bool), format (function), icon (string)</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">id string Unique effect type</span></td><td></td></tr><tr><td class="param-name">containing</td><td class="param-type"><span class="type">data table Effect type definition</span></td><td>:</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.RegisterFormula">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.RegisterFormula(player, name, array, array, score, score, result, flags)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:38</span>
+    </div>
+    <div class="function-desc"><p>Register a compound formula by creating a canister item.
+v2.0: Physical canisters replace character-data formula storage.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The</span></td><td></td></tr><tr><td class="param-name">name</td><td class="param-type"><span class="type">name string Formula</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Strand ID</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Resolved effects</span></td><td></td></tr><tr><td class="param-name">score</td><td class="param-type"><span class="type">stability number Stability</span></td><td></td></tr><tr><td class="param-name">score</td><td class="param-type"><span class="type">totalPotency number Total potency</span></td><td></td></tr><tr><td class="param-name">result</td><td class="param-type"><span class="type">cascadeResult table|nil Cascade resolution</span></td><td></td></tr><tr><td class="param-name">flags</td><td class="param-type"><span class="type">flags table|nil Synthesis</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool success</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>string|nil error</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.RegisterResonancePattern">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.RegisterResonancePattern(identifier, containing)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:1110</span>
+    </div>
+    <div class="function-desc"><p>Register a resonance pattern.
+name (string), description (string),
+required (table: array of strand IDs that must ALL be present),
+requireAny (table: array of strand IDs where at least ONE must be present),
+requireAdjacent (bool: if true, required strands must be adjacent),
+hidden (bool: undiscovered until triggered),
+effects (function(sequence, existingEffects) → table of bonus effects),
+stabilityBonus (number),
+notification (string: flavour text shown on trigger)</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">id string Unique pattern</span></td><td></td></tr><tr><td class="param-name">containing</td><td class="param-type"><span class="type">data table Pattern definition</span></td><td>:</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.RegisterStrand">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.RegisterStrand(identifier, definition)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:9</span>
+    </div>
+    <div class="function-desc"><p>Register a new reagent strand.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">id string Unique strand</span></td><td></td></tr><tr><td class="param-name">definition</td><td class="param-type"><span class="type">data table Strand</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ResolveCascade">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ResolveCascade(array)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:162</span>
+    </div>
+    <div class="function-desc"><p>Resolve the complete metabolic cascade for a compound sequence.
+Returns resolved tail state, metrics, and the scheduled tail list.
+tailQueue     = table,       -- Full tail queue with resolved flags
+resolutions   = table,       -- Which metabolisers resolved which tails
+unresolvedTails = table,     -- Tails that will fire on the patient
+chainDepth    = number,      -- Total chain depth
+chainPurity   = number,      -- Purity ratio 0-1
+suppressed    = bool,        -- Whether tails are globally suppressed
+}</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table cascadeResult {</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ResolveResonancePatterns">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.ResolveResonancePatterns(array, array, Mutable)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:1509</span>
+    </div>
+    <div class="function-desc"><p>Resolve all resonance patterns for a sequence.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr><tr><td class="param-name">Mutable</td><td class="param-type"><span class="type">stabilityRef table</span></td><td>{value = N} stability reference</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of triggered resonance pattern IDs</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ResolveSequence">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ResolveSequence(IDs, run)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:688</span>
+    </div>
+    <div class="function-desc"><p>Resolve a compound sequence into its full output profile.
+v2.1: Discovery value = registered value (no variance on registration).
+v2.2: Integrates cascade resolution, tuning strands, chain purity.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">IDs</td><td class="param-type"><span class="type">sequence table Ordered array of strand</span></td><td></td></tr><tr><td class="param-name">run</td><td class="param-type"><span class="type">bDiscovery bool Whether this is a discovery</span></td><td>(informational only)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table effects Resolved effects array</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>number stability Final stability score (0-100)</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>number totalPotency Sum of all effect magnitudes</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>bool bContaminated Whether the output is contaminated</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>table cascadeResult Metabolic cascade result</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>table flags Synthesis flags (degradationReduction, etc.)</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ScheduleCascadeTails">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ScheduleCascadeTails(player, ResolveCascade)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:233</span>
+    </div>
+    <div class="function-desc"><p>Schedule all unresolved tail effects on a player.
+Called during compound application (sv_production.lua).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity Target</span></td><td></td></tr><tr><td class="param-name">ResolveCascade</td><td class="param-type"><span class="type">cascadeResult table Result from</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ScheduleTailEffect">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.ScheduleTailEffect(player, ID, activates, effect, label)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:1153</span>
+    </div>
+    <div class="function-desc"><p>Schedule a tail effect with the specified delay.
+Called by sv_cascade.lua after metaboliser resolution.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity Target</span></td><td></td></tr><tr><td class="param-name">ID</td><td class="param-type"><span class="type">tailType string Tail effect type</span></td><td></td></tr><tr><td class="param-name">activates</td><td class="param-type"><span class="type">delay number Seconds before tail</span></td><td></td></tr><tr><td class="param-name">effect</td><td class="param-type"><span class="type">duration number Duration of the tail</span></td><td></td></tr><tr><td class="param-name">label</td><td class="param-type"><span class="type">severity string Severity</span></td><td>(low/moderate/high)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ShouldIntegrityCheck">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ShouldIntegrityCheck(item, table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:178</span>
+    </div>
+    <div class="function-desc"><p>Check if a production run should trigger an integrity check.
+Returns true if conditions require player acknowledgement.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">item</td><td class="param-type"><span class="type">canisterItem table The canister</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">cfg table Config</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool Whether integrity check is needed</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>string|nil Reason for the check</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ValidateSequence">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.bacta.ValidateSequence(strings)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_recipes.lua:8</span>
+    </div>
+    <div class="function-desc"><p>Validate that a sequence array is structurally correct.
+Checks strand IDs, category rules, and length.
+v2.0: Metabolisers count toward stabiliser cap.
+v2.1: Tuning strands count toward modifier cap (max 2).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">strings</td><td class="param-type"><span class="type">sequence table Ordered array of strand ID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool isValid</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>string|nil errorMessage</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.bacta.ValidateSessionPool">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.bacta.ValidateSessionPool(player, array)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:805</span>
+    </div>
+    <div class="function-desc"><p>Validate that a submitted sequence only contains strands from the player&#x27;s session pool.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">client Entity The</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Submitted strand ID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool Whether the sequence is valid for this session</td></tr></tbody></table></div>
+    
+    
+</div>
+
+
+</div></article>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>

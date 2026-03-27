@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ix.unlocks - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li class="active"><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    
+<article><div class="wrapper">
+
+<div class="module-header">
+    <span class="kind-badge module">Library</span>
+    <h1>ix.unlocks</h1>
+    <p class="module-file">plugins/unlocktrees/cl_editor.lua</p>
+</div>
+
+
+<div class="toc"><h3>Functions</h3><ul><li><span class="realm server" title="server"></span><a href="#ix.unlocks.AdminGrantNode">ix.unlocks.AdminGrantNode</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.AdminRemoveNode">ix.unlocks.AdminRemoveNode</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.CanAccessTree">ix.unlocks.CanAccessTree</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.CanRefundNode">ix.unlocks.CanRefundNode</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.CheckCost">ix.unlocks.CheckCost</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.CheckPrerequisites">ix.unlocks.CheckPrerequisites</a></li><li><span class="realm client" title="client"></span><a href="#ix.unlocks.CloseEditor">ix.unlocks.CloseEditor</a></li><li><span class="realm client" title="client"></span><a href="#ix.unlocks.CloseTreePanel">ix.unlocks.CloseTreePanel</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.ConnectNodes">ix.unlocks.ConnectNodes</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.DeductCost">ix.unlocks.DeductCost</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetAccessibleTrees">ix.unlocks.GetAccessibleTrees</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.GetAuditLog">ix.unlocks.GetAuditLog</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetChildren">ix.unlocks.GetChildren</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetCostString">ix.unlocks.GetCostString</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetNode">ix.unlocks.GetNode</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetPathCost">ix.unlocks.GetPathCost</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetPathCostString">ix.unlocks.GetPathCostString</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetPrerequisites">ix.unlocks.GetPrerequisites</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetResourceIDs">ix.unlocks.GetResourceIDs</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetResourceProvider">ix.unlocks.GetResourceProvider</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetTabMenuTrees">ix.unlocks.GetTabMenuTrees</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetTree">ix.unlocks.GetTree</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetTreeIDs">ix.unlocks.GetTreeIDs</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetTreeNetworkData">ix.unlocks.GetTreeNetworkData</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.GetVisibleNodes">ix.unlocks.GetVisibleNodes</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.InvalidateVisibilityCache">ix.unlocks.InvalidateVisibilityCache</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.IsNodeVisible">ix.unlocks.IsNodeVisible</a></li><li><span class="realm client" title="client"></span><a href="#ix.unlocks.OpenEditor">ix.unlocks.OpenEditor</a></li><li><span class="realm client" title="client"></span><a href="#ix.unlocks.OpenTreePanel">ix.unlocks.OpenTreePanel</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.RefundCost">ix.unlocks.RefundCost</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.RefundNode">ix.unlocks.RefundNode</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.RegisterNode">ix.unlocks.RegisterNode</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.RegisterResource">ix.unlocks.RegisterResource</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.RegisterTree">ix.unlocks.RegisterTree</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.RequestRefundNode">ix.unlocks.RequestRefundNode</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.RequestRespec">ix.unlocks.RequestRespec</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.RequestUnlock">ix.unlocks.RequestUnlock</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.RespecAll">ix.unlocks.RespecAll</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.RespecTree">ix.unlocks.RespecTree</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.unlocks.SetExclusive">ix.unlocks.SetExclusive</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.SyncAllToClient">ix.unlocks.SyncAllToClient</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.SyncNodeToClient">ix.unlocks.SyncNodeToClient</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.SyncTreeToClient">ix.unlocks.SyncTreeToClient</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.TryUnlockNode">ix.unlocks.TryUnlockNode</a></li><li><span class="realm server" title="server"></span><a href="#ix.unlocks.UnlockMultiple">ix.unlocks.UnlockMultiple</a></li></ul></div>
+<h2>Functions</h2>
+<div class="function-block" id="ix.unlocks.AdminGrantNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.AdminGrantNode(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:282</span>
+    </div>
+    <div class="function-desc"><p>Admin-only: directly grant a node without cost or prerequisite checks.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.AdminRemoveNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.AdminRemoveNode(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:328</span>
+    </div>
+    <div class="function-desc"><p>Admin-only: directly remove a node (no refund).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.CanAccessTree">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.CanAccessTree(Player, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_tree.lua:4</span>
+    </div>
+    <div class="function-desc"><p>Check if a player can access a specific tree based on its restrictions.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.CanRefundNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.CanRefundNode(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_node.lua:385</span>
+    </div>
+    <div class="function-desc"><p>Check if a single node can be safely refunded without breaking dependents.
+A node can only be refunded if no child nodes depend on it being unlocked.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.CheckCost">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.CheckCost(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_node.lua:134</span>
+    </div>
+    <div class="function-desc"><p>Check if a player can afford the cost of a node.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.CheckPrerequisites">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.CheckPrerequisites(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_node.lua:22</span>
+    </div>
+    <div class="function-desc"><p>Check if all prerequisites, exclusive locks, cooldowns, and requirements for a node are met.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.CloseEditor">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.unlocks.CloseEditor()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/cl_editor.lua:1120</span>
+    </div>
+    <div class="function-desc"><p>Close the editor.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.CloseTreePanel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.unlocks.CloseTreePanel()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/cl_treepanel.lua:1313</span>
+    </div>
+    <div class="function-desc"><p>Close the tree panel if open.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.ConnectNodes">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.ConnectNodes(string, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:151</span>
+    </div>
+    <div class="function-desc"><p>Connect two nodes with a prerequisite edge (parent -&gt; child).
+The parent must be unlocked before the child can be unlocked.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">parentNode</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">childNode</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.DeductCost">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.DeductCost(client, treeID, nodeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_node.lua:201</span>
+    </div>
+    <div class="function-desc"><p>Deduct the cost of a node from a player. Server only.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">nodeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetAccessibleTrees">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetAccessibleTrees(Player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_tree.lua:151</span>
+    </div>
+    <div class="function-desc"><p>Get a list of trees accessible to a specific player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of tree IDs</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetAuditLog">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.GetAuditLog(table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:43</span>
+    </div>
+    <div class="function-desc"><p>Get the audit log for a character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">table</td><td class="param-type"><span class="type">character</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of log entries</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetChildren">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetChildren(treeID, nodeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:249</span>
+    </div>
+    <div class="function-desc"><p>Get all immediate children of a given node.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">nodeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetCostString">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetCostString(string, string, Player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_node.lua:314</span>
+    </div>
+    <div class="function-desc"><p>Build a human-readable cost summary string for a node.
+Supports both static and dynamic (function) cost values.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td>(optional, required for dynamic costs; defaults to LocalPlayer on client)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetNode(treeID, nodeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:225</span>
+    </div>
+    <div class="function-desc"><p>Get a node from a tree.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">nodeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetPathCost">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetPathCost(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:387</span>
+    </div>
+    <div class="function-desc"><p>Calculate the total cost of unlocking a node including all unmet prerequisites.
+Walks the prerequisite chain and sums costs of nodes the character has not yet unlocked.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table { money = number, resources = { [resourceID] = amount } }</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetPathCostString">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetPathCostString(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:448</span>
+    </div>
+    <div class="function-desc"><p>Build a human-readable path cost string.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetPrerequisites">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetPrerequisites(treeID, nodeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:233</span>
+    </div>
+    <div class="function-desc"><p>Get all prerequisite node IDs for a given node.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">nodeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetResourceIDs">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetResourceIDs()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:70</span>
+    </div>
+    <div class="function-desc"><p>Get all registered resource provider IDs.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of resource ID strings</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetResourceProvider">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetResourceProvider(string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:63</span>
+    </div>
+    <div class="function-desc"><p>Get a registered resource provider.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">resourceID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table or nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetTabMenuTrees">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetTabMenuTrees(Player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_tree.lua:168</span>
+    </div>
+    <div class="function-desc"><p>Get trees that should appear in the tab menu for a specific player.
+Only returns trees with showInTabMenu = true that the player can access.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of tree IDs</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetTree">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetTree(treeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:220</span>
+    </div>
+    <div class="function-desc"><p>Get a tree by ID.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetTreeIDs">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetTreeIDs()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:265</span>
+    </div>
+    <div class="function-desc"><p>Get list of all registered tree IDs.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetTreeNetworkData">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetTreeNetworkData(string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_tree.lua:73</span>
+    </div>
+    <div class="function-desc"><p>Strip callbacks and functions from a tree for safe JSON serialisation.
+Used when exporting or networking tree definitions.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table or nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.GetVisibleNodes">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.GetVisibleNodes(Player, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:361</span>
+    </div>
+    <div class="function-desc"><p>Get all visible node IDs in a tree for a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of visible nodeIDs</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.InvalidateVisibilityCache">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.InvalidateVisibilityCache()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:356</span>
+    </div>
+    <div class="function-desc"><p>Invalidate the visibility cache (call when conditions change).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.IsNodeVisible">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.IsNodeVisible(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:280</span>
+    </div>
+    <div class="function-desc"><p>Check if a hidden node is visible to a player.
+A node is visible when:
+1. It has no <code>hidden</code> table, OR
+2. Its <code>hidden.condition(client, character)</code> returns true.
+If a node&#x27;s prerequisite chain contains hidden nodes the player cannot see,
+this node is also hidden (cascading).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.OpenEditor">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.unlocks.OpenEditor()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/cl_editor.lua:1111</span>
+    </div>
+    <div class="function-desc"><p>Open the admin tree editor.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.OpenTreePanel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.unlocks.OpenTreePanel(string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/cl_treepanel.lua:1299</span>
+    </div>
+    <div class="function-desc"><p>Open the unlock tree viewer.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td>(optional) Auto-select this tree</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RefundCost">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.RefundCost(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_node.lua:248</span>
+    </div>
+    <div class="function-desc"><p>Refund the cost of a node to a player. Server only.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">ratio</span></td><td>(optional) Fraction of cost to return (0-1). Defaults to 1.</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RefundNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.RefundNode(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:178</span>
+    </div>
+    <div class="function-desc"><p>Refund a single node for a player. Only works if no children depend on it.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RegisterNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.RegisterNode(to, tree, definition)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:111</span>
+    </div>
+    <div class="function-desc"><p>Register a node within a tree.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">to</td><td class="param-type"><span class="type">treeID string Tree to add the node</span></td><td></td></tr><tr><td class="param-name">tree</td><td class="param-type"><span class="type">nodeID string Unique node identifier within the</span></td><td></td></tr><tr><td class="param-name">definition</td><td class="param-type"><span class="type">data table Node</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table The registered node</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RegisterResource">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.RegisterResource(cost, above)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:55</span>
+    </div>
+    <div class="function-desc"><p>Register a custom resource type that can be used in node costs.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">cost</td><td class="param-type"><span class="type">resourceID string Unique key used in</span></td><td>.resources tables</td></tr><tr><td class="param-name">above</td><td class="param-type"><span class="type">provider table See resource provider documentation</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RegisterTree">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.RegisterTree(identifier, definition)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:86</span>
+    </div>
+    <div class="function-desc"><p>Register a new unlock tree.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">treeID string Unique</span></td><td></td></tr><tr><td class="param-name">definition</td><td class="param-type"><span class="type">data table Tree</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table The registered tree</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RequestRefundNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.RequestRefundNode(treeID, nodeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:594</span>
+    </div>
+    <div class="function-desc"><p>Request the server to refund a single node.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">nodeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RequestRespec">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.RequestRespec(treeID, bAll, bRefund)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:602</span>
+    </div>
+    <div class="function-desc"><p>Request the server to respec a tree.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">bAll</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">bRefund</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RequestUnlock">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.RequestUnlock(treeID, nodeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:586</span>
+    </div>
+    <div class="function-desc"><p>Request the server to unlock a node.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">nodeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RespecAll">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.RespecAll(Player, bool)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:416</span>
+    </div>
+    <div class="function-desc"><p>Respec all trees for a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">bool</td><td class="param-type"><span class="type">bRefund</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.RespecTree">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.RespecTree(Player, string, costs)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:364</span>
+    </div>
+    <div class="function-desc"><p>Respec (reset) a specific tree for a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">costs</td><td class="param-type"><span class="type">bRefund bool Whether to refund node</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.SetExclusive">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.unlocks.SetExclusive(string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:180</span>
+    </div>
+    <div class="function-desc"><p>Mark two or more nodes as mutually exclusive (bidirectional).
+Once any node in the group is unlocked, the others cannot be unlocked.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.SyncAllToClient">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.SyncAllToClient(client)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_networking.lua:52</span>
+    </div>
+    <div class="function-desc"><p>Sync all tree progress data to a client.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.SyncNodeToClient">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.SyncNodeToClient(client, treeID, nodeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_networking.lua:15</span>
+    </div>
+    <div class="function-desc"><p>Sync a single node update to a client.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">nodeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.SyncTreeToClient">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.SyncTreeToClient(client, treeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_networking.lua:32</span>
+    </div>
+    <div class="function-desc"><p>Sync all nodes for a specific tree to a client.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">client</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.TryUnlockNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.TryUnlockNode(Player, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:75</span>
+    </div>
+    <div class="function-desc"><p>Attempt to unlock a node for a player. This is the primary entry point.
+Validates access, prerequisites, cost, then applies the unlock.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool success, string reason</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.unlocks.UnlockMultiple">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.unlocks.UnlockMultiple(Player, string, strings, continue)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:245</span>
+    </div>
+    <div class="function-desc"><p>Unlock multiple nodes at once for a player. Processes in order.
+Stops at the first failure unless bContinueOnFail is true.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">strings</td><td class="param-type"><span class="type">nodeIDs table Array of nodeID</span></td><td></td></tr><tr><td class="param-name">continue</td><td class="param-type"><span class="type">bContinueOnFail bool If true, skip failing nodes and</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table { results = { [nodeID] = {success, reason} }, succeeded = number, failed = number }</td></tr></tbody></table></div>
+    
+    
+</div>
+
+
+</div></article>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>

@@ -60,11 +60,6 @@ function PLUGIN:SetupMove(client, mv, cmd)
 
 	if (character) then
 		if SERVER then
-			-- Ensure SpeedModifiers table exists
-			if not client.SpeedModifiers then
-				return -- Exit early if runspeed plugin hasn't initialized yet
-			end
-
 			local weight = character:GetData("carry", 0)
 			local maxWeight = ix.weight.BaseWeight(character)
 
@@ -74,21 +69,32 @@ function PLUGIN:SetupMove(client, mv, cmd)
 				if (endurance == 0) then
 					endurance = character:GetAttribute("end", 0)
 				end
-				
+
 				-- 5% slowdown per kg, reduced by endurance
 				local reduction = (excess * 0.05) / (1 + (endurance * 0.1))
 				local speedScale = math.Clamp(1 - reduction, 0.1, 1)
 
-				-- Apply modifier using the runspeed manager (REMOVE the true parameter!)
-				client:UpdateRunSpeedModifier("weightOverload", ix.plugin.list.runspeed.ModifierTypes.MULT, speedScale)
-				client:UpdateWalkSpeedModifier("weightOverload", ix.plugin.list.runspeed.ModifierTypes.MULT, speedScale)
+				-- Only update if the value changed (avoids per-frame net messages)
+				if (client._weightSpeedScale ~= speedScale) then
+					client._weightSpeedScale = speedScale
+					local PE   = ix.playerEffects
+					local MULT = PE.MOD_MULT
+
+					client:AddEffect("speed.run", "weightOverload", MULT, speedScale, {
+						layer    = "equipment",
+						priority = 5,
+					})
+					client:AddEffect("speed.walk", "weightOverload", MULT, speedScale, {
+						layer    = "equipment",
+						priority = 5,
+					})
+				end
 			else
 				-- Remove modifiers when no longer overweight
-				if client.SpeedModifiers and client.SpeedModifiers.run["weightOverload"] then
-					client:RemoveRunSpeedModifier("weightOverload")
-				end
-				if client.SpeedModifiers and client.SpeedModifiers.walk["weightOverload"] then
-					client:RemoveWalkSpeedModifier("weightOverload")
+				if (client._weightSpeedScale) then
+					client._weightSpeedScale = nil
+					client:RemoveEffect("speed.run", "weightOverload")
+					client:RemoveEffect("speed.walk", "weightOverload")
 				end
 			end
 		end

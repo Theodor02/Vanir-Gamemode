@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: ApplyDirectionalModifier - Skeleton</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Skeleton</h1>
+        <p>Skeleton Documentation</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="functions.html">Functions</a>
+        <a href="modules.html">Modules</a>
+    </nav>
+    <p class="text-muted"><a href="modules.html">Modules</a> / ApplyDirectionalModifier</p>
+
+    <div class="content">
+        <h2>Module: ApplyDirectionalModifier</h2>
+        <p>Total functions: <strong>2</strong></p>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">ApplyDirectionalModifier</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Directional Adjacency System (v2.1) -- Extracted from sv_synthesis.lua. Adjacency effects now support directional -- modifiers: forward (A→B) and reverse (B→A) can have different effects. -- Hidden synergies are discoverable only through experimentation. -- @module ix.bacta.adjacency -- ═══════════════════════════════════════════════════════════════════════════════ -- DIRECTIONAL ADJACENCY TABLES -- Each rule defines effects when strand A is placed immediately before strand B -- in the sequence. modifier_forward applies to A→B, modifier_reverse to B→A. -- ═══════════════════════════════════════════════════════════════════════════════ ix.bacta.AdjacencyRules = { -- ── Base + Active synergies ────────────────────────────────────────── { a = &quot;base_bacta_a&quot;, b = &quot;act_genomic_rep&quot;, modifier_forward = {magnitude_mult = 1.10}, modifier_reverse = {magnitude_mult = 1.05}, hidden = false, }, { a = &quot;base_kolto&quot;, b = &quot;act_regen_stim&quot;, modifier_forward = {duration_mult = 1.20}, modifier_reverse = {duration_mult = 1.10}, hidden = false, }, -- ── Active + Stabiliser / Catalyst synergies ───────────────────────── { a = &quot;act_coag_factor&quot;, b = &quot;stab_iso_buffer&quot;, modifier_forward = {stability = 8}, modifier_reverse = {stability = 4}, hidden = false, }, { a = &quot;act_regen_stim&quot;, b = &quot;stab_binding_prot&quot;, modifier_forward = {duration_mult = 1.15}, modifier_reverse = {duration_mult = 1.08}, hidden = false, }, { a = &quot;cat_rapid_react&quot;, b = &quot;act_adrenaline_syn&quot;, modifier_forward = {magnitude_add = {type = &quot;buff_speed&quot;, value = 0.05}}, modifier_reverse = {magnitude_add = {type = &quot;buff_speed&quot;, value = 0.03}}, hidden = false, }, -- ── Metaboliser placement synergies ────────────────────────────────── { a = &quot;met_crash_suppress&quot;, b = &quot;act_adrenaline_syn&quot;, modifier_forward = {stability = 5}, modifier_reverse = {stability = 3}, hidden = false, }, { a = &quot;met_hepatic_assist&quot;, b = &quot;act_regen_stim&quot;, modifier_forward = {stability = 4}, modifier_reverse = {stability = 2}, hidden = false, }, -- ── Hidden synergies (discoverable only through experimentation) ───── { a = &quot;act_genomic_rep&quot;, b = &quot;met_synaptic_reset&quot;, modifier_forward = {magnitude_mult = 1.08, stability = 3}, modifier_reverse = {stability = 1}, hidden = true, }, { a = &quot;base_bacta_b&quot;, b = &quot;met_hepatic_assist&quot;, modifier_forward = {stability = 6}, modifier_reverse = {stability = 2}, hidden = true, }, { a = &quot;act_adrenaline_syn&quot;, b = &quot;met_crash_suppress&quot;, modifier_forward = {magnitude_mult = 1.05, stability = 4}, modifier_reverse = {stability = 2}, hidden = true, }, } -- ═══════════════════════════════════════════════════════════════════════════════ -- ADJACENCY PENALTY RULES -- ═══════════════════════════════════════════════════════════════════════════════ ix.bacta.AdjacencyPenalties = { { a = &quot;act_sedative&quot;, b = &quot;act_adrenaline_syn&quot;, modifier_forward = {stability = -15, magnitude_mult = 0.80}, modifier_reverse = {stability = -10, magnitude_mult = 0.85}, hidden = false, }, { a = &quot;cat_potency_amp&quot;, b = &quot;cat_rapid_react&quot;, modifier_forward = {stability = -25}, modifier_reverse = {stability = -20}, hidden = false, }, { a = &quot;base_synth_plasma&quot;, b = &quot;act_neurotox_block&quot;, modifier_forward = {inject_effect = {type = &quot;side_cardiac&quot;, magnitude = 3, duration = 10, tick_rate = 5, immediate = false}}, modifier_reverse = {inject_effect = {type = &quot;side_cardiac&quot;, magnitude = 2, duration = 8, tick_rate = 5, immediate = false}}, hidden = false, }, -- Tuning strand conflicts { a = &quot;tun_sel_suppress_tails&quot;, b = &quot;met_crash_suppress&quot;, modifier_forward = {stability = -20}, modifier_reverse = {stability = -20}, hidden = false, }, { a = &quot;tun_sel_suppress_tails&quot;, b = &quot;met_neural_buffer&quot;, modifier_forward = {stability = -20}, modifier_reverse = {stability = -20}, hidden = false, }, } -- ═══════════════════════════════════════════════════════════════════════════════ -- DIRECTIONAL RESOLUTION -- ═══════════════════════════════════════════════════════════════════════════════
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>modifier, effects, stabilityRef</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\medicalsys\sv_adjacency.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">ApplyDirectionalModifier</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Apply a single directional modifier to the effects array and stability. -- @param modifier table The modifier table (magnitude_mult, stability, etc.) -- @param effects table Mutable effects array -- @param stabilityRef table Table with .value field
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>modifier, effects, stabilityRef</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\medicalsys\sv_adjacency.lua</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Generated on 2026-03-10 20:48:19 | Skeleton
+    </footer>
+</div>
+</body>
+</html>

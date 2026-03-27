@@ -578,6 +578,14 @@ function ROW:Paint(w, h)
 end
 
 function ROW:OnMousePressed(code)
+    if (code == MOUSE_LEFT) then
+        local recordPanel = vgui.Create("ixUSMSServiceRecord")
+        if (IsValid(recordPanel)) then
+            recordPanel:SetTargetCharID(self.data.charID)
+        end
+        return
+    end
+
     if (code != MOUSE_RIGHT) then return end
 
     local char = LocalPlayer():GetCharacter()

@@ -19,8 +19,12 @@ function ix.usms.db.Load()
         ix.usms.squads = {}
         ix.usms.members = {}
         ix.usms.squadMembers = {}
+        ix.usms.missions = {}
+        ix.usms.commendations = {}
         ix.usms.nextUnitID = 1
         ix.usms.nextSquadID = 1
+        ix.usms.nextMissionID = 1
+        ix.usms.nextCommendationID = 1
         return
     end
 
@@ -55,6 +59,22 @@ function ix.usms.db.Load()
 
     ix.usms.nextUnitID = tonumber(data.nextUnitID) or 1
     ix.usms.nextSquadID = tonumber(data.nextSquadID) or 1
+    ix.usms.nextMissionID = tonumber(data.nextMissionID) or 1
+    ix.usms.nextCommendationID = tonumber(data.nextCommendationID) or 1
+
+    ix.usms.missions = {}
+    if (istable(data.missions)) then
+        for k, v in pairs(data.missions) do
+            ix.usms.missions[tonumber(k) or k] = v
+        end
+    end
+
+    ix.usms.commendations = {}
+    if (istable(data.commendations)) then
+        for k, v in pairs(data.commendations) do
+            ix.usms.commendations[tonumber(k) or k] = v
+        end
+    end
 
     -- Prune old logs on load
     ix.usms.db.PruneLogs()
@@ -62,7 +82,9 @@ function ix.usms.db.Load()
     print("[USMS] Loaded " .. table.Count(ix.usms.units) .. " units, "
         .. table.Count(ix.usms.members) .. " members, "
         .. table.Count(ix.usms.squads) .. " squads, "
-        .. table.Count(ix.usms.squadMembers) .. " squad members.")
+        .. table.Count(ix.usms.squadMembers) .. " squad members, "
+        .. table.Count(ix.usms.missions) .. " missions, "
+        .. table.Count(ix.usms.commendations) .. " commendations.")
 end
 
 --- Save all USMS data to the plugin data file.
@@ -76,9 +98,13 @@ function ix.usms.db.Save()
         squads = ix.usms.squads or {},
         members = ix.usms.members or {},
         squadMembers = ix.usms.squadMembers or {},
+        missions = ix.usms.missions or {},
+        commendations = ix.usms.commendations or {},
         logs = ix.usms.logs or {},
         nextUnitID = ix.usms.nextUnitID or 1,
-        nextSquadID = ix.usms.nextSquadID or 1
+        nextSquadID = ix.usms.nextSquadID or 1,
+        nextMissionID = ix.usms.nextMissionID or 1,
+        nextCommendationID = ix.usms.nextCommendationID or 1
     }
 
     plugin:SetData(data, false, true) -- ignoreMap=true
@@ -97,6 +123,22 @@ end
 function ix.usms.db.AllocSquadID()
     local id = ix.usms.nextSquadID
     ix.usms.nextSquadID = id + 1
+    return id
+end
+
+--- Allocate a new unique mission ID.
+-- @return number The new ID
+function ix.usms.db.AllocMissionID()
+    local id = ix.usms.nextMissionID
+    ix.usms.nextMissionID = id + 1
+    return id
+end
+
+--- Allocate a new unique commendation ID.
+-- @return number The new ID
+function ix.usms.db.AllocCommendationID()
+    local id = ix.usms.nextCommendationID
+    ix.usms.nextCommendationID = id + 1
     return id
 end
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: RecordAuditLog - Skeleton</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Skeleton</h1>
+        <p>Skeleton Documentation</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="functions.html">Functions</a>
+        <a href="modules.html">Modules</a>
+    </nav>
+    <p class="text-muted"><a href="modules.html">Modules</a> / RecordAuditLog</p>
+
+    <div class="content">
+        <h2>Module: RecordAuditLog</h2>
+        <p>Total functions: <strong>1</strong></p>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">RecordAuditLog</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Record an unlock event for debugging and analytics. -- Stored per-character in &quot;ixUnlockLog&quot; as an array of recent events. -- @param character table -- @param action string  &quot;unlock&quot; | &quot;refund&quot; | &quot;respec&quot; | &quot;admin_grant&quot; | &quot;admin_remove&quot; -- @param treeID string -- @param nodeID string|nil -- @param extra table|nil  Additional context local MAX_LOG_ENTRIES = 200
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>character, action, treeID, nodeID, extra</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\unlocktrees\sv_progression.lua</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Generated on 2026-03-10 20:48:19 | Skeleton
+    </footer>
+</div>
+</body>
+</html>

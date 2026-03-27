@@ -38,23 +38,8 @@ end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- MOVEMENT SPEED MODIFICATION
+-- Now handled by player_effects (speed.run / speed.walk with id "diseaseSpeed")
 -- ═══════════════════════════════════════════════════════════════════════════════
-
---- Modify character walk and run speed based on active disease effects.
-function PLUGIN:CharacterGetWalkSpeed(character, speed)
-    local mult = character:GetVar("diseaseSpeedMult", 1)
-    if (mult < 1) then
-        return speed * mult
-    end
-end
-
---- Modify character run speed.
-function PLUGIN:CharacterGetRunSpeed(character, speed)
-    local mult = character:GetVar("diseaseSpeedMult", 1)
-    if (mult < 1) then
-        return speed * mult
-    end
-end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- DAMAGE HOOKS

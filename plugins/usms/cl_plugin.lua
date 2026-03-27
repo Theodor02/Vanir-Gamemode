@@ -6,6 +6,7 @@ ix.usms.clientData = ix.usms.clientData or {
     roster = {},
     squads = {},
     logs = {},
+    missions = {},
     intelUnits = {}
 }
 
@@ -160,6 +161,45 @@ net.Receive("ixUSMSIntelSync", function()
     }
 
     hook.Run("USMSIntelUpdated", unitID)
+end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- MISSION SYNC
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+--- Receive full mission list for the unit.
+net.Receive("ixUSMSMissionSync", function()
+    local unitID = net.ReadUInt(32)
+    local dataLen = net.ReadUInt(32)
+    local compressed = net.ReadData(dataLen)
+
+    local decompressed = util.Decompress(compressed)
+    if (!decompressed) then return end
+
+    local missions = util.JSONToTable(decompressed)
+    if (!istable(missions)) then return end
+
+    ix.usms.clientData.missions = missions
+
+    hook.Run("USMSMissionsUpdated", unitID, missions)
+end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- SERVICE RECORD SYNC
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+--- Receive a service record for a specific character.
+net.Receive("ixUSMSServiceRecord", function()
+    local dataLen = net.ReadUInt(32)
+    local compressed = net.ReadData(dataLen)
+
+    local decompressed = util.Decompress(compressed)
+    if (!decompressed) then return end
+
+    local record = util.JSONToTable(decompressed)
+    if (!istable(record)) then return end
+
+    hook.Run("USMSServiceRecordReceived", record)
 end)
 
 -- ═══════════════════════════════════════════════════════════════════════════════

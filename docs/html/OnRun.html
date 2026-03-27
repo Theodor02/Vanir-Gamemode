@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: OnRun - Skeleton</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Skeleton</h1>
+        <p>Skeleton Documentation</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="functions.html">Functions</a>
+        <a href="modules.html">Modules</a>
+    </nav>
+    <p class="text-muted"><a href="modules.html">Modules</a> / OnRun</p>
+
+    <div class="content">
+        <h2>Module: OnRun</h2>
+        <p>Total functions: <strong>9</strong></p>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">Unknown</span>
+                </div>
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>self, ply, action</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\displaychat.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">module</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                -- Terminal Hacking System namespace. ix.hacking = ix.hacking or {} ix.util.Include(&quot;sh_config.lua&quot;) ix.util.Include(&quot;sh_effects.lua&quot;) ix.util.Include(&quot;sv_generator.lua&quot;) ix.util.Include(&quot;sv_sessions.lua&quot;) ix.util.Include(&quot;sv_effects.lua&quot;) ix.util.Include(&quot;sv_net.lua&quot;) ix.util.Include(&quot;cl_net.lua&quot;) ix.util.Include(&quot;cl_terminal.lua&quot;) -- Auto-load effect definitions local files = file.Find(PLUGIN.folder .. &quot;/effects/*.lua&quot;, &quot;LUA&quot;) for _, f in ipairs(files or {}) do ix.util.Include(&quot;effects/&quot; .. f) end -- ═══════════════════════════════════════════════════════════════════════════════ -- DEBUG / TEST COMMANDS (shared) -- ═══════════════════════════════════════════════════════════════════════════════
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>self, client, preset</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\hackingsys\sh_plugin.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Start a hacking session with an optional preset name. -- Usage: /HackingTest [preset] -- Presets: very_easy, easy, average, hard, very_hard ix.command.Add(&quot;HackingTest&quot;, { description = &quot;Start a test hacking session with an optional preset.&quot;, adminOnly = true, arguments = bit.bor(ix.type.string, ix.type.optional), OnRun = function(self, client, preset) preset = preset or &quot;average&quot; if (!ix.hacking.Presets[preset]) then return &quot;@Invalid preset. Options: very_easy, easy, average, hard, very_hard&quot; end ix.hacking.Sessions.Start(client, {preset = preset}) end })
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>self, client</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\hackingsys\sh_plugin.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Force-end the caller&#x27;s active hacking session. -- Usage: /HackingEnd ix.command.Add(&quot;HackingEnd&quot;, { description = &quot;Force-end your active hacking session.&quot;, adminOnly = true, OnRun = function(self, client) if (!ix.hacking.Sessions.Get(client)) then return &quot;@No active hacking session.&quot; end ix.hacking.Sessions.End(client, &quot;admin_end&quot;) end })
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>self, client</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\hackingsys\sh_plugin.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Dump info about the caller&#x27;s active session to server console. -- Usage: /HackingDebug ix.command.Add(&quot;HackingDebug&quot;, { description = &quot;Print debug info about your active hacking session.&quot;, superAdminOnly = true, OnRun = function(self, client) local session = ix.hacking.Sessions.Get(client) if (!session) then return &quot;@No active hacking session.&quot; end print(&quot;[ix.hacking] Debug for &quot; .. client:Nick()) print(&quot;  Solution:  &quot; .. tostring(session.solution)) print(&quot;  Attempts:  &quot; .. tostring(session.attempts) .. &quot;/&quot; .. tostring(session.maxAttempts)) print(&quot;  Grid:      &quot; .. tostring(session.lines) .. &quot; lines x &quot; .. tostring(session.width) .. &quot; chars&quot;) print(&quot;  Elapsed:   &quot; .. string.format(&quot;%.1fs&quot;, CurTime() - session.startTime)) local wordCount, bracketCount, junkCount = 0, 0, 0 for _, t in pairs(session.tokens) do if (t.kind == &quot;word&quot;) then wordCount = wordCount + 1 elseif (t.kind == &quot;bracket&quot;) then bracketCount = bracketCount + 1 else junkCount = junkCount + 1 end end print(&quot;  Tokens:    &quot; .. wordCount .. &quot; words, &quot; .. bracketCount .. &quot; brackets, &quot; .. junkCount .. &quot; junk&quot;) print(&quot;  Limits:    &quot; .. table.ToString(session.effectLimits or {}, &quot;effectLimits&quot;, true)) client:ChatPrint(&quot;[HACKING] Debug info printed to server console.&quot;) end })
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>self, client, target, preset</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\hackingsys\sh_plugin.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Use the compound on yourself. ITEM.functions.Use = { name = &quot;Administer (Self)&quot;, tip  = &quot;Administer this compound to yourself.&quot;, icon = &quot;icon16/heart.png&quot;, OnRun = function(item) local client = item.player local data   = item:GetData(&quot;bactaSynthData&quot;) if (!data) then client:Notify(&quot;This compound has no valid data.&quot;) return false end if (!client:Alive()) then client:Notify(&quot;You cannot use this while incapacitated.&quot;) return false end local consume = AdministerCompound(item, client, client) client:Notify(&quot;Compound administered: &quot; .. (item:GetData(&quot;formulaName&quot;) or &quot;Unknown&quot;)) return consume end, }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>item</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\medicalsys\items\base\sh_synth.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Fabricate a batch from this canister. ITEM.functions.Fabricate = { name = &quot;Fabricate Batch&quot;, tip  = &quot;Produce a batch of compounds from this formula.&quot;, icon = &quot;icon16/cog.png&quot;, OnRun = function(item) local client = item.player if (!IsValid(client)) then return false end local ok, err = ix.bacta.FabricateFromCanister(client, item.id, false) if (!ok and err) then client:Notify(&quot;Fabrication failed: &quot; .. err) end return false -- Never consume the canister from fabrication end, OnCanRun = function(item) return item:GetData(&quot;durability&quot;, 100) &gt; 0 end, }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>item</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\medicalsys\items\synth\sh_synth_canister.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Refine the canister to improve stability. ITEM.functions.Refine = { name = &quot;Refine&quot;, tip  = &quot;Spend SGC to improve the formula&#x27;s stability.&quot;, icon = &quot;icon16/wand.png&quot;, OnRun = function(item) local client = item.player if (!IsValid(client)) then return false end local ok, err = ix.bacta.RefineCanister(client, item.id) if (!ok) then client:Notify(&quot;Refinement failed: &quot; .. (err or &quot;Unknown error.&quot;)) end return false end, OnCanRun = function(item) local maxStab = (ix.bacta.Config.REFINEMENT or {}).max_stability or 100 return item:GetData(&quot;stability&quot;, 50) &lt; maxStab end, }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>item</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\medicalsys\items\synth\sh_synth_canister.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">OnRun</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Take the medicine yourself. ITEM.functions.Use = { name = &quot;Take Medicine&quot;, tip = &quot;Take this medicine to treat your ailments.&quot;, icon = &quot;icon16/pill.png&quot;, OnRun = function(item) local client = item.player if (!IsValid(client) or !client:Alive()) then return false end local character = client:GetCharacter() if (!character) then client:Notify(&quot;No active character.&quot;) return false end -- Handle vaccine if (item.medicineType == &quot;vaccine&quot; and item.vaccineTarget) then ix.disease.Vaccinate(character, item.vaccineTarget) client:Notify(&quot;The vaccine has been administered.&quot;) -- /me action if (ix.config.Get(&quot;diseaseMeActions&quot;, true)) then ix.chat.Send(client, &quot;me&quot;, &quot;injects themselves with a vaccine&quot;) end return true -- consume end -- Handle general medicine local treated = ix.disease.ApplyMedicine(character, item.medicineType) -- Track overdose local overdosed = ix.disease.TrackMedicineUse(character, item.medicineType) if (treated) then client:Notify(&quot;The &quot; .. item.medicineType .. &quot; begins to work.&quot;) else client:Notify(&quot;The medicine doesn&#x27;t seem to help your current condition.&quot;) end -- /me action if (ix.config.Get(&quot;diseaseMeActions&quot;, true)) then ix.chat.Send(client, &quot;me&quot;, &quot;takes some medicine&quot;) end return true -- consume end, }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>item</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\smartdisease\items\base\sh_medicine.lua</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Generated on 2026-03-10 20:48:19 | Skeleton
+    </footer>
+</div>
+</body>
+</html>

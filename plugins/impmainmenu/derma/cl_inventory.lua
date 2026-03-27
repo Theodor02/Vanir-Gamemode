@@ -2,27 +2,9 @@ local RECEIVER_NAME = "ixInventoryItem"
 
 ICON_RENDER_QUEUE = ICON_RENDER_QUEUE or {}
 
-local THEME = {
-	background = Color(0, 0, 0, 200),
-	frame = Color(191, 148, 53, 255),
-	frameSoft = Color(191, 148, 53, 120),
-	text = Color(235, 235, 235, 255),
-	textMuted = Color(168, 168, 168, 140),
-	accent = Color(191, 148, 53, 255),
-	accentSoft = Color(191, 148, 53, 220),
-	buttonBg = Color(16, 16, 16, 255),
-	buttonBgHover = Color(26, 26, 26, 255),
-	danger = Color(180, 60, 60, 255),
-	ready = Color(60, 170, 90, 255)
-}
-
-local function Scale(value)
-	return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
-local function IsMenuClosing()
-	return IsValid(ix.gui.menu) and ix.gui.menu.bClosing
-end
+local THEME = ix.ui.THEME
+local Scale = ix.ui.Scale
+local IsMenuClosing = ix.ui.IsMenuClosing
 
 -- Helper icon re-render
 

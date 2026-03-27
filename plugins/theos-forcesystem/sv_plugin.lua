@@ -1,0 +1,8 @@
+--- DEPRECATED: This file is no longer loaded.
+-- All server-side logic has been split into:
+--   sv_forcesystem.lua — spawn hooks, LSCS inventory sync
+--   sv_whispers.lua    — periodic force whisper dispatch
+--   sh_force_pool.lua  — force pool monkey-patch
+--   sh_stamina_bridge.lua — bilateral stamina bridge
+--
+-- This file is kept for reference. It can be safely deleted.

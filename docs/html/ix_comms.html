@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ix.comms - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li class="active"><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    
+<article><div class="wrapper">
+
+<div class="module-header">
+    <span class="kind-badge module">Library</span>
+    <h1>ix.comms</h1>
+    <p class="module-file">plugins/comms_sys/cl_plugin.lua</p>
+</div>
+
+
+<div class="toc"><h3>Functions</h3><ul><li><span class="realm shared" title="shared"></span><a href="#ix.comms.AddChannel">ix.comms.AddChannel</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.comms.CanListen">ix.comms.CanListen</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.comms.CanTalk">ix.comms.CanTalk</a></li><li><span class="realm client" title="client"></span><a href="#ix.comms.ChangeActiveChannel">ix.comms.ChangeActiveChannel</a></li><li><span class="realm client" title="client"></span><a href="#ix.comms.ChangeMuteStatus">ix.comms.ChangeMuteStatus</a></li><li><span class="realm server" title="server"></span><a href="#ix.comms.FullSync">ix.comms.FullSync</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.comms.GetAccessibleChannels">ix.comms.GetAccessibleChannels</a></li><li><span class="realm client" title="client"></span><a href="#ix.comms.GetActiveChannel">ix.comms.GetActiveChannel</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.comms.GetChannelByName">ix.comms.GetChannelByName</a></li><li><span class="realm client" title="client"></span><a href="#ix.comms.GetIncomingTransmissions">ix.comms.GetIncomingTransmissions</a></li><li><span class="realm client" title="client"></span><a href="#ix.comms.GetMutedChannels">ix.comms.GetMutedChannels</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.comms.HasAccess">ix.comms.HasAccess</a></li><li><span class="realm server" title="server"></span><a href="#ix.comms.InitMutedDefaults">ix.comms.InitMutedDefaults</a></li><li><span class="realm client" title="client"></span><a href="#ix.comms.IsChannelMuted">ix.comms.IsChannelMuted</a></li><li><span class="realm client" title="client"></span><a href="#ix.comms.IsTalking">ix.comms.IsTalking</a></li><li><span class="realm server" title="server"></span><a href="#ix.comms.StartTalking">ix.comms.StartTalking</a></li><li><span class="realm server" title="server"></span><a href="#ix.comms.StopTalking">ix.comms.StopTalking</a></li></ul></div>
+<h2>Functions</h2>
+<div class="function-block" id="ix.comms.AddChannel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.comms.AddChannel(definition)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sh_plugin.lua:80</span>
+    </div>
+    <div class="function-desc"><p>Register a new radio channel.
+<ul><li>Name (string): Display name</li>
+<li>Talkers (table): List of TEAM_ identifiers that can talk</li>
+<li>Listeners (table): List of TEAM_ identifiers that can listen</li>
+<li>GetTalkers (function(ply)): Returns true if player can talk</li>
+<li>GetListeners (function(ply)): Returns true if player can listen</li>
+<li>Mutable (bool): Whether the player can mute this channel</li>
+<li>MutedByDefault (bool): Whether this channel starts muted</li>
+<li>Colour/Color (Color): Channel accent color</li>
+<li>Encrypted (bool): Whether the channel is encrypted (visual only)</li>
+<li>Frequency (string): Display frequency (e.g. &quot;8858.0&quot;)</li>
+<li>Description (string): Optional channel description</li></ul></p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">definition</td><td class="param-type"><span class="type">input Table containing channel</span></td><td>:</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.CanListen">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.comms.CanListen(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sh_plugin.lua:151</span>
+    </div>
+    <div class="function-desc"><p>Check if a player can listen on a given channel.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player to check</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">bool</span></td><td></td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.CanTalk">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.comms.CanTalk(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sh_plugin.lua:140</span>
+    </div>
+    <div class="function-desc"><p>Check if a player can talk on a given channel.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player to check</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">bool</span></td><td></td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.ChangeActiveChannel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.comms.ChangeActiveChannel(chanID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:93</span>
+    </div>
+    <div class="function-desc"><p>Request to change the active transmit channel.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">chanID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.ChangeMuteStatus">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.comms.ChangeMuteStatus(muted)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:101</span>
+    </div>
+    <div class="function-desc"><p>Request to mute/unmute a channel.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">muted</td><td class="param-type"><span class="type">boolean</span></td><td>Whether to mute</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.FullSync">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.comms.FullSync(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:306</span>
+    </div>
+    <div class="function-desc"><p>Send a full channel state sync to a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player to sync</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.GetAccessibleChannels">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.comms.GetAccessibleChannels(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sh_plugin.lua:170</span>
+    </div>
+    <div class="function-desc"><p>Get all channels a player has access to.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">table</span></td><td>Array of {id, channel, canTalk, canListen}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.GetActiveChannel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.comms.GetActiveChannel()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:62</span>
+    </div>
+    <div class="function-desc"><p>Get the local player&#x27;s active transmit channel ID.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">int</span></td><td>Channel ID (0 = off)</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.GetChannelByName">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.comms.GetChannelByName(name)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sh_plugin.lua:193</span>
+    </div>
+    <div class="function-desc"><p>Get a channel by name (case-insensitive).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">name</td><td class="param-type"><span class="type">string</span></td><td>Channel name to search for</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">int|nil</span></td><td>Channel ID or nil</td></tr><tr><td class="param-type"><span class="type">table|nil</span></td><td>Channel data or nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.GetIncomingTransmissions">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.comms.GetIncomingTransmissions()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:87</span>
+    </div>
+    <div class="function-desc"><p>Get all currently active incoming transmissions.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">table</span></td><td>{[steamID64] = {ply, chanID, startTime}}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.GetMutedChannels">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.comms.GetMutedChannels()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:81</span>
+    </div>
+    <div class="function-desc"><p>Get the full muted channels table.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">table</span></td><td>{[chanID] = bool}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.HasAccess">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.comms.HasAccess(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sh_plugin.lua:162</span>
+    </div>
+    <div class="function-desc"><p>Check if a player has any access (talk or listen) to a channel.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">bool</span></td><td></td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.InitMutedDefaults">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.comms.InitMutedDefaults(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:51</span>
+    </div>
+    <div class="function-desc"><p>Initialize muted-by-default channels for a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.IsChannelMuted">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.comms.IsChannelMuted(chanID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:74</span>
+    </div>
+    <div class="function-desc"><p>Check if a channel is muted locally.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">chanID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">bool</span></td><td></td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.IsTalking">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.comms.IsTalking()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:68</span>
+    </div>
+    <div class="function-desc"><p>Check if the local player is currently transmitting.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">bool</span></td><td></td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.StartTalking">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.comms.StartTalking(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:93</span>
+    </div>
+    <div class="function-desc"><p>Start a player&#x27;s radio transmission on their active channel.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The speaking player</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.comms.StopTalking">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.comms.StopTalking(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:143</span>
+    </div>
+    <div class="function-desc"><p>Stop a player&#x27;s radio transmission.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The speaking player</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+
+</div></article>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>

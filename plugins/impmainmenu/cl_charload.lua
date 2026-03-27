@@ -1,104 +1,5 @@
-local THEME = {
-	background = Color(10, 10, 10, 255),
-	frame = Color(191, 148, 53, 255),
-	frameSoft = Color(191, 148, 53, 120),
-	text = Color(235, 235, 235, 255),
-	textMuted = Color(168, 168, 168, 140),
-	accent = Color(191, 148, 53, 255),
-	accentSoft = Color(191, 148, 53, 220),
-	danger = Color(180, 60, 60, 255),
-	ready = Color(60, 170, 90, 255),
-	buttonBg = Color(16, 16, 16, 255),
-	buttonBgHover = Color(26, 26, 26, 255)
-}
-
-local SOUND_HOVER = "everfall/miscellaneous/ux/navigation/navigation_tab_01.mp3"
-local SOUND_CLICK = "everfall/miscellaneous/ux/navigation/navigation_activate_01.mp3"
-local SOUND_ERROR = "everfall/miscellaneous/ux/navigation/navigation_error_01.mp3"
-
-local function Scale(value)
-	return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
--- Helper functions from cl_charcreate.lua
-local function DrawScreeningPanel(panel, width, height, headerText)
-	local now = CurTime()
-	local flicker = 0.85 + (math.sin(now * 2.4) + 1) * 0.075
-	local innerPad = Scale(10)
-	local footerHeight = panel.__ixImpFooterHeight or 0
-	local drawH = height - footerHeight
-	local headerH = Scale(24)
-
-	local innerX = innerPad - Scale(2)
-	local innerY = headerH + innerPad
-	local innerW = width - innerPad * 2
-	local innerH = drawH - innerY - Scale(46)
-
-	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawRect(0, 0, width, height)
-	
-	-- Header Bar
-	surface.SetDrawColor(THEME.frameSoft)
-	surface.DrawRect(0, 0, width, headerH)
-	
-	-- Frame Outline
-	surface.DrawOutlinedRect(0, 0, width, drawH)
-
-	-- Static Header
-	draw.SimpleText(headerText, "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-	draw.SimpleText("BIOSCAN", "ixImpMenuDiag", width - Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-
-	local scanY = innerY + (now * 40 % innerH)
-	surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 35))
-	
-	if (scanY < innerY + innerH) then
-		surface.DrawRect(innerX, scanY, innerW, Scale(2))
-	end
-
-	surface.SetDrawColor(Color(255, 255, 255, 6))
-	for i = 0, 6 do
-		surface.DrawLine(innerX, innerY + (i / 6) * innerH, innerX + innerW, innerY + (i / 6) * innerH)
-	end
-
-    -- Animated boxes clamped to bottom
-	local barY = drawH - Scale(24) -- Pushed down since aurebesh is gone
-	for i = 1, 3 do
-		local phase = now * (0.7 + i * 0.4)
-		local fill = 0.35 + (math.sin(phase) + 1) * 0.3
-        local barH = Scale(6)
-        
-        -- Ensure bar doesn't go below drawH
-        if (barY + barH > drawH) then break end
-
-		surface.SetDrawColor(Color(255, 255, 255, 10))
-		surface.DrawRect(innerX, barY, innerW, barH)
-		surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 120))
-		surface.DrawRect(innerX, barY, innerW * fill, barH)
-		barY = barY - Scale(10) -- Stack upwards from bottom
-	end
-end
-
-local function ApplyScreeningPanel(panel, headerText)
-	if (!IsValid(panel)) then return end
-	panel.Paint = function(this, width, height)
-		DrawScreeningPanel(this, width, height, headerText)
-	end
-end
-
-local function ApplyDataPanel(panel, headerText)
-	if (!IsValid(panel)) then return end
-	panel.Paint = function(this, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 200))
-		surface.DrawRect(0, 0, width, height)
-
-		local headerH = Scale(24)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawRect(0, 0, width, headerH)
-        surface.DrawOutlinedRect(0, 0, width, height)
-
-		draw.SimpleText(headerText, "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-	end
-end
+local THEME = ix.ui.THEME
+local Scale = ix.ui.Scale
 
 DEFINE_BASECLASS("ixCharMenuPanel")
 local PANEL = {}
@@ -125,7 +26,7 @@ function PANEL:Init()
     leftFooter:SetTall(Scale(64))
     leftFooter:DockMargin(0, Scale(8), 0, 0)
     
-    self.returnButton = leftFooter:Add("ixImpMenuButtonChar")
+    self.returnButton = leftFooter:Add("ixImpButton")
     self.returnButton:SetLabel("RETURN")
     self.returnButton:SetStyle("default")
     self.returnButton:Dock(FILL)
@@ -213,7 +114,7 @@ function PANEL:Init()
     -- Data Panel for List
     local leftPanel = leftContainer:Add("Panel")
     leftPanel:Dock(FILL)
-    ApplyDataPanel(leftPanel, "PERSONNEL DATABASE")
+    ix.ui.ApplyDataPanel(leftPanel, "PERSONNEL DATABASE")
     
     self.characterList = leftPanel:Add("DScrollPanel")
     self.characterList:Dock(FILL)
@@ -221,15 +122,7 @@ function PANEL:Init()
     self.characterList.Paint = function(this, w, h) end -- Transparent
     
     -- Custom scrollbar
-    local vbar = self.characterList:GetVBar()
-    vbar:SetWide(Scale(4))
-    vbar.Paint = function() end
-    vbar.btnUp.Paint = function() end
-    vbar.btnDown.Paint = function() end
-    vbar.btnGrip.Paint = function(this, w, h)
-        surface.SetDrawColor(THEME.accentSoft)
-        surface.DrawRect(0, 0, w, h)
-    end
+    ix.ui.ApplyScrollbarStyle(self.characterList)
 
     -- RIGHT SIDE: Character Preview (Screening Panel style)
     local rightPanel = self:Add("Panel")
@@ -243,7 +136,7 @@ function PANEL:Init()
     footer:SetTall(Scale(64))
     footer:DockMargin(0, Scale(8), 0, 0)
     
-    self.playButton = footer:Add("ixImpMenuButtonChar")
+    self.playButton = footer:Add("ixImpButton")
     self.playButton:SetLabel("DEPLOY")
     self.playButton:SetStyle("accent")
     self.playButton:Dock(RIGHT)
@@ -258,7 +151,7 @@ function PANEL:Init()
         end
     end
 
-    self.deleteButton = footer:Add("ixImpMenuButtonChar")
+    self.deleteButton = footer:Add("ixImpButton")
     self.deleteButton:SetLabel("TERMINATE")
     self.deleteButton:SetStyle("danger")
     self.deleteButton:Dock(LEFT)
@@ -301,7 +194,7 @@ function PANEL:Init()
         oldPaint(this, w, h)
     end
     
-    ApplyScreeningPanel(modelPanelContainer, "BIOMETRIC SCAN")
+    ix.ui.ApplyScreeningPanel(modelPanelContainer, "BIOMETRIC SCAN")
 
     -- Character Info overlay removed (Moved to left panel)
 end
@@ -331,7 +224,7 @@ function PANEL:Populate()
             continue
         end
 
-        local charBtn = self.characterList:Add("ixImpMenuButtonChar")
+        local charBtn = self.characterList:Add("ixImpButton")
         charBtn:SetLabel(character:GetName())
         charBtn:Dock(TOP)
         charBtn:DockMargin(0, 0, 0, Scale(4))

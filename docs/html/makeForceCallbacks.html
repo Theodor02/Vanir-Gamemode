@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: makeForceCallbacks - Skeleton</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Skeleton</h1>
+        <p>Skeleton Documentation</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="functions.html">Functions</a>
+        <a href="modules.html">Modules</a>
+    </nav>
+    <p class="text-muted"><a href="modules.html">Modules</a> / makeForceCallbacks</p>
+
+    <div class="content">
+        <h2>Module: makeForceCallbacks</h2>
+        <p>Total functions: <strong>1</strong></p>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">makeForceCallbacks</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Force Power Unlock Tree -- Registers a full force power / saber stance unlock tree using the -- unlocktrees plugin. Each node grants or revokes an LSCS power via -- ix.force.Grant() / ix.force.Revoke(). -- -- Registration is deferred to InitPostEntity because this plugin -- loads before unlocktrees alphabetically (t &lt; u). -- -- (depends on: unlocktrees plugin, ix.force API from sh_plugin.lua) -- @module theos-forcesystem.sh_unlocktree hook.Add(&quot;InitPostEntity&quot;, &quot;ixForceTree.Register&quot;, function() if not ix.unlocks then ErrorNoHalt(&quot;[theos-forcesystem] unlocktrees plugin not found — skipping tree registration.\n&quot;) return end local TREE_ID = &quot;force_powers&quot; -- ───────────────────────────────────────────── -- Tree Registration -- ───────────────────────────────────────────── ix.unlocks.RegisterTree(TREE_ID, { name = &quot;The Force&quot;, description = &quot;Develop your connection to the Force, learning new abilities and combat forms.&quot;, showInTabMenu = true, allowRespec = true, refundable = true, refundRatio = 0.75, respecRatio = 0.5, restrictions = { condition = function(client, character) if (character:GetAttribute(&quot;force&quot;, 0) &lt;= 0) then return false, &quot;You are not Force sensitive.&quot; end return true end }, }) -- ───────────────────────────────────────────── -- Helper — generate onUnlocked / onRefunded -- that call ix.force.Grant / Revoke -- ─────────────────────────────────────────────
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>lscsClass</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\theos-forcesystem\sh_unlocktree.lua</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Generated on 2026-03-10 20:48:19 | Skeleton
+    </footer>
+</div>
+</body>
+</html>

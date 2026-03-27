@@ -1,163 +1,6 @@
-local THEME = {
-	background = Color(10, 10, 10, 255),
-	frame = Color(191, 148, 53, 255),
-	frameSoft = Color(191, 148, 53, 120),
-	text = Color(235, 235, 235, 255),
-	textMuted = Color(168, 168, 168, 140),
-	accent = Color(191, 148, 53, 255),
-	accentSoft = Color(191, 148, 53, 220),
-	buttonBg = Color(16, 16, 16, 255),
-	buttonBgHover = Color(26, 26, 26, 255),
-	rowEven = Color(14, 14, 14, 255),
-	rowOdd = Color(18, 18, 18, 255)
-}
-
-local function Scale(value)
-	return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
-local function IsMenuClosing()
-	return IsValid(ix.gui.menu) and ix.gui.menu.bClosing
-end
-
-
--- Screening Panel painter
-local function DrawScreeningPanel(panel, width, height, headerText)
-	local now = CurTime()
-	local innerPad = Scale(10)
-	local footerHeight = panel.__ixImpFooterHeight or 0
-	local drawH = height - footerHeight
-	local headerH = Scale(24)
-
-	local innerX = innerPad - Scale(2)
-	local innerY = headerH + innerPad
-	local innerW = width - innerPad * 2
-	local innerH = drawH - innerY - Scale(46)
-
-	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawRect(0, 0, width, height)
-
-	surface.SetDrawColor(THEME.frameSoft)
-	surface.DrawRect(0, 0, width, headerH)
-	surface.DrawOutlinedRect(0, 0, width, drawH)
-
-	draw.SimpleText(headerText, "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-	draw.SimpleText("BIOSCAN", "ixImpMenuAurebesh", width - Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-
-	local scanY = innerY + (now * 40 % innerH)
-	surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 35))
-	if (scanY < innerY + innerH) then
-		surface.DrawRect(innerX, scanY, innerW, Scale(2))
-	end
-
-	surface.SetDrawColor(Color(255, 255, 255, 6))
-	for i = 0, 6 do
-		surface.DrawLine(innerX, innerY + (i / 6) * innerH, innerX + innerW, innerY + (i / 6) * innerH)
-	end
-
-	local barY = drawH - Scale(24)
-	for i = 1, 3 do
-		local phase = now * (0.7 + i * 0.4)
-		local fill = 0.35 + (math.sin(phase) + 1) * 0.3
-		local barH = Scale(6)
-		if (barY + barH > drawH) then break end
-		surface.SetDrawColor(Color(255, 255, 255, 10))
-		surface.DrawRect(innerX, barY, innerW, barH)
-		surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 120))
-		surface.DrawRect(innerX, barY, innerW * fill, barH)
-		barY = barY - Scale(10)
-	end
-end
-
-
--- Attribute Bar Style
-
-local function ApplyAttributeBarStyle(panel)
-	if (!IsValid(panel)) then return end
-
-	panel:SetTall(Scale(22))
-
-	if (IsValid(panel.label)) then
-		panel.label:SetFont("ixImpMenuDiag")
-		panel.label:SetTextColor(THEME.textMuted)
-		panel.label:SetContentAlignment(5)
-	end
-
-	if (IsValid(panel.bar)) then
-		panel.bar.Paint = function(this, w, h)
-			surface.SetDrawColor(Color(0, 0, 0, 255))
-			surface.DrawRect(0, 0, w, h)
-			surface.SetDrawColor(THEME.frameSoft)
-			surface.DrawOutlinedRect(0, 0, w, h)
-
-			local max = math.max(panel.max or 1, 1)
-			local value = (panel.deltaValue or 0) / max
-			local fillW = math.max(0, (w - 4) * value)
-
-			if (fillW > 0) then
-				surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 180))
-				surface.DrawRect(2, 2, fillW, h - 4)
-			end
-		end
-	end
-
-	if (panel.GetColor and panel:GetColor() ~= THEME.accent) then
-		panel:SetColor(THEME.accent)
-	end
-end
-
--- Data row helper
-
-local function CreateDataRow(parent, label, value, index)
-	local box = parent:Add("EditablePanel")
-	box:Dock(TOP)
-	box:DockMargin(0, 0, 0, Scale(2))
-	box:SetTall(Scale(24))
-
-	local bg = (index % 2 == 0) and THEME.rowEven or THEME.rowOdd
-	box.Paint = function(_, w, h)
-		surface.SetDrawColor(bg)
-		surface.DrawRect(0, 0, w, h)
-		surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 30)
-		surface.DrawRect(0, h - 1, w, 1)
-	end
-
-	local l = box:Add("DLabel")
-	l:SetText(label)
-	l:SetFont("ixImpMenuDiag")
-	l:Dock(LEFT)
-	l:SetWide(Scale(120))
-	l:DockMargin(Scale(8), 0, 0, 0)
-	l:SetTextColor(THEME.textMuted)
-	l:SetContentAlignment(4)
-
-	local v = box:Add("DLabel")
-	v:SetText(value)
-	v:SetFont("ixImpMenuDiag")
-	v:Dock(FILL)
-	v:DockMargin(Scale(4), 0, Scale(8), 0)
-	v:SetTextColor(THEME.text)
-	v:SetContentAlignment(4)
-
-	return box
-end
-
-
-local function CreateSectionHeader(parent, text)
-	local sep = parent:Add("EditablePanel")
-	sep:Dock(TOP)
-	sep:SetTall(Scale(20))
-	sep:DockMargin(0, Scale(10), 0, Scale(4))
-	sep.Paint = function(_, w, h)
-		draw.SimpleText(text, "ixImpMenuDiag", 0, h * 0.5, THEME.accent, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-
-		local tw = surface.GetTextSize(text)
-		surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 50)
-		surface.DrawRect(tw + Scale(8), math.floor(h * 0.5), w - tw - Scale(8), 1)
-	end
-
-	return sep
-end
+local THEME = ix.ui.THEME
+local Scale = ix.ui.Scale
+local IsMenuClosing = ix.ui.IsMenuClosing
 
 
 -- Main Panel
@@ -204,15 +47,7 @@ function PANEL:Init()
 	self.scroll.Paint = function() end
 
 	-- Styled scrollbar
-	local vbar = self.scroll:GetVBar()
-	vbar:SetWide(Scale(4))
-	vbar.Paint = function() end
-	vbar.btnUp.Paint = function() end
-	vbar.btnDown.Paint = function() end
-	vbar.btnGrip.Paint = function(_, w, h)
-		surface.SetDrawColor(THEME.accentSoft)
-		surface.DrawRect(0, 0, w, h)
-	end
+	ix.ui.ApplyScrollbarStyle(self.scroll)
 
 
 	self:PopulateInfo()
@@ -223,7 +58,7 @@ function PANEL:Init()
 	self.rightPanel = self:Add("EditablePanel")
 	self.rightPanel:Dock(FILL)
 	self.rightPanel.Paint = function(pnl, w, h)
-		DrawScreeningPanel(pnl, w, h, "BIOMETRIC SCAN")
+		ix.ui.DrawScreeningPanel(pnl, w, h, "BIOMETRIC SCAN")
 	end
 
 	self.model = self.rightPanel:Add("ixModelPanel")
@@ -323,23 +158,23 @@ function PANEL:PopulateInfo()
 	end
 
 
-	CreateSectionHeader(scroll, "PERSONNEL DETAILS")
+	ix.ui.CreateSectionHeader(scroll, "PERSONNEL DETAILS")
 
 	rowIdx = rowIdx + 1
-	CreateDataRow(scroll, "CREDITS", ix.currency.Get(char:GetMoney()), rowIdx)
+	ix.ui.CreateDataRow(scroll, "CREDITS", ix.currency.Get(char:GetMoney()), rowIdx)
 
 	local class = ix.class.list[char:GetClass()]
 	if (class) then
 		rowIdx = rowIdx + 1
-		CreateDataRow(scroll, "CLASS", class.name, rowIdx)
+		ix.ui.CreateDataRow(scroll, "CLASS", class.name, rowIdx)
 	end
 
 
 	rowIdx = rowIdx + 1
-	CreateDataRow(scroll, "FACTION", factionName, rowIdx)
+	ix.ui.CreateDataRow(scroll, "FACTION", factionName, rowIdx)
 
 
-	CreateSectionHeader(scroll, "BIOGRAPHY")
+	ix.ui.CreateSectionHeader(scroll, "BIOGRAPHY")
 
 	local desc = scroll:Add("DLabel")
 	desc:SetText(char:GetDescription())
@@ -368,7 +203,7 @@ function PANEL:PopulateInfo()
 
 
 	if (table.Count(ix.attributes.list) > 0) then
-		CreateSectionHeader(scroll, "ATTRIBUTES")
+		ix.ui.CreateSectionHeader(scroll, "ATTRIBUTES")
 
 		for k, v in SortedPairs(ix.attributes.list) do
 			local val = char:GetAttribute(k, 0)
@@ -380,7 +215,7 @@ function PANEL:PopulateInfo()
 			bar:SetValue(val)
 			bar:SetText(Format("%s [%.1f/%.1f] (%.1f%%)", L(v.name), val, max, val / max * 100))
 			bar:SetReadOnly()
-			ApplyAttributeBarStyle(bar)
+			ix.ui.ApplyAttributeBarStyle(bar)
 		end
 	end
 end

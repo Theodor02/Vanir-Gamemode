@@ -1,35 +1,5 @@
-local THEME = {
-	background = Color(10, 10, 10, 255),
-	frame = Color(191, 148, 53, 255),
-	frameSoft = Color(191, 148, 53, 120),
-	text = Color(235, 235, 235, 255),
-	textMuted = Color(168, 168, 168, 140),
-	accent = Color(191, 148, 53, 255),
-	accentSoft = Color(191, 148, 53, 220),
-	buttonBg = Color(16, 16, 16, 255),
-	buttonBgHover = Color(26, 26, 26, 255)
-}
-
-local function Scale(value)
-	return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
-local function ApplyDataPanel(panel, headerText)
-	if (!IsValid(panel)) then return end
-	panel.Paint = function(this, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 200))
-		surface.DrawRect(0, 0, width, height)
-
-		local headerH = Scale(24)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawRect(0, 0, width, headerH)
-		surface.DrawOutlinedRect(0, 0, width, height)
-
-		if (headerText) then
-			draw.SimpleText(headerText, "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-		end
-	end
-end
+local THEME = ix.ui.THEME
+local Scale = ix.ui.Scale
 
 local PANEL = {}
 
@@ -133,7 +103,7 @@ function PANEL:Init()
 	leftPanel:Dock(LEFT)
 	leftPanel:SetWide(leftWidth)
 	leftPanel:DockMargin(padding, padding, 0, padding)
-	ApplyDataPanel(leftPanel, "CATEGORIES")
+	ix.ui.ApplyDataPanel(leftPanel, "CATEGORIES")
 
 	self.categories = leftPanel:Add("DScrollPanel")
 	self.categories:Dock(FILL)
@@ -141,35 +111,19 @@ function PANEL:Init()
 	self.categories.Paint = function(this, w, h) end
 	self.categoryPanels = {}
 
-	local catVbar = self.categories:GetVBar()
-	catVbar:SetWide(Scale(4))
-	catVbar.Paint = function() end
-	catVbar.btnUp.Paint = function() end
-	catVbar.btnDown.Paint = function() end
-	catVbar.btnGrip.Paint = function(this, w, h)
-		surface.SetDrawColor(THEME.accentSoft)
-		surface.DrawRect(0, 0, w, h)
-	end
+	ix.ui.ApplyScrollbarStyle(self.categories)
 
 	local rightPanel = self:Add("Panel")
 	rightPanel:Dock(FILL)
 	rightPanel:DockMargin(padding, padding, padding, padding)
-	ApplyDataPanel(rightPanel, "REQUISITIONS")
+	ix.ui.ApplyDataPanel(rightPanel, "REQUISITIONS")
 
 	self.scroll = rightPanel:Add("DScrollPanel")
 	self.scroll:Dock(FILL)
 	self.scroll:DockMargin(Scale(8), Scale(72), Scale(8), Scale(56))
 	self.scroll.Paint = function(this, w, h) end
 
-	local itemsVbar = self.scroll:GetVBar()
-	itemsVbar:SetWide(Scale(4))
-	itemsVbar.Paint = function() end
-	itemsVbar.btnUp.Paint = function() end
-	itemsVbar.btnDown.Paint = function() end
-	itemsVbar.btnGrip.Paint = function(this, w, h)
-		surface.SetDrawColor(THEME.accentSoft)
-		surface.DrawRect(0, 0, w, h)
-	end
+	ix.ui.ApplyScrollbarStyle(self.scroll)
 
 	self.search = rightPanel:Add("DTextEntry")
 	self.search:Dock(TOP)

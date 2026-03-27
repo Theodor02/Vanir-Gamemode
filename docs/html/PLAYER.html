@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLAYER - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li class="active"><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    
+<article><div class="wrapper">
+
+<div class="module-header">
+    <span class="kind-badge module">Library</span>
+    <h1>PLAYER</h1>
+    <p class="module-file">plugins/theos-forcesystem/sh_force_pool.lua</p>
+</div>
+
+
+<div class="toc"><h3>Functions</h3><ul><li><span class="realm shared" title="shared"></span><a href="#PLAYER:GetUnlockedNodes">PLAYER:GetUnlockedNodes</a></li><li><span class="realm shared" title="shared"></span><a href="#PLAYER:HasUnlockedNode">PLAYER:HasUnlockedNode</a></li><li><span class="realm shared" title="shared"></span><a href="#PLAYER:_ixForceRefreshPool">PLAYER:_ixForceRefreshPool</a></li><li><span class="realm shared" title="shared"></span><a href="#PLAYER:lscsSetMaxForce">PLAYER:lscsSetMaxForce</a></li></ul></div>
+<h2>Functions</h2>
+<div class="function-block" id="PLAYER:GetUnlockedNodes">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">PLAYER:GetUnlockedNodes(treeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:573</span>
+    </div>
+    <div class="function-desc"><p>Convenience: get all unlocked nodes for the player&#x27;s current character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLAYER:HasUnlockedNode">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">PLAYER:HasUnlockedNode(treeID, nodeID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_api.lua:565</span>
+    </div>
+    <div class="function-desc"><p>Convenience: check if the player&#x27;s current character has an unlocked node.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">treeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">nodeID</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLAYER:_ixForceRefreshPool">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">PLAYER:_ixForceRefreshPool()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sh_force_pool.lua:17</span>
+    </div>
+    <div class="function-desc"><p>Recalculate and apply the LSCS max force pool from Helix data.
+Called on spawn, character load, and whenever player_effects force.pool_max fires.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="PLAYER:lscsSetMaxForce">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">PLAYER:lscsSetMaxForce(value)</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sh_force_pool.lua:54</span>
+    </div>
+    <div class="function-desc"><p>Override lscsSetMaxForce to log external writes but still allow them.
+Anything the perk tree or other systems set directly still works;
+_ixForceRefreshPool later resets it to the canonical value.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">value</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+
+</div></article>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>

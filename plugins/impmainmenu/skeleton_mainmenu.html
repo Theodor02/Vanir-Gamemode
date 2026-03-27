@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  SKELETON — IMPERIAL TERMINAL INTERFACE
+  Main Menu — HTML Design Reference
+  ============================================================
+
+  PURPOSE:
+    This file is a visual reference/mockup intended to be ported
+    into Garry's Mod using VGUI / DERMA panels and Lua.
+    It is NOT meant to run as a web application.
+
+  PORTING NOTES FOR GMod (VGUI / DERMA):
+    - The root container maps to a fullscreen DFrame or DPanel
+      set to fill the screen (w = ScrW(), h = ScrH())
+    - All colours are defined as CSS hex values here.
+      In Lua use Color(r, g, b, a) equivalents — see COLOUR PALETTE below
+    - Fonts: In GMod, register custom fonts via surface.CreateFont().
+      "Barlow" (body/buttons) and "Share Tech Mono" (system labels)
+      are Google Fonts — embed the TTF files in your addon under
+      garrysmod/addons/yourmod/resource/fonts/ and call
+      resource.AddFile() so clients download them automatically.
+    - Borders: CSS border = draw.RoundedBox or surface.DrawRect
+      with a 1px outline approach in Lua. For 1px lines use
+      surface.DrawLine or a thin DPanel with a solid colour.
+    - Hover states: replicate with :SetCursor and OnCursorEntered /
+      OnCursorExited callbacks on DButton panels.
+    - The collapsed button group (shared borders) can be achieved by
+      stacking DButton panels with no gap and painting only the
+      outer border manually in the parent panel's Paint function.
+    - The footer sigil string (Aurebesh-style glyphs) should be
+      rendered via surface.DrawText with the mono font.
+
+  COLOUR PALETTE (CSS -> Lua Color()):
+    Background:         #111111  ->  Color(17,  17,  17)
+    Topbar border:      #2a2618  ->  Color(42,  38,  24)    -- warm gold-tinted dark
+    Button border idle: #3a3628  ->  Color(58,  54,  40)    -- muted warm grey
+    Button border hover:#8a7438  ->  Color(138, 116, 56)    -- gold, only on hover
+    Button bg hover:    #1c1a12  ->  Color(28,  26,  18)    -- very subtle warm lift
+    Button text:        #c8c4bc  ->  Color(200, 196, 188)   -- warm off-white
+    Button text hover:  #e0dbd0  ->  Color(224, 219, 208)   -- slightly brighter
+    Return text idle:   #5a5650  ->  Color(90,  86,  80)    -- receded, same family
+    Return text hover:  #9a7070  ->  Color(154, 112, 112)   -- muted red-warm
+    Return bg hover:    #181212  ->  Color(24,  18,  18)
+    Return border hover:#5a2e2e  ->  Color(90,  46,  46)
+    Title text:         #d4cfc6  ->  Color(212, 207, 198)
+    System label text:  #3a3628  ->  Color(58,  54,  40)
+    Subtitle text:      #302e22  ->  Color(48,  46,  34)
+    Sigil text:         #2e2c20  ->  Color(46,  44,  32)
+    Footer right text:  #3a3628  ->  Color(58,  54,  40)
+
+  TYPOGRAPHY:
+    Display title ("SKELETON"):  Barlow Light (weight 300), ~40px, letter-spacing 0.45em
+    Button labels:               Barlow Regular (weight 400), ~11px, letter-spacing 0.28em
+    System labels / mono text:   Share Tech Mono, 9-10px, letter-spacing 0.1-0.14em
+    Sigil row:                   Share Tech Mono, 11px, letter-spacing 0.2em
+
+  LAYOUT MEASUREMENTS (approximate, scale to ScrW/ScrH in Lua):
+    Topbar height:     ~38px
+    Footer height:     ~36px
+    Button width:      360px  (centre-aligned in body)
+    Button height:     ~46px each
+    Button group top margin from subtitle: ~52px
+    Body: vertically centred between topbar and footer
+
+  ============================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skeleton — Main Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #111111; }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     ROOT CONTAINER
+     GMod: fullscreen DPanel, Paint() fills Color(17,17,17)
+     ============================================================ -->
+<div style="background:#111111; min-height:100vh; display:flex; flex-direction:column; font-family:'Barlow',sans-serif;">
+
+
+  <!-- ============================================================
+       TOPBAR
+       GMod: thin DPanel at top, height ~38px.
+       Bottom border = 1px line drawn in Paint() using
+       surface.DrawRect at y = panel:GetTall()-1, Color(42,38,24).
+       ============================================================
+
+       LEFT:  Static label "IMPERIAL MAIN MENU" — always uppercase.
+              Font: Share Tech Mono, system/ambient label.
+              GMod: surface.DrawText()
+
+       RIGHT: Last-used character name, e.g. "OPERATIVE / TK-4421"
+              or just the character name "GREENERY BREEN".
+              GMod: pull from your character data table and
+              format as: string.upper(charName) .. " / " .. unitDesignation
+              If no character has been used yet, hide this element entirely
+              or display "NO OPERATIVE ON FILE".
+  -->
+  <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 24px; border-bottom:1px solid #2a2618;">
+    <span style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.14em; color:#3a3628; text-transform:uppercase;">
+      Imperial Main Menu
+    </span>
+    <!-- DYNAMIC: Replace with last-used character name from player data -->
+    <span style="font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:.1em; color:#3a3628;">
+      LAST OPERATIVE / TK-0013
+    </span>
+  </div>
+
+
+  <!-- ============================================================
+       BODY — centred content block
+       GMod: no special panel needed, just position children
+       using manual x/y coords relative to screen centre.
+       Centre point: ScrW()/2, roughly ScrH()/2
+       ============================================================ -->
+  <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:52px 20px 44px;">
+
+    <!-- TITLE
+         GMod: surface.DrawText(), font Barlow 300 at ~40px scaled.
+         Letter spacing is important — in GMod you may need to
+         draw each character individually with manual x offset
+         to replicate wide letter-spacing if surface.DrawText
+         doesn't support it natively. Approx 0.45em = ~18px at 40px size.
+    -->
+    <div style="font-size:40px; font-weight:300; letter-spacing:.45em; padding-left:.45em; text-transform:uppercase; color:#d4cfc6; line-height:1; margin-bottom:6px; font-family:'Barlow',sans-serif;">
+      Skeleton
+    </div>
+
+    <!-- SUBTITLE — static ambient label, never changes -->
+    <div style="font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:.3em; color:#302e22; text-transform:uppercase;">
+      Imperial Terminal Interface
+    </div>
+
+
+    <!-- ============================================================
+         BUTTON GROUP
+         GMod: stack DButton panels with no gap between them.
+         Paint the shared border in the PARENT panel's Paint()
+         rather than on each button individually — draw one
+         outer rectangle outline around the whole group, then
+         draw horizontal dividing lines between each button.
+         This avoids doubled/thickened borders between items.
+
+         Button idle state:  border #3a3628, text #c8c4bc, bg transparent
+         Button hover state: border #8a7438, text #e0dbd0, bg #1c1a12
+         Hover transitions are instant in GMod (no CSS transition equiv),
+         but you can lerp colours using Lerp() in Paint() if desired.
+
+         MENU DESIGN NOTES:
+           - Order follows Hick's Law: most-used action first (Enlist/Deploy),
+             destructive/exit action last and visually separated by colour.
+           - All buttons are equal size — Fitts's Law: same target area,
+             no hierarchy through scale, only through colour and position.
+           - Return is receded (dim text) to reduce accidental clicks.
+             It becomes visible on hover but never demands attention at rest.
+    ============================================================ -->
+    <div style="display:flex; flex-direction:column; width:360px; margin-top:52px;">
+
+      <!-- BUTTON: Enlist — primary action, top of group -->
+      <button
+        onclick="/* GMod: call your enlist/character creation function */"
+        style="background:transparent; border:1px solid #3a3628; border-bottom:none; color:#c8c4bc; font-family:'Barlow',sans-serif; font-size:11px; font-weight:400; letter-spacing:.28em; text-transform:uppercase; padding:15px 24px; cursor:pointer; text-align:center; border-radius:0; width:100%;"
+        onmouseover="this.style.background='#1c1a12'; this.style.borderColor='#8a7438'; this.style.color='#e0dbd0';"
+        onmouseout="this.style.background='transparent'; this.style.borderColor='#3a3628'; this.style.color='#c8c4bc';">
+        Enlist
+      </button>
+
+      <!-- BUTTON: Deploy — secondary action -->
+      <button
+        onclick="/* GMod: call your deployment/spawn function */"
+        style="background:transparent; border:1px solid #3a3628; border-bottom:none; color:#c8c4bc; font-family:'Barlow',sans-serif; font-size:11px; font-weight:400; letter-spacing:.28em; text-transform:uppercase; padding:15px 24px; cursor:pointer; text-align:center; border-radius:0; width:100%;"
+        onmouseover="this.style.background='#1c1a12'; this.style.borderColor='#8a7438'; this.style.color='#e0dbd0';"
+        onmouseout="this.style.background='transparent'; this.style.borderColor='#3a3628'; this.style.color='#c8c4bc';">
+        Deploy
+      </button>
+
+      <!-- BUTTON: Community Node — tertiary action -->
+      <button
+        onclick="/* GMod: open community/server browser panel */"
+        style="background:transparent; border:1px solid #3a3628; border-bottom:none; color:#c8c4bc; font-family:'Barlow',sans-serif; font-size:11px; font-weight:400; letter-spacing:.28em; text-transform:uppercase; padding:15px 24px; cursor:pointer; text-align:center; border-radius:0; width:100%;"
+        onmouseover="this.style.background='#1c1a12'; this.style.borderColor='#8a7438'; this.style.color='#e0dbd0';"
+        onmouseout="this.style.background='transparent'; this.style.borderColor='#3a3628'; this.style.color='#c8c4bc';">
+        Community Node
+      </button>
+
+      <!-- BUTTON: Return — destructive/exit, always last
+           Visually receded at rest. Slightly warm-red on hover.
+           GMod: this would call gui.HideGameUI() or similar. -->
+      <button
+        onclick="/* GMod: close the menu / disconnect */"
+        style="background:transparent; border:1px solid #3a3628; color:#5a5650; font-family:'Barlow',sans-serif; font-size:11px; font-weight:400; letter-spacing:.28em; text-transform:uppercase; padding:15px 24px; cursor:pointer; text-align:center; border-radius:0; width:100%;"
+        onmouseover="this.style.background='#181212'; this.style.borderColor='#5a2e2e'; this.style.color='#9a7070';"
+        onmouseout="this.style.background='transparent'; this.style.borderColor='#3a3628'; this.style.color='#5a5650';">
+        Return
+      </button>
+
+    </div>
+    <!-- END BUTTON GROUP -->
+
+  </div>
+  <!-- END BODY -->
+
+
+  <!-- ============================================================
+       FOOTER
+       GMod: thin DPanel at bottom, height ~36px.
+       Top border = 1px line in Paint(), same colour as topbar border.
+
+       LEFT:  Aurebesh-style ambient sigil string.
+              These are Unicode Latin Extended characters that
+              visually resemble alien script — purely decorative,
+              never readable. Replace with actual Aurebesh font
+              glyphs if you have the "Aurebesh" TTF available.
+              GMod: register Aurebesh font via surface.CreateFont()
+              and draw with surface.DrawText(). If not available,
+              these Unicode chars rendered in Share Tech Mono
+              serve as a passable substitute.
+              OPTIONAL: animate a slow left-to-right character
+              shuffle using a timer to give the impression of
+              a live system readout.
+
+       RIGHT: Static ambient system status.
+              Can be replaced with live server info, e.g.:
+              - Player count: tostring(#player.GetAll()) .. " OPERATIVES"
+              - Server name
+              - Current map name: game.GetMap()
+  ============================================================ -->
+  <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 24px; border-top:1px solid #2a2618;">
+
+    <!-- AUREBESH SIGILS: purely decorative ambient glyph string
+         GMod: surface.DrawText() with Aurebesh or Share Tech Mono font
+         Consider a slow timer-driven character randomise effect here -->
+    <span style="font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:.2em; color:#2e2c20;">
+      ꞙ &nbsp;ꟊ&nbsp; ꝏ &nbsp;Ꟈ&nbsp; ꞛ &nbsp;ꟓ&nbsp; ꝡ
+    </span>
+
+    <!-- DYNAMIC: server/session status — replace with live data in GMod -->
+    <span style="font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:.12em; color:#3a3628;">
+      NODE-7 / ACTIVE
+    </span>
+
+  </div>
+  <!-- END FOOTER -->
+
+
+</div>
+<!-- END ROOT -->
+
+</body>
+</html>

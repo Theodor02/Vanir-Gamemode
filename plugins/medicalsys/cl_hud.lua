@@ -220,3 +220,196 @@ hook.Add("HUDShouldDraw", "ixBactaHUDVisibility", function(name)
     -- The effect HUD is always drawn via HUDPaint, this hook is for
     -- compatibility — we don't block any default HUD elements.
 end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- BACTA VISUAL EFFECTS — Screenspace Rendering
+-- Reads the local player's visual.* player effect values and renders
+-- color tints, blur, bloom, vignette, sharpen, desaturation, screen flicker,
+-- water warp, nausea sway, and tremor view-punch in real time.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+-- Cached state for heartbeat loop
+local _bactaHeartbeat = nil
+local _bactaHeartbeatActive = false
+local _bactaHeartbeatNextBeat = 0
+
+hook.Add("RenderScreenspaceEffects", "ixBactaVisualEffects", function()
+    local client = LocalPlayer()
+    if (!IsValid(client) or !client:Alive()) then return end
+    if (!client.GetEffectValue) then return end
+
+    local now = CurTime()
+
+    -- ─── Color Tint ─────────────────────────────────────────────────────
+    local tint = client:GetEffectValue("visual.color_tint")
+    local desat = client:GetEffectValue("visual.desaturate") or 0
+
+    if (tint and IsColor(tint)) or (desat > 0.01) then
+        local r, g, b, intensity
+        if (tint and IsColor(tint)) then
+            r, g, b = tint.r, tint.g, tint.b
+            intensity = (tint.a or 30) / 255
+        else
+            r, g, b = 255, 255, 255
+            intensity = 0
+        end
+
+        DrawColorModify({
+            ["$pp_colour_addr"] = (r / 255 - 0.5) * intensity,
+            ["$pp_colour_addg"] = (g / 255 - 0.5) * intensity,
+            ["$pp_colour_addb"] = (b / 255 - 0.5) * intensity,
+            ["$pp_colour_brightness"] = -0.02 * intensity,
+            ["$pp_colour_contrast"] = 1 + (0.08 * intensity),
+            ["$pp_colour_colour"] = 1 - math.max(0.25 * intensity, desat),
+            ["$pp_colour_mulr"] = 0,
+            ["$pp_colour_mulg"] = 0,
+            ["$pp_colour_mulb"] = 0,
+        })
+    end
+
+    -- ─── Motion Blur ────────────────────────────────────────────────────
+    local blur = client:GetEffectValue("visual.blur") or 0
+    if (blur > 0.01) then
+        local amount = 0.05 + (blur * 0.35)
+        DrawMotionBlur(math.Clamp(amount, 0, 0.5), 0.8, 0.01)
+    end
+
+    -- ─── Bloom ──────────────────────────────────────────────────────────
+    local bloom = client:GetEffectValue("visual.bloom") or 0
+    if (bloom > 0.01) then
+        DrawBloom(
+            0.5,
+            bloom * 1.5,
+            3 + bloom * 3,
+            3 + bloom * 3,
+            3,
+            bloom * 0.5,
+            1 - bloom * 0.05,
+            1 - bloom * 0.05,
+            1 - bloom * 0.05
+        )
+    end
+
+    -- ─── Sharpen ────────────────────────────────────────────────────────
+    local sharpen = client:GetEffectValue("visual.sharpen") or 0
+    if (sharpen > 0.01) then
+        DrawSharpen(sharpen * 2, sharpen * 0.5)
+    end
+
+    -- ─── Water Warp ─────────────────────────────────────────────────────
+    local warp = client:GetEffectValue("visual.water_warp") or 0
+    if (warp > 0.01) then
+        DrawMaterialOverlay("effects/water_warp01", warp * -0.01)
+    end
+
+    -- ─── Vignette ───────────────────────────────────────────────────────
+    local vignette = client:GetEffectValue("visual.vignette") or 0
+    if (vignette > 0.01) then
+        local scrW, scrH = ScrW(), ScrH()
+        local layers = math.Clamp(math.floor(vignette * 12), 1, 8)
+
+        for i = 1, layers do
+            local frac = i / layers
+            local alpha = vignette * 220 * frac
+            local inset = scrW * (1 - frac) * 0.5
+
+            surface.SetDrawColor(0, 0, 0, math.Clamp(alpha, 0, 200))
+            surface.DrawRect(0, 0, scrW, inset * 0.6)
+            surface.DrawRect(0, scrH - inset * 0.6, scrW, inset * 0.6)
+            surface.DrawRect(0, 0, inset, scrH)
+            surface.DrawRect(scrW - inset, 0, inset, scrH)
+        end
+    end
+
+    -- ─── Screen Flicker ─────────────────────────────────────────────────
+    local flicker = client:GetEffectValue("visual.screen_flicker") or 0
+    if (flicker > 0.01) then
+        if (math.random() < flicker * FrameTime()) then
+            surface.SetDrawColor(0, 0, 0, math.random(100, 220))
+            surface.DrawRect(0, 0, ScrW(), ScrH())
+        end
+    end
+end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- BACTA TREMOR VIEW PUNCH — Continuous Camera Shake
+-- Applies sinusoidal view-angle perturbation based on visual.tremor value.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+hook.Add("Think", "ixBactaTremorEffect", function()
+    local client = LocalPlayer()
+    if (!IsValid(client) or !client:Alive()) then return end
+    if (!client.GetEffectValue) then return end
+
+    local tremor = client:GetEffectValue("visual.tremor") or 0
+    if (tremor <= 0) then return end
+
+    local now = CurTime()
+    local intensity = tremor * 0.35
+
+    local ang = Angle(
+        math.sin(now * 10) * intensity,
+        math.cos(now * 7.5) * intensity * 0.7,
+        math.sin(now * 5) * intensity * 0.2
+    )
+
+    client:SetEyeAngles(client:EyeAngles() + ang * FrameTime() * 5)
+end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- BACTA NAUSEA SWAY — Sinusoidal View Drift
+-- Applies a slow, disorienting sway to the camera based on visual.nausea.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+hook.Add("Think", "ixBactaNauseaEffect", function()
+    local client = LocalPlayer()
+    if (!IsValid(client) or !client:Alive()) then return end
+    if (!client.GetEffectValue) then return end
+
+    local nausea = client:GetEffectValue("visual.nausea") or 0
+    if (nausea <= 0) then return end
+
+    local now = CurTime()
+    local intensity = nausea * 0.6
+
+    -- Slow, sickening drift
+    local ang = Angle(
+        math.sin(now * 1.5) * intensity * 0.4,
+        math.cos(now * 1.1) * intensity * 0.6,
+        math.sin(now * 0.8) * intensity * 0.15
+    )
+
+    client:SetEyeAngles(client:EyeAngles() + ang * FrameTime() * 3)
+end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- BACTA HEARTBEAT — Pulsing Audio Loop
+-- Plays a rhythmic heartbeat sound when audio.heartbeat > 0.
+-- Intensity controls volume and rate.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+hook.Add("Think", "ixBactaHeartbeatLoop", function()
+    local client = LocalPlayer()
+    if (!IsValid(client) or !client:Alive()) then
+        _bactaHeartbeatActive = false
+        return
+    end
+    if (!client.GetEffectValue) then return end
+
+    local heartbeat = client:GetEffectValue("audio.heartbeat") or 0
+    local now = CurTime()
+
+    if (heartbeat > 0.01) then
+        _bactaHeartbeatActive = true
+        -- Beat interval: faster at higher intensity (0.4s at max, 1.2s at low)
+        local interval = math.Clamp(1.4 - heartbeat * 1.0, 0.4, 1.4)
+
+        if (now >= _bactaHeartbeatNextBeat) then
+            local vol = math.Clamp(heartbeat * 0.5, 0.1, 0.5)
+            surface.PlaySound("ambient/machines/machine1_hit1.wav")
+            _bactaHeartbeatNextBeat = now + interval
+        end
+    else
+        _bactaHeartbeatActive = false
+    end
+end)

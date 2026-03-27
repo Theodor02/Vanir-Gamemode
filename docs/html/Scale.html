@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: Scale - Skeleton</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Skeleton</h1>
+        <p>Skeleton Documentation</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="functions.html">Functions</a>
+        <a href="modules.html">Modules</a>
+    </nav>
+    <p class="text-muted"><a href="modules.html">Modules</a> / Scale</p>
+
+    <div class="content">
+        <h2>Module: Scale</h2>
+        <p>Total functions: <strong>20</strong></p>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">Unknown</span>
+                </div>
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\background\sh_plugin.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Imperial Comms System - Diegetic Channel Selector -- VGUI panel overlaying the HUD comms area for click-based channel management. -- Toggle open/close via: +ixcomms_menu -- Only two keybinds needed: +ixcomms_talk (PTT), +ixcomms_menu (this panel). ix.comms = ix.comms or {} ix.comms.menuOpen = false -- ═══════════════════════════════════════════════════════════════════════════════ -- STATE -- ═══════════════════════════════════════════════════════════════════════════════ local menuBackdrop = nil -- ═══════════════════════════════════════════════════════════════════════════════ -- THEME (mirrors diagetichud) -- ═══════════════════════════════════════════════════════════════════════════════ local THEME = { background       = Color(0, 0, 0, 165), backgroundStrong = Color(0, 0, 0, 195), text             = Color(240, 240, 240, 255), textMuted        = Color(200, 200, 200, 220), textDark         = Color(155, 155, 155, 200), amber            = Color(228, 175, 42, 255), amberDim         = Color(194, 144, 21, 225), cyan             = Color(84, 168, 255, 255), cyanDim          = Color(84, 168, 255, 195), green            = Color(70, 185, 100, 255), greenDim         = Color(70, 185, 100, 195), yellow           = Color(255, 222, 40, 255), red              = Color(255, 55, 55, 255), redDim           = Color(230, 30, 70, 215), borderGray       = Color(130, 130, 130, 220), borderAmber      = Color(194, 144, 21, 245), borderCyan       = Color(84, 168, 255, 245), borderGreen      = Color(70, 160, 80, 230), } -- ═══════════════════════════════════════════════════════════════════════════════ -- SCALING -- ═══════════════════════════════════════════════════════════════════════════════
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>v</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\comms_sys\cl_comms_menu.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Imperial Diegetic HUD - Client Plugin -- Draws all HUD elements: compass, vitals, weapon, mission status, comms, squad, damage indicators. -- Uses transparent overlays with minimal borders per the Imperial design spec. local PLUGIN = PLUGIN -- ═══════════════════════════════════════════════════════════════════════════════ -- THEME &amp; CONFIG -- ═══════════════════════════════════════════════════════════════════════════════ local THEME = { background = Color(0, 0, 0, 165), backgroundStrong = Color(0, 0, 0, 175), text = Color(240, 240, 240, 255), textMuted = Color(200, 200, 200, 220), textDark = Color(183, 183, 183), amber = Color(228, 175, 42, 255), amberDim = Color(194, 144, 21, 225), gold = Color(201, 158, 63, 255), cyan = Color(84, 168, 255, 255), cyanDim = Color(84, 168, 255, 195), green = Color(70, 185, 100, 255), greenDim = Color(70, 185, 100, 195), yellow = Color(255, 222, 40, 255), red = Color(255, 55, 55, 255), redDim = Color(230, 30, 70, 215), danger = Color(155, 10, 10, 255), borderGray = Color(130, 130, 130, 220), borderAmber = Color(194, 144, 21, 245), borderRed = Color(200, 60, 60, 245), borderCyan = Color(84, 168, 255, 245), borderGreen = Color(70, 160, 80, 230) } -- ═══════════════════════════════════════════════════════════════════════════════ -- SCALING &amp; FONTS -- ═══════════════════════════════════════════════════════════════════════════════
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\diagetichud\cl_plugin.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Terminal Hacking UI -- Diegetic green-phosphor CRT terminal for the hacking minigame. -- Follows the impmainmenu visual language (header bars, Aurebesh labels, outlined frames, -- scanline sweeps, data bars) with a green monochrome terminal palette. -- @module ix.hacking (client) ix.hacking = ix.hacking or {} ix.hacking.UI = ix.hacking.UI or {} -- ===================================================================================== -- THEME  (green phosphor CRT -- mirrors impmainmenu structure) -- ===================================================================================== local THEME = { background   = Color(4, 8, 4, 250),        -- near-black with green tint panel        = Color(8, 14, 8, 240),        -- slightly lighter panel bg frame        = Color(45, 160, 50, 220),     -- green frame outline frameSoft    = Color(45, 160, 50, 120),     -- softer green (header bars) accent       = Color(55, 190, 60, 255),     -- bright green accent accentSoft   = Color(55, 190, 60, 180),     -- softer bright green accentDim    = Color(30, 100, 35, 120),     -- dim green (diagnostic text) text         = Color(55, 200, 65, 245),     -- primary green text (phosphor) textMuted    = Color(40, 130, 45, 160),     -- dimmed green text textBright   = Color(120, 255, 130, 255),   -- bright flash green success      = Color(80, 220, 90, 255),     -- success highlight warning      = Color(200, 200, 50, 255),    -- amber warning danger       = Color(200, 55, 55, 255),     -- red danger buttonBg     = Color(6, 12, 6, 255),        -- dark button bg buttonHover  = Color(14, 24, 14, 220),      -- hovered button bg border       = Color(45, 160, 50, 60),      -- faint green border gridChar     = Color(55, 200, 65, 230),     -- grid character colour gridAddr     = Color(40, 140, 45, 180),     -- grid address colour (dimmer) logText      = Color(50, 180, 55, 200),     -- log entry colour attemptFull  = Color(55, 190, 60, 255),     -- filled attempt block attemptEmpty = Color(15, 35, 15, 180),      -- empty attempt block consumed     = Color(25, 60, 28, 120),       -- consumed token text (dimmed) } local SOUND_HOVER = &quot;everfall/miscellaneous/ux/navigation/navigation_tab_01.mp3&quot; local SOUND_CLICK = &quot;everfall/miscellaneous/ux/navigation/navigation_activate_01.mp3&quot; local SOUND_ENTER = &quot;everfall/miscellaneous/ux/navigation/navigation_matchmaking_01.mp3&quot; local SOUND_ERROR = &quot;everfall/miscellaneous/ux/navigation/navigation_error_01.mp3&quot; -- ===================================================================================== -- SCALING -- =====================================================================================
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\hackingsys\cl_terminal.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Client-Side Active Effect HUD -- Diegetic medical terminal overlay for active biochemical effects. -- Styled to match the compound sequencer terminal aesthetic with -- Aurebesh readouts and animated medical scan lines. -- @module ix.bacta (client) -- ═══════════════════════════════════════════════════════════════════════════════ -- HUD THEME (consistent with sequencer terminal) -- ═══════════════════════════════════════════════════════════════════════════════ local HUD = { bg          = Color(6, 8, 10, 200), headerBg    = Color(40, 180, 160, 90), panel       = Color(10, 12, 16, 210), accent      = Color(40, 200, 180, 255), accentSoft  = Color(40, 200, 180, 120), text        = Color(210, 225, 220, 255), textMuted   = Color(140, 160, 155, 160), textBright  = Color(240, 255, 250, 255), positive    = Color(60, 200, 100, 255), negative    = Color(200, 55, 55, 255), tail        = Color(200, 120, 60, 255), barBg       = Color(16, 20, 26, 220), border      = Color(40, 180, 160, 50), } local HUD_WIDTH  = 220 local HUD_HEADER = 24 local HUD_ENTRY  = 40 local HUD_MARGIN = 12
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\medicalsys\cl_hud.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Compound Sequencer Interface (VGUI) -- Diegetic medical terminal UI for exploratory sequencing and batch fabrication. -- Styled to match the impmainmenu Imperial terminal aesthetic with a medical/science theme. -- @module ix.bacta (client) -- ═══════════════════════════════════════════════════════════════════════════════ -- THEME -- ═══════════════════════════════════════════════════════════════════════════════ local THEME = { background  = Color(6, 8, 10, 255), panel       = Color(12, 14, 18, 240), frame       = Color(40, 180, 160, 220), frameSoft   = Color(40, 180, 160, 100), accent      = Color(40, 200, 180, 255), accentSoft  = Color(40, 200, 180, 180), accentDim   = Color(30, 140, 120, 120), text        = Color(210, 225, 220, 255), textMuted   = Color(140, 160, 155, 180), textBright  = Color(240, 255, 250, 255), success     = Color(60, 200, 100, 255), warning     = Color(220, 180, 50, 255), danger      = Color(200, 55, 55, 255), input       = Color(16, 18, 22, 255), buttonBg    = Color(14, 16, 20, 255), buttonHover = Color(22, 26, 32, 220), border      = Color(40, 180, 160, 60), slotEmpty   = Color(16, 20, 26, 255), slotFilled  = Color(20, 30, 36, 255), tail        = Color(200, 120, 60, 255), metaboliser = Color(100, 180, 220, 255), tuning      = Color(180, 140, 230, 255), proven      = Color(60, 200, 100, 255), tested      = Color(220, 180, 50, 255), experimental= Color(200, 100, 100, 255), } local SOUND_HOVER = &quot;everfall/miscellaneous/ux/navigation/navigation_tab_01.mp3&quot; local SOUND_CLICK = &quot;everfall/miscellaneous/ux/navigation/navigation_activate_01.mp3&quot; local SOUND_ERROR = &quot;everfall/miscellaneous/ux/navigation/navigation_error_01.mp3&quot; local SOUND_SYNTH = &quot;everfall/miscellaneous/ux/navigation/navigation_activate_01.mp3&quot; -- ═══════════════════════════════════════════════════════════════════════════════ -- FONTS -- ═══════════════════════════════════════════════════════════════════════════════
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\medicalsys\cl_sequencer.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Smart Disease — Client-Side Logic -- Handles disease state synchronisation, visual effects, notifications, -- the body status HUD display, and immersive client-side events -- (heartbeat, phantom voices, clone hallucinations, etc.). -- @module ix.disease (client) local PLUGIN = PLUGIN -- ═══════════════════════════════════════════════════════════════════════════════ -- CLIENT STATE -- ═══════════════════════════════════════════════════════════════════════════════ ix.disease = ix.disease or {} ix.disease._clientDiseases = ix.disease._clientDiseases or {} ix.disease._activeVisuals = ix.disease._activeVisuals or {} ix.disease._activeVisualExpiry = ix.disease._activeVisualExpiry or 0 ix.disease._shadowStalkers = ix.disease._shadowStalkers or {} -- Client event state ix.disease._heartbeat = ix.disease._heartbeat or nil        -- active heartbeat sound ix.disease._heartbeatExpiry = 0 ix.disease._phantomSounds = ix.disease._phantomSounds or {}  -- active phantom sound entries ix.disease._cloneModels = ix.disease._cloneModels or {}      -- active clone hallucination models ix.disease._tinnitus = nil                                    -- active tinnitus sound ix.disease._tinnitusExpiry = 0 ix.disease._screenFlash = 0                                   -- screen flash end time ix.disease._intrusiveThought = nil                            -- current intrusive thought text ix.disease._intrusiveThoughtExpiry = 0 ix.disease._fleetingThoughts = ix.disease._fleetingThoughts or {} -- active fleeting thoughts (sliding animation) -- Water warp material (pre-cached) local matWaterWarp = Material(&quot;effects/water_warp01&quot;) local matWhite = Material(&quot;vgui/white&quot;) -- ═══════════════════════════════════════════════════════════════════════════════ -- HUD THEME (matching medicalsys / diegetic style) -- ═══════════════════════════════════════════════════════════════════════════════ local THEME = { bg          = Color(6, 8, 10, 200), headerBg    = Color(180, 40, 40, 90), panel       = Color(10, 12, 16, 210), accent      = Color(200, 55, 55, 255), accentSoft  = Color(200, 55, 55, 120), text        = Color(210, 220, 215, 255), textMuted   = Color(140, 155, 150, 160), textBright  = Color(255, 240, 240, 255), positive    = Color(60, 200, 100, 255), negative    = Color(200, 55, 55, 255), warning     = Color(255, 180, 50, 255), barBg       = Color(16, 20, 26, 220), border      = Color(180, 40, 40, 50), } local HUD_WIDTH = 200 local HUD_HEADER = 22 local HUD_ENTRY = 32 local HUD_MARGIN = 12
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>v</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\smartdisease\cl_plugin.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Client-Side Force System -- Handles force whisper rendering (three alignment styles) and -- disables the LSCS inventory menu / desktop icon since the -- unlock tree replaces LSCS&#x27;s built-in inventory management. -- @module theos-forcesystem.cl_forcesystem if not CLIENT then return end -- ───────────────────────────────────────────── -- Disable LSCS menu UI (client-side) -- ───────────────────────────────────────────── timer.Simple(0, function() -- Remove the LSCS menu from the spawn menu / desktop window list list.Set(&quot;DesktopWindows&quot;, &quot;LSCSMenu&quot;, nil) -- Stub the concommand so it does nothing concommand.Remove(&quot;lscs_openmenu&quot;) -- Stub the global open function if LSCS then LSCS.OpenMenu = function() end end end) -- ───────────────────────────────────────────── -- Force Whisper Fonts -- ─────────────────────────────────────────────
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>px</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\theos-forcesystem\cl_forcesystem.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Force Management Tab Panel -- Integrates into the skeleton tab menu, providing force-sensitive players -- with stance/power management, keybind configuration, and LSCS client settings. -- Replaces the disabled LSCS menu for all features except inventory and lightsaber construction. -- -- (depends on: impmainmenu plugin, LSCS addon, theos-forcesystem) -- @module theos-forcesystem.derma.cl_force_tab if not CLIENT then return end -- ───────────────────────────────────────────── -- Theme (mirrors impmainmenu THEME) -- ───────────────────────────────────────────── local THEME = { background = Color(10, 10, 10, 240), frame = Color(191, 148, 53, 220), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 245), textMuted = Color(205, 205, 205, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 200), danger = Color(180, 60, 60, 255), ready = Color(60, 170, 90, 255), buttonBg = Color(16, 16, 16, 220), buttonBgHover = Color(26, 26, 26, 230), panelBg = Color(0, 0, 0, 200), headerBg = Color(191, 148, 53, 120), equipped = Color(60, 170, 90, 255), unequipped = Color(120, 120, 120, 180), } local SOUND_HOVER = &quot;everfall/miscellaneous/ux/navigation/navigation_tab_01.mp3&quot; local SOUND_CLICK = &quot;everfall/miscellaneous/ux/navigation/navigation_activate_01.mp3&quot;
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\theos-forcesystem\derma\cl_force_tab.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Help &amp; Info Panel -- Describes all unit and squad roles, permissions, and system overview. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), panelBg = Color(12, 12, 12, 255), ready = Color(60, 170, 90, 255), danger = Color(180, 60, 60, 255), supply = Color(80, 140, 200, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_help_panel.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Cross-Faction Intel Panel -- Allows authorized players to view other factions&#x27; unit overview data. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), panelBg = Color(12, 12, 12, 255), rowEven = Color(14, 14, 14, 255), rowOdd = Color(18, 18, 18, 255), rowHover = Color(24, 22, 14, 255), danger = Color(180, 60, 60, 255), ready = Color(60, 170, 90, 255), supply = Color(80, 140, 200, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_intel_panel.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Invite Popup -- A notification popup that appears when the player receives an invite. local THEME = { background = Color(10, 10, 10, 245), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), accept = Color(60, 170, 90, 255), acceptHover = Color(80, 200, 110, 255), decline = Color(180, 60, 60, 255), declineHover = Color(200, 80, 80, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_invite_popup.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Loadout Panel -- Displays current class info, available classes, loadout items and costs, gear-up button. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), panelBg = Color(12, 12, 12, 255), rowEven = Color(14, 14, 14, 255), rowOdd = Color(18, 18, 18, 255), rowHover = Color(24, 22, 14, 255), danger = Color(180, 60, 60, 255), ready = Color(60, 170, 90, 255), supply = Color(80, 140, 200, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_loadout_panel.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Log Panel -- Enhanced filterable, scrollable activity log viewer with search, time range, -- character filter, expandable detail rows, and copy-to-clipboard. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), panelBg = Color(12, 12, 12, 255), rowEven = Color(14, 14, 14, 255), rowOdd = Color(18, 18, 18, 255), rowHover = Color(24, 22, 14, 255), rowExpanded = Color(20, 18, 10, 255), danger = Color(180, 60, 60, 255), ready = Color(60, 170, 90, 255), warn = Color(200, 170, 60, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_log_panel.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Mission Panel -- Displays active and historical missions, with creation dialog for officers/squad leaders. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), panelBg = Color(12, 12, 12, 255), rowEven = Color(14, 14, 14, 255), rowOdd = Color(18, 18, 18, 255), rowHover = Color(24, 22, 14, 255), danger = Color(180, 60, 60, 255), dangerHover = Color(200, 80, 80, 255), ready = Color(60, 170, 90, 255), warn = Color(200, 170, 60, 255), supply = Color(80, 140, 200, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_mission_panel.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Service Record Panel -- Popup panel showing a character&#x27;s commendations, promotion history, and service info. -- Opened via roster right-click → &quot;View Service Record&quot;. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), panelBg = Color(12, 12, 12, 255), rowEven = Color(14, 14, 14, 255), rowOdd = Color(18, 18, 18, 255), rowHover = Color(24, 22, 14, 255), danger = Color(180, 60, 60, 255), ready = Color(60, 170, 90, 255), warn = Color(200, 170, 60, 255), supply = Color(80, 140, 200, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_service_record.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Squad Management Panel -- Squad cards, create/leave/disband controls, member list per squad. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), panelBg = Color(12, 12, 12, 255), danger = Color(180, 60, 60, 255), dangerHover = Color(200, 80, 80, 255), ready = Color(60, 170, 90, 255), rowEven = Color(14, 14, 14, 255), rowOdd = Color(18, 18, 18, 255), rowHover = Color(24, 22, 14, 255), ownSquadBg = Color(30, 26, 12, 255), ownSquadBorder = Color(191, 148, 53, 180) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_squad_panel.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Unit Overview Sidebar -- Shows unit info, current squad, and loadout summary in the left sidebar. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), danger = Color(180, 60, 60, 255), ready = Color(60, 170, 90, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_unit_overview.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Unit Roster Panel -- Sortable member table showing all unit members. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), rowEven = Color(14, 14, 14, 255), rowOdd = Color(18, 18, 18, 255), rowHover = Color(24, 22, 14, 255), danger = Color(180, 60, 60, 255), ready = Color(60, 170, 90, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_unit_roster.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">Scale</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                USMS Tab Menu Registration &amp; Main Panel Container -- Registers the &quot;DEPLOYMENT&quot; tab in the Helix tab menu. local THEME = { background = Color(10, 10, 10, 255), frame = Color(191, 148, 53, 255), frameSoft = Color(191, 148, 53, 120), text = Color(235, 235, 235, 255), textMuted = Color(168, 168, 168, 140), accent = Color(191, 148, 53, 255), accentSoft = Color(191, 148, 53, 220), buttonBg = Color(16, 16, 16, 255), buttonBgHover = Color(26, 26, 26, 255), rowEven = Color(14, 14, 14, 255), rowOdd = Color(18, 18, 18, 255), rowHover = Color(24, 22, 14, 255), danger = Color(180, 60, 60, 255), ready = Color(60, 170, 90, 255) }
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>value</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\usms\derma\cl_usms_tab.lua</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Generated on 2026-03-10 20:48:19 | Skeleton
+    </footer>
+</div>
+</body>
+</html>

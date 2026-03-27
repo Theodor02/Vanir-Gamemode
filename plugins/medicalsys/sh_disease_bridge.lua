@@ -2146,8 +2146,8 @@ if (SERVER) then
             end
         else
             -- Mild immune reaction symptoms instead of full infection
-            ix.bacta.ApplyTempVar(client, "bactaNausea", 0.20, eff.duration or 5)
-            ix.bacta.ApplyTempVar(client, "bactaFatigue", 0.10, eff.duration or 5)
+            ix.bacta.ApplyTempDisplay(client, "bactaNausea", 0.20, eff.duration or 5)
+            ix.bacta.ApplyTempDisplay(client, "bactaFatigue", 0.10, eff.duration or 5)
             client:Notify("A mild immune reaction passes through you.")
         end
 
@@ -2263,27 +2263,42 @@ if (SERVER) then
     ix.bacta.effectTypes["disease_symptom_fever"].apply = function(client, eff)
         local magnitude = eff.magnitude or 1.0
         local duration = eff.duration or 30
-        
-        -- Apply fever through temp vars
-        ix.bacta.ApplyTempVar(client, "bactaFever", magnitude * 0.3, duration)
-        ix.bacta.ApplyTempVar(client, "bactaFatigue", magnitude * 0.2, duration)
-        
-        -- Visual effect
+
+        local PE   = ix.playerEffects
+        local MULT = PE.MOD_MULT
+
+        ix.bacta.ApplyTempDisplay(client, "bactaFever", magnitude * 0.3, duration)
+        ix.bacta.ApplyTempDisplay(client, "bactaFatigue", magnitude * 0.2, duration)
+
+        -- Fatigue as speed debuff
+        local fatigueMult = 1.0 - (magnitude * 0.2)
+        client:AddEffect("speed.run", "bactaFever", MULT, fatigueMult, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_symptom"},
+        })
+        client:AddEffect("speed.walk", "bactaFever", MULT, fatigueMult, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+        })
+
         if (magnitude > 1.0) then
             client:Notify("Intense heat surges through your body — you're burning up.")
         else
             client:Notify("You feel feverish and warm.")
         end
-        
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["disease_symptom_cough"].apply = function(client, eff)
         local duration = eff.duration or 30
-        
-        ix.bacta.ApplyTempVar(client, "bactaCough", 1.0, duration)
-        ix.bacta.ApplyTempVar(client, "bactaBreathing", 0.25, duration)
-        
+
+        ix.bacta.ApplyTempDisplay(client, "bactaCough", 1.0, duration)
+        ix.bacta.ApplyTempDisplay(client, "bactaBreathing", 0.25, duration)
+
         client:Notify("Your airways constrict — coughing begins.")
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -2291,8 +2306,8 @@ if (SERVER) then
     ix.bacta.effectTypes["disease_symptom_hallucination"].apply = function(client, eff)
         local magnitude = eff.magnitude or 1.0
         local duration = eff.duration or 30
-        
-        ix.bacta.ApplyTempVar(client, "bactaHallucination", magnitude, duration)
+
+        ix.bacta.ApplyTempDisplay(client, "bactaHallucination", magnitude, duration)
         
         -- Trigger visual distortion effects
         if (magnitude > 1.0) then
@@ -2312,13 +2327,35 @@ if (SERVER) then
     ix.bacta.effectTypes["disease_symptom_pain"].apply = function(client, eff)
         local magnitude = eff.magnitude or 1.0
         local duration = eff.duration or 30
-        
-        ix.bacta.ApplyTempVar(client, "bactaPain", magnitude, duration)
-        
-        -- Apply movement penalty
+
+        local PE   = ix.playerEffects
+        local MULT = PE.MOD_MULT
+
+        ix.bacta.ApplyTempDisplay(client, "bactaPain", magnitude, duration)
+
+        -- Movement penalty via player_effects
         local speedPenalty = math.Clamp(magnitude * 0.15, 0, 0.4)
-        ix.bacta.ApplyTempVar(client, "bactaSpeed", -speedPenalty, duration)
-        
+        local speedMult = 1.0 - speedPenalty
+        client:AddEffect("speed.run", "bactaPain", MULT, speedMult, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_symptom"},
+        })
+        client:AddEffect("speed.walk", "bactaPain", MULT, speedMult, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+        })
+
+        -- Pain amplification
+        local painAmp = 1.0 + (magnitude * 0.15)
+        client:AddEffect("damage.taken", "bactaPain", MULT, painAmp, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+        })
+
         if (magnitude > 1.5) then
             client:Notify("Excruciating pain tears through every nerve — you can barely move.")
         elseif (magnitude > 1.0) then
@@ -2326,17 +2363,33 @@ if (SERVER) then
         else
             client:Notify("You feel a dull, persistent ache.")
         end
-        
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["disease_symptom_weakness"].apply = function(client, eff)
         local magnitude = eff.magnitude or 1.0
         local duration = eff.duration or 30
-        
-        ix.bacta.ApplyTempVar(client, "bactaWeakness", magnitude, duration)
-        ix.bacta.ApplyTempVar(client, "bactaFatigue", magnitude * 0.3, duration)
-        
+
+        local PE   = ix.playerEffects
+        local MULT = PE.MOD_MULT
+
+        ix.bacta.ApplyTempDisplay(client, "bactaWeakness", magnitude, duration)
+
+        -- Fatigue as speed debuff
+        local fatigueMult = 1.0 - (magnitude * 0.3)
+        client:AddEffect("speed.run", "bactaWeakness", MULT, fatigueMult, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_symptom"},
+        })
+        client:AddEffect("speed.walk", "bactaWeakness", MULT, fatigueMult, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+        })
+
         client:Notify("Your muscles feel weak and unresponsive.")
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -2344,24 +2397,43 @@ if (SERVER) then
     ix.bacta.effectTypes["disease_symptom_confusion"].apply = function(client, eff)
         local magnitude = eff.magnitude or 1.0
         local duration = eff.duration or 30
-        
-        ix.bacta.ApplyTempVar(client, "bactaConfusion", magnitude, duration)
-        
-        -- Could trigger HUD distortion, inverted controls, etc.
+
+        local PE   = ix.playerEffects
+        local MULT = PE.MOD_MULT
+
+        ix.bacta.ApplyTempDisplay(client, "bactaConfusion", magnitude, duration)
+
+        -- Focus impairment
+        local focusMult = 1.0 - (magnitude * 0.25)
+        client:AddEffect("combat.focus", "bactaConfusion", MULT, focusMult, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_symptom"},
+        })
+
         if (magnitude > 1.0) then
             client:Notify("Your thoughts scatter like leaves — you can't remember where you are.")
         else
             client:Notify("Your mind feels clouded and slow.")
         end
-        
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["disease_symptom_nausea"].apply = function(client, eff)
         local duration = eff.duration or 30
-        
-        ix.bacta.ApplyTempVar(client, "bactaNausea", 1.0, duration)
-        
+
+        local PE  = ix.playerEffects
+        local ADD = PE.MOD_ADD
+
+        client:AddEffect("visual.nausea", "bactaDisNausea", ADD, 1.0, {
+            duration = duration,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_symptom"},
+        })
+
         client:Notify("Your stomach churns violently — you feel like vomiting.")
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -2369,22 +2441,21 @@ if (SERVER) then
     ix.bacta.effectTypes["immune_suppress"].apply = function(client, eff)
         local magnitude = eff.magnitude or 1.0
         local duration = eff.duration or 60
-        
-        ix.bacta.ApplyTempVar(client, "bactaImmuneSuppression", magnitude, duration)
-        
+
+        ix.bacta.ApplyTempDisplay(client, "bactaImmuneSuppression", magnitude, duration)
+
         -- Make character more vulnerable to diseases
         local char = client:GetCharacter()
         if (char and ix.bacta.IsDiseaseSystemAvailable()) then
-            -- Could modify disease resistance/acquisition rates here
             char:SetData("bactaImmuneWeakness", magnitude, duration)
         end
-        
+
         if (magnitude > 1.0) then
             client:Notify("Your immune system collapses — you are defenseless against disease.")
         else
             client:Notify("Your immune system weakens.")
         end
-        
+
         ix.bacta.NotifyEffect(client, eff)
     end
 

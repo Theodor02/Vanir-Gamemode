@@ -424,7 +424,6 @@ concommand.Add("+ixcomms_menu", function()
 end)
 
 concommand.Add("-ixcomms_menu", function()
-	-- Toggle on key press, not release
 end)
 
 -- ═══════════════════════════════════════════════════════════════════════════════

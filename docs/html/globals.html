@@ -1,0 +1,4352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Globals - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li class="active"><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    <article><div class="wrapper"><h2>Global Functions</h2>
+<div class="function-block" id="AdministerCompound">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">AdministerCompound(instance, effects, administering)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/base/sh_synth.lua:106</span>
+    </div>
+    <div class="function-desc"><p>Internal: Apply compound to target and handle bookkeeping.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">instance</td><td class="param-type"><span class="type">item table The item</span></td><td></td></tr><tr><td class="param-name">effects</td><td class="param-type"><span class="type">target Entity The target player receiving</span></td><td></td></tr><tr><td class="param-name">administering</td><td class="param-type"><span class="type">client Entity The player</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool Whether to consume the item</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ApplyCatalyst">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ApplyCatalyst(ID, array, reference)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:298</span>
+    </div>
+    <div class="function-desc"><p>Apply a catalyst strand&#x27;s global effect to the effect array.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">strandID string The catalyst strand</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr><tr><td class="param-name">reference</td><td class="param-type"><span class="type">stabilityRef table Mutable stability</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ApplyChainDepthDegradation">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ApplyChainDepthDegradation(array, resolution, table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:65</span>
+    </div>
+    <div class="function-desc"><p>Apply chain depth degradation modifier.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr><tr><td class="param-name">resolution</td><td class="param-type"><span class="type">chainDepth number Chain depth from cascade</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">cfg table Config</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ApplyDirectionalModifier">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ApplyDirectionalModifier(table, array, with)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_adjacency.lua:125</span>
+    </div>
+    <div class="function-desc"><p>Apply a single directional modifier to the effects array and stability.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">table</td><td class="param-type"><span class="type">modifier table The modifier</span></td><td>(magnitude_mult, stability, etc.)</td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr><tr><td class="param-name">with</td><td class="param-type"><span class="type">stabilityRef table Table</span></td><td>.value field</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ApplyEffectValue">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ApplyEffectValue(ply, effectType)</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:288</span>
+    </div>
+    <div class="function-desc"><p>Invoke the effect type&#x27;s apply/unapply callback with the current value.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">effectType</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ApplyFabricationVariance">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ApplyFabricationVariance(array, table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:31</span>
+    </div>
+    <div class="function-desc"><p>Apply per-item fabrication variance to an effects array.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Effects</span></td><td>(will be deep-copied)</td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">cfg table Config</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Variance-applied effects copy</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ApplyModifier">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ApplyModifier(ID, array, flags)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:432</span>
+    </div>
+    <div class="function-desc"><p>Apply modifier strand effects.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">strandID string Modifier strand</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr><tr><td class="param-name">flags</td><td class="param-type"><span class="type">flags table Synthesis</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ApplyStabiliserSpecial">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ApplyStabiliserSpecial(ID, array, flags)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:376</span>
+    </div>
+    <div class="function-desc"><p>Apply stabiliser special effects.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">strandID string Stabiliser strand</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr><tr><td class="param-name">flags</td><td class="param-type"><span class="type">flags table Synthesis</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ApplyTuningStrands">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ApplyTuningStrands(array, array, flags, modification)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:490</span>
+    </div>
+    <div class="function-desc"><p>Apply tuning strand effects to the resolved effect array.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr><tr><td class="param-name">flags</td><td class="param-type"><span class="type">flags table Synthesis</span></td><td></td></tr><tr><td class="param-name">modification</td><td class="param-type"><span class="type">cascadeResult table|nil Cascade result for tail</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="AreStrandsAdjacent">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">AreStrandsAdjacent(array, ID, ID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:1449</span>
+    </div>
+    <div class="function-desc"><p>Check if two strand IDs are adjacent in the sequence (either order).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr><tr><td class="param-name">ID</td><td class="param-type"><span class="type">a string First strand</span></td><td></td></tr><tr><td class="param-name">ID</td><td class="param-type"><span class="type">b string Second strand</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="AutoAssignToFactionUnit">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">AutoAssignToFactionUnit(number, Character)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:29</span>
+    </div>
+    <div class="function-desc"><p>Auto-assign a character to their faction&#x27;s unit if one exists.
+If they are in a different faction&#x27;s unit, transfer them.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">charID</span></td><td></td></tr><tr><td class="param-name">Character</td><td class="param-type"><span class="type">char</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="BroadcastSound">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">BroadcastSound(position, path, 0, value)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:50</span>
+    </div>
+    <div class="function-desc"><p>Broadcast a sound to nearby players.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">position</td><td class="param-type"><span class="type">origin Vector World</span></td><td></td></tr><tr><td class="param-name">path</td><td class="param-type"><span class="type">soundPath string Sound file</span></td><td></td></tr><tr><td class="param-name">0</td><td class="param-type"><span class="type">volume number</span></td><td>-1</td></tr><tr><td class="param-name">value</td><td class="param-type"><span class="type">pitch number Pitch</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="BuildDetailString">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">BuildDetailString(entry)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_log_panel.lua:74</span>
+    </div>
+    <div class="function-desc"><p>Build a detail string from a log entry&#x27;s data table.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">entry</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="BuildTailQueue">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">BuildTailQueue(array)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:13</span>
+    </div>
+    <div class="function-desc"><p>Build the initial tail queue from a sequence.
+Each entry records the source strand, the tail type, and its parameters.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of {source, tail_type, delay, duration, severity, position}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="CalcChainDepth">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">CalcChainDepth(queue)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:134</span>
+    </div>
+    <div class="function-desc"><p>Calculate Chain Depth — total number of tail entries (original + metaboliser-introduced).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">queue</td><td class="param-type"><span class="type">tailQueue table The complete tail</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number Chain depth</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="CalcChainPurity">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">CalcChainPurity(queue)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:141</span>
+    </div>
+    <div class="function-desc"><p>Calculate Chain Purity — ratio of resolved tails to total tails.
+1.0 = every tail was metabolised (or suppressed). 0.0 = no tails resolved.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">queue</td><td class="param-type"><span class="type">tailQueue table The complete tail</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number Chain purity (0.0 to 1.0)</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="CalculatePersistentVisuals">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">CalculatePersistentVisuals()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:117</span>
+    </div>
+    <div class="function-desc"><p>Calculate merged persistent visual config from all active diseases.
+Reads disease definitions (shared code) and calculates combined visuals
+from each disease&#x27;s current stage persistentVisual field.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Merged visual config</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="CreateMemberTooltip">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">CreateMemberTooltip(isOnline)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_unit_roster.lua:38</span>
+    </div>
+    <div class="function-desc"><p>Create a styled tooltip panel for a member data entry.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">isOnline</td><td class="param-type"><span class="type">data table Roster entry with name, role, className, squadID, squadName, squadRole,</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>Panel</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="DegradeCanister">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">DegradeCanister(instance, stabiliser, table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:153</span>
+    </div>
+    <div class="function-desc"><p>Degrade a canister item&#x27;s durability after fabrication.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">instance</td><td class="param-type"><span class="type">canisterItem table Helix item</span></td><td></td></tr><tr><td class="param-name">stabiliser</td><td class="param-type"><span class="type">degradationReduction number Reduction from</span></td><td>/modifier (0-1)</td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">cfg table Config</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number New durability</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>bool Whether canister is still usable</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="DoesPatternMatch">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">DoesPatternMatch(definition, array)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:1464</span>
+    </div>
+    <div class="function-desc"><p>Check if a resonance pattern matches a given sequence.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">definition</td><td class="param-type"><span class="type">pattern table Resonance pattern</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="DrawBar">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawBar(x, y, w, h, fraction, barColor)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:241</span>
+    </div>
+    <div class="function-desc"><p>Uses RNDX for rounded pill-shaped bars when available.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">x</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">y</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">w</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">h</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">fraction</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">barColor</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawCRTOverlay">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawCRTOverlay(w, h, startY, endY)</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/cl_terminal.lua:284</span>
+    </div>
+    <div class="function-desc"><p>Draw CRT scanline sweep + faint grid lines inside a panel region.
+Only used on sub-panels (grid, log), NOT on the parent frame.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">w</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">h</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">startY</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">endY</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawCornerBrackets">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawCornerBrackets(x, y, w, h, color, len)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/cl_treepanel.lua:142</span>
+    </div>
+    <div class="function-desc"><p>Draw corner bracket decorations.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">x</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">y</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">w</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">h</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">color</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">len</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawDataPanelBg">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawDataPanelBg(panel, width, height, headerText, subtitleText)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_sequencer.lua:372</span>
+    </div>
+    <div class="function-desc"><p>Draw a data panel header (dark bg, teal accent header bar, outlined frame).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">panel</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">width</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">height</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">headerText</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">subtitleText</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawDiagnostics">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawDiagnostics(diagLines, x, y, maxH, font, color)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/cl_treepanel.lua:169</span>
+    </div>
+    <div class="function-desc"><p>Draw typewriter aurebesh diagnostic text in the given region.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">diagLines</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">x</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">y</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">maxH</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">font</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">color</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawFromCategory">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">DrawFromCategory(key, draw, exclude)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:16</span>
+    </div>
+    <div class="function-desc"><p>Draw a random subset of strands from a category, excluding a subcategory.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">key</td><td class="param-type"><span class="type">category string Category</span></td><td></td></tr><tr><td class="param-name">draw</td><td class="param-type"><span class="type">count number Number to</span></td><td></td></tr><tr><td class="param-name">exclude</td><td class="param-type"><span class="type">excludeSubcategory string|nil Subcategory to</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of strand IDs</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="DrawFromSubcategory">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">DrawFromSubcategory(key, draw)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:49</span>
+    </div>
+    <div class="function-desc"><p>Draw strands from a subcategory with rarity weighting.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">key</td><td class="param-type"><span class="type">subcategory string Subcategory</span></td><td>(&quot;metaboliser&quot;, &quot;tuning&quot;)</td></tr><tr><td class="param-name">draw</td><td class="param-type"><span class="type">count number Number to attempt to</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of strand IDs</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="DrawMedicalDiagnostics">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawMedicalDiagnostics(panel, width, height, headerText, effectsLines)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_sequencer.lua:242</span>
+    </div>
+    <div class="function-desc"><p>Draw an animated medical diagnostic overlay (Aurebesh readouts, scanlines, data bars).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">panel</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">width</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">height</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">headerText</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">effectsLines</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawPanel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawPanel(x, y, w, h, borderColor, bgAlpha)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:217</span>
+    </div>
+    <div class="function-desc"><p>Uses RNDX for GPU-accelerated rounded corners when available.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">x</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">y</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">w</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">h</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">borderColor</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">bgAlpha</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawPanelFrame">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawPanelFrame(w, h, headerH, headerText, aurebeshText)</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/cl_terminal.lua:256</span>
+    </div>
+    <div class="function-desc"><p>Draw the standard sub-panel frame: dark bg, frameSoft header bar, outline.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">w</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">h</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">headerH</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">headerText</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">aurebeshText</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawPreviewBox">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawPreviewBox(x, y, text, color)</code>
+            
+        </div>
+        <span class="file-ref">plugins/radio_chatbox/derma/cl_chatbox.lua:944</span>
+    </div>
+    <div class="function-desc"><p>Draws a single Imperial-styled preview argument box and returns its width.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">x</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">y</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">text</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">color</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawScanline">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawScanline(x, y, w, regionH, color)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/cl_treepanel.lua:162</span>
+    </div>
+    <div class="function-desc"><p>Draw faint scanline sweep.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">x</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">y</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">w</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">regionH</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">color</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawShadowText">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawShadowText(text, font, x, y, color, alignX, alignY)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:195</span>
+    </div>
+    <div class="function-desc"><p>Draw text with double-layered shadow for readability over any background.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">text</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">font</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">x</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">y</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">color</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">alignX</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">alignY</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawStatusBars">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawStatusBars(x, y, w)</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/cl_terminal.lua:314</span>
+    </div>
+    <div class="function-desc"><p>Draw status-aware data bars. Bar fills reflect actual game state.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">x</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">y</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">w</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="DrawVignette">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">DrawVignette(w, h)</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/cl_terminal.lua:349</span>
+    </div>
+    <div class="function-desc"><p>Draw a screen-edge vignette (diegetic CRT curvature hint).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">w</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">h</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="GetVitalColor">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">GetVitalColor(fraction)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:271</span>
+    </div>
+    <div class="function-desc"><p>Get color for a health-like value (gold &gt; yellow &gt; red).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">fraction</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="HasDiseaseCureStrands">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">HasDiseaseCureStrands(array)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:2600</span>
+    </div>
+    <div class="function-desc"><p>Check if a sequence contains any disease cure/treat strands.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="HasDiseaseStrands">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">HasDiseaseStrands(array)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:2579</span>
+    </div>
+    <div class="function-desc"><p>Check if a sequence contains any disease-related strands.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="HasTailSuppressor">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">HasTailSuppressor(array)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:117</span>
+    </div>
+    <div class="function-desc"><p>Check if the sequence contains a tail gate suppressor.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="InjectAdverseEffects">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">InjectAdverseEffects(score, array)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:616</span>
+    </div>
+    <div class="function-desc"><p>Inject or amplify adverse effects based on stability score.
+v2.0: Tightened thresholds (clean=90, good=70, minor=50, severe=30).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">score</td><td class="param-type"><span class="type">stability number Current stability</span></td><td></td></tr><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="NotifyPlayer">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">NotifyPlayer(entity, text)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:39</span>
+    </div>
+    <div class="function-desc"><p>Send a notification to a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">entity</td><td class="param-type"><span class="type">client Entity Player</span></td><td></td></tr><tr><td class="param-name">text</td><td class="param-type"><span class="type">message string Notification</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PerformMeAction">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">PerformMeAction(character, text)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:69</span>
+    </div>
+    <div class="function-desc"><p>Perform a /me action for a character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">character</td><td class="param-type"><span class="type">character table Helix</span></td><td></td></tr><tr><td class="param-name">text</td><td class="param-type"><span class="type">action string The action</span></td><td>(without &quot;/me&quot;)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PlayConfigSound">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">PlayConfigSound(key)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:48</span>
+    </div>
+    <div class="function-desc"><p>Play a named config sound.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">key</td><td class="param-type"><span class="type">string</span></td><td>Sound key from ix.comms.config.sounds</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="PlayRandomSound">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">PlayRandomSound(vol)</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:37</span>
+    </div>
+    <div class="function-desc"><p>Play a random variant of a sound from a list.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vol</td><td class="param-type"><span class="type">number</span></td><td>Volume (0-1)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="QueueSync">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">QueueSync(ply, effectType)</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:275</span>
+    </div>
+    <div class="function-desc"><p>Queue an effect sync to be sent at end-of-frame, coalescing duplicates.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">effectType</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="RecordCooldown">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">RecordCooldown(table, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:54</span>
+    </div>
+    <div class="function-desc"><p>Record a cooldown timestamp after a node with a cooldown requirement is unlocked.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">table</td><td class="param-type"><span class="type">character</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="RemoveEffectTimer">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">RemoveEffectTimer(ply, effectType, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:220</span>
+    </div>
+    <div class="function-desc"><p>Remove an existing effect timer.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">effectType</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ResolveCost">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ResolveCost(number, Player, table, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sh_node.lua:4</span>
+    </div>
+    <div class="function-desc"><p>Resolve a cost value that may be a static number or a dynamic function.
+Dynamic costs use the signature: function(client, character, level) -&gt; number
+where level is the NEXT level the player would reach.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">value</span></td><td>|function</td></tr><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">character</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ResolveMetabolisers">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ResolveMetabolisers(array, BuildTailQueue)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:47</span>
+    </div>
+    <div class="function-desc"><p>Resolve metaboliser strands against the tail queue.
+Metabolisers act on the nearest matching tail BEFORE them in sequence.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">sequence table Ordered strand ID</span></td><td></td></tr><tr><td class="param-name">BuildTailQueue</td><td class="param-type"><span class="type">tailQueue table Mutable tail queue from</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of {metaboliserID, resolved_tail, met_tail} for resolved entries</td></tr><tr><td class="param-type"><span class="type">any</span></td><td>table Array of met_tail entries to add to the queue</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="RollCriticalEvent">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">RollCriticalEvent(array, table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:98</span>
+    </div>
+    <div class="function-desc"><p>Roll for a critical batch event and apply if triggered.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">array</td><td class="param-type"><span class="type">effects table Mutable effects</span></td><td>(single item)</td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">cfg table Config</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>string|nil Event type if triggered, nil otherwise</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="SetupEffectTimer">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">SetupEffectTimer(ply, effectType, identifier, duration)</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:211</span>
+    </div>
+    <div class="function-desc"><p>Create a timer that removes a modifier after its duration.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">effectType</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">duration</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="StyleScrollbar">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">StyleScrollbar(scroll)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_sequencer.lua:399</span>
+    </div>
+    <div class="function-desc"><p>Apply styled scrollbar to a DScrollPanel.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">scroll</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="SyncDiseasesToClient">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">SyncDiseasesToClient(object)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:26</span>
+    </div>
+    <div class="function-desc"><p>Sync disease state to the owning client.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="SyncEffect">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">SyncEffect(ply, effectType)</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:226</span>
+    </div>
+    <div class="function-desc"><p>Compress and send the full modifier set for one effect type to the owning client.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">effectType</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="TimerID">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">TimerID(ply, effectType, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:206</span>
+    </div>
+    <div class="function-desc"><p>Build a unique timer identifier for a modifier.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">effectType</td><td class="param-type"><span class="type">any</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="TuningTargetMatches">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">TuningTargetMatches(ID, definition)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:463</span>
+    </div>
+    <div class="function-desc"><p>Check if an effect type matches a tuning target spec.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">effType string Effect type</span></td><td></td></tr><tr><td class="param-name">definition</td><td class="param-type"><span class="type">tune table Tuning effect</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_comms_menu.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Imperial Comms System - Diegetic Channel Selector
+VGUI panel overlaying the HUD comms area for click-based channel management.
+Toggle open/close via: +ixcomms_menu
+Only two keybinds needed: +ixcomms_talk (PTT), +ixcomms_menu (this panel).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Imperial Comms System - Client Plugin
+Handles client-side state, networking, console commands, keybind support,
+audio cue playback, and integration with the diegetic HUD comms panel.
+Primary keybinds: +ixcomms_talk (PTT), +ixcomms_menu (channel selector GUI).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sh_channels.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Imperial Comms System - Default Channel Configuration
+Define your radio channels here. Channels appear in the order they are defined.
+Each channel needs: Name, Talkers (teams), Listeners (teams), GetTalkers (func),
+GetListeners (func), Mutable, and a Color.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sh_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Imperial Comms System - Shared Plugin
+Channel-based voice radio system adapted from helio_radio.
+Integrates with the diegetic HUD for visual feedback.
+No external UI or VManip required - all presentation handled by diagetichud.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Imperial Comms System - Server Plugin
+Handles voice routing via PlayerCanHearPlayersVoice, channel state management,
+transmission broadcasting, and muted-by-default initialization.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Imperial Diegetic HUD - Client Plugin
+Draws all HUD elements: compass, vitals, weapon, mission status, comms, squad, damage indicators.
+Uses transparent overlays with minimal borders per the Imperial design spec.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/sv_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Imperial Diegetic HUD - Server Plugin
+Handles damage direction networking, squad sync timer, and admin test commands.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/effects/sh_default.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Default effect definitions for the terminal hacking system.
+Registered via ix.hacking.Effects.Register().</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/sv_effects.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Server-side effect application logic.
+Weighted random selection and limit tracking for bracket effects.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/sv_generator.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Server-side grid generator.
+Produces a randomised hex-dump grid with placed words, bracket tokens, and junk spans.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/sv_sessions.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Server-side session management.
+Handles starting, ending, word guesses, and token clicks for hacking sessions.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_hud.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Client-Side Active Effect HUD
+Diegetic medical terminal overlay for active biochemical effects.
+Styled to match the compound sequencer terminal aesthetic with
+Aurebesh readouts and animated medical scan lines.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_sequencer.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Compound Sequencer Interface (VGUI)
+Diegetic medical terminal UI for exploratory sequencing and batch fabrication.
+Styled to match the impmainmenu Imperial terminal aesthetic with a medical/science theme.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(base_synth)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/base/sh_synth.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Base Fabricated Compound Item (v2.0/2.1/2.2)
+All synthesised compound items inherit from this base.
+Contains shared use/apply logic, dynamic description, tail summary,
+test credit tracking, and experimental broadcast.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">base_synth</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_aerosol)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_aerosol.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Fabricated Aerosol
+Pressurised aerosol canister for area-effect compound delivery.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_aerosol</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_canister)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_canister.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Formula Canister Item (v2.0/2.1/2.2)
+Physical item that stores a synthesised formula.
+Replaces character-data formula storage with a tangible, tradeable object.
+Tracks durability, test credits, status promotion, and cascade metadata.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_canister</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_capsule)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_capsule.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Fabricated Capsule
+Oral administration compound capsule.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_capsule</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_experimental)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_experimental.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Experimental Compound (v2.0)
+Newly-created compound that hasn&#x27;t been tested on other players.
+When used, broadcasts to nearby players that an experimental compound was administered.
+Inherits all behaviour from base_synth.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_experimental</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_injector)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_injector.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Fabricated Injector
+Auto-injecting compound delivery device. Standard delivery method.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_injector</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_patch)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_patch.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Fabricated Patch
+Transdermal contact-application dermal patch.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_patch</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_proven)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_proven.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Proven Compound (v2.0)
+Compound that has been extensively tested and verified.
+Highest tier of compound — trusted by the medical community.
+Inherits all behaviour from base_synth.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_proven</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_sgc)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_sgc.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Synth-Grade Compound (SGC)
+Raw biochemical feedstock used as the production currency for batch fabrication.
+Players collect these and absorb them into their synthesis balance.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_sgc</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(synth_tested)</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_tested.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Tested Compound (v2.0)
+Compound that has passed the minimum test credit threshold.
+More reliable than experimental — synthesist has gathered usage data.
+Inherits all behaviour from base_synth.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">synth_tested</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_disease_bridge.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Integration Bridge (v3.0)
+Connects the Bacta-Synth Protocol with the Smart Disease System.
+Adds disease-related effect types, reagent strands, adjacency rules,
+and a resonance pattern system for cross-plugin synergy.</p>
+<p>Requires: smartdisease plugin (optional — gracefully degrades when absent).</p>
+<p>═══════════════════════════════════════════════════════════════════════════════
+EXPANDED STRAND LIBRARY (v3.1)
+═══════════════════════════════════════════════════════════════════════════════
+SYMPTOM-SPECIFIC STRANDS (7 strands):
+<ul><li>Pyrogenic Agent (fever), Hallucinogen, Pain Amplifier, Respiratory Inhibitor</li>
+<li>Muscle Inhibitor, Emetic Compound, and more symptom-focused agents</li>
+</ul>
+MID-TIER DISEASE STRANDS (5 strands):
+<ul><li>Space Plague, Neural Parasite, Withering Sickness, Anxiety Inducer</li>
+<li>Toxin Synthesizer Bacteria</li>
+</ul>
+SPECIFIC DISEASE INDUCERS (6 legendary strands):
+<ul><li>Rakghoul Plague, Krytos Virus, Bloodburn Pathogen, Neuroplague</li>
+<li>Cyberia Psychosis, Corellian Plague</li>
+</ul>
+EXTREME/HIGH-RISK COMPOUNDS (3 legendary strands):
+<ul><li>Panacea-Ω (ultimate cure, catastrophically unstable)</li>
+<li>Genetic Mutagen (completely random effects)</li>
+<li>Necrotic Agent (pure damage dealer)</li>
+</ul>
+BIOWEAPON STRANDS (4 strands):
+<ul><li>Multi-Pathogen Carrier, Immune Destroyer, Contagion Enhancer</li>
+<li>Bioweapon Catalyst (inverts cures into diseases)</li>
+</ul>
+NEW EFFECT TYPES (14 types):
+<ul><li>8 symptom effects (fever, cough, hallucination, pain, weakness, confusion, nausea, immune suppression)</li>
+<li>2 bioweapon effects (immune suppression, contagion amplification)</li>
+<li>4 tail effects (necrotic cascade, genetic instability, cascade failure, pathogenic reaction)</li>
+</ul>
+NEW RESONANCE PATTERNS (7 patterns):
+<ul><li>Perfect Bioweapon, Symptom Cascade, Necrotic Plague, Psychotic Break</li>
+<li>Catalyst Inversion, Panacea Miracle, and existing patterns</li>
+</ul>
+TOTAL NEW CONTENT: 25 strands, 14 effect types, 7 resonance patterns</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Effect Type Registry &amp; Application
+Defines all effect types, their metadata, display formatters, and server-side application logic.
+Uses a proper registration system for extensibility.
+v2.2: Adds 6 tail effect types for the Metabolic Cascade system.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_recipes.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Recipe Data Structures &amp; Helpers (v2.0/2.1/2.2)
+Shared recipe validation, cost calculation, and utility functions.
+v2.0: Metaboliser strands count in stabiliser slots.
+v2.1: Tuning strands count in modifier slots (max 2 tuning total).
+v2.2: Cascade summary in recipe/canister data.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Reagent Strand Definitions
+All reagent strand data for the Bacta-Synth Protocol v2.2.
+Strands are the fundamental building blocks of compound sequences.
+Includes tail effects (v2.2), metaboliser strands, and tuning strands.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_adjacency.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Directional Adjacency System (v2.1)
+Extracted from sv_synthesis.lua. Adjacency effects now support directional
+modifiers: forward (A→B) and reverse (B→A) can have different effects.
+Hidden synergies are discoverable only through experimentation.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_cascade.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Metabolic Cascade Resolution (v2.2)
+Chain resolution algorithm for tail effects and metaboliser strands.
+Processes the sequence to determine which tails fire, which are metabolised,
+and computes Chain Depth and Chain Purity metrics.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Server-Side Networking, Formula Registry &amp; Persistence (v2.0/2.1/2.2)
+Handles all net message registration, receiving, character data persistence,
+canister creation, test credit tracking, status promotion, and experimental broadcasts.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Server-Side Batch Fabrication (v2.0/2.1/2.2)
+Handles production of synthesised items from canister formulas.
+v2.0: Fabrication variance, canister degradation, critical batch events.
+v2.1: Chain depth degradation modifier.
+v2.2: Metabolic cascade tail scheduling on compound use.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Server-Side Synthesis Logic (v2.2)
+Core synthesis resolution engine: directional adjacency, catalysts, modifiers,
+tuning strand application, metabolic cascade integration, adverse effect injection,
+and session pool generation with pool influence support.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_api.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Player Effects Registry – Public Registration API
+Provides functions for plugins to register custom effect types
+and define mutual exclusion rules between effect identifiers.</p>
+<p>Usage:
+ix.playerEffects.RegisterEffectType(&quot;my_custom.stat&quot;, {
+name         = &quot;Custom Stat&quot;,
+baseValue    = 1,
+min          = 0,
+max          = 10,
+calcOrder    = &quot;mult_first&quot;,       -- &quot;mult_first&quot; (default) or &quot;add_first&quot;
+modTypes     = {ix.playerEffects.MOD_MULT, ix.playerEffects.MOD_ADD},
+apply        = function(ply, value) end,   -- SERVER: called when value changes
+unapply      = function(ply) end,           -- SERVER: called when all modifiers removed
+calculate    = nil,                          -- optional custom calculation override
+})</p>
+<p>ix.playerEffects.SetExclusive(&quot;poisoned&quot;, &quot;cured&quot;, &quot;priority&quot;)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_effect_types.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Player Effects Registry – Built-in Effect Type Definitions
+Registers all standard effect categories so they are available out of the box.
+Plugins may register additional types via ix.playerEffects.RegisterEffectType().</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Player Effects Registry – Core Plugin
+Unified player stat modifier, buff/debuff, and status effect framework.</p>
+<p>Multiple plugins can safely add/remove modifiers of the same type without
+overwriting one another, and timed effects expire automatically.</p>
+<p>Quick-start (server-side):
+-- 50 % run-speed slow for 5 seconds
+ply:AddEffect(&quot;speed.run&quot;, &quot;my_stun&quot;, ix.playerEffects.MOD_MULT, 0.5, {duration = 5})</p>
+<p>-- +10 % outgoing damage, permanent
+ply:AddEffect(&quot;damage.dealt&quot;, &quot;weapon_skill&quot;, ix.playerEffects.MOD_MULT, 1.1)</p>
+<p>-- Remove a specific modifier
+ply:RemoveEffect(&quot;speed.run&quot;, &quot;my_stun&quot;)</p>
+<p>-- Query from anywhere (shared)
+local mult = ply:GetEffectValue(&quot;damage.dealt&quot;)  -- returns current combined value</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_hooks.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Smart Disease — Client-Side Hooks
+Registers client-side hooks for HUD visibility, visual effect cleanup,
+character change handling, and client event lifecycle management.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Smart Disease — Client-Side Logic
+Handles disease state synchronisation, visual effects, notifications,
+the body status HUD display, and immersive client-side events
+(heartbeat, phantom voices, clone hallucinations, etc.).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_covid.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: COVID-19
+A respiratory viral illness with variable severity.
+Cycles between active and lessened stages until treated with medicine.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_diphtheria.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: Diphtheria
+A bacterial infection of the respiratory tract with progressive organ damage.
+DEADLY if untreated — requires antibiotic medication.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_ebola.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: Ebola (Haemorrhagic Fever)
+A severe viral disease with progressive organ failure and bleeding.
+DEADLY if untreated — requires antiviral medication.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_flu.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: Influenza (Flu)
+A highly contagious viral infection with progressive respiratory symptoms.
+Cycles between active and lessened stages until treated with medicine.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_panic.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: Panic Disorder
+A chronic psychological condition with recurring panic attacks.
+Does NOT self-cure — requires anti-anxiety medication.
+Cycles between buildup and attack phases.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_polio.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: Polio (Poliomyelitis)
+A viral disease causing progressive paralysis.
+DEADLY if untreated — requires antiviral medication.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_sars.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: SARS
+A severe acute respiratory syndrome with high fatality.
+DEADLY if untreated — requires antiviral medication.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_schizophrenia.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: Schizophrenia
+A chronic psychological condition with hallucinations, delusions, and
+disordered thinking. Does NOT self-cure — requires antipsychotic medication.
+Cycles between active psychotic episodes and brief remission periods.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_staph.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: Staphylococcal Infection
+A bacterial skin and systemic infection that cycles between flare-ups and remission.
+Requires antibiotics to fully clear.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/diseases/sh_zombie.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Definition: Zombie Virus
+A fictional viral infection that progressively transforms the host.
+DEADLY if untreated — requires antiviral medication.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(base_medicine)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/base/sh_medicine.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Base Medicine Item
+All medicine and vaccine items inherit from this base.
+Handles consumption logic, overdose tracking, and cure application.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">base_medicine</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(medicine_antianxiety)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/medicine/sh_antianxiety.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Anti-Anxiety Medicine
+Treats psychological anxiety conditions (Panic Disorder).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">medicine_antianxiety</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(medicine_antibiotic)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/medicine/sh_antibiotic.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Antibiotic Medicine
+Treats bacterial diseases (Staph, Diphtheria).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">medicine_antibiotic</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(medicine_antipsychotic)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/medicine/sh_antipsychotic.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Antipsychotic Medicine
+Treats psychological diseases (Schizophrenia).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">medicine_antipsychotic</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(medicine_antiviral)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/medicine/sh_antiviral.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Antiviral Medicine
+Treats viral diseases (Flu, COVID, SARS, Ebola, Polio, Zombie).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">medicine_antiviral</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(vaccine_covid)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/vaccine/sh_vaccine_covid.lua:1</span>
+    </div>
+    <div class="function-desc"><p>COVID-19 Vaccine
+Provides immunity against COVID-19.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vaccine_covid</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(vaccine_diphtheria)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/vaccine/sh_vaccine_diphtheria.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Diphtheria Vaccine
+Provides immunity against Diphtheria.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vaccine_diphtheria</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(vaccine_ebola)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/vaccine/sh_vaccine_ebola.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Ebola Vaccine
+Provides immunity against Ebola Haemorrhagic Fever.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vaccine_ebola</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(vaccine_flu)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/vaccine/sh_vaccine_flu.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Flu Vaccine
+Provides immunity against Influenza.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vaccine_flu</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(vaccine_polio)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/vaccine/sh_vaccine_polio.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Polio Vaccine
+Provides immunity against Poliomyelitis.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vaccine_polio</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(vaccine_sars)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/vaccine/sh_vaccine_sars.lua:1</span>
+    </div>
+    <div class="function-desc"><p>SARS Vaccine
+Provides immunity against SARS.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vaccine_sars</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(vaccine_staph)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/vaccine/sh_vaccine_staph.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Staph Vaccine
+Provides immunity against Staphylococcus.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vaccine_staph</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0(vaccine_zombie)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/vaccine/sh_vaccine_zombie.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Zombie Vaccine
+Provides immunity against the Necroa Virus.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">vaccine_zombie</td><td class="param-type"><span class="type">Item</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/languages/sh_english.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Smart Disease — Language Strings (English)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Disease Registry &amp; Management Library
+Provides the core ix.disease API for registering, infecting, curing, and
+querying diseases. All disease definitions use a declarative meta-registration system.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_symptoms.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Symptom Registry &amp; Application Library
+Provides the ix.symptom API for registering reusable symptoms that can be
+shared across multiple diseases. Symptoms define /me actions, visual effects,
+sounds, and contagion behaviour.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sh_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Smart Disease System — Helix Plugin
+A comprehensive disease, symptom, and medical system for roleplay servers.
+Provides a public API via ix.disease and ix.symptom for extensibility.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_hooks.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Smart Disease — Server-Side Hooks
+Registers all server-side hooks for the disease progression engine,
+transmission, player lifecycle, and movement speed modification.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Smart Disease — Server-Side Logic
+Implements the core disease infection, curing, progression, transmission,
+and symptom application on the server. Overrides the stub functions from
+libs/sh_disease.lua with full implementations.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/cl_forcesystem.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Client-Side Force System
+Handles force whisper rendering (three alignment styles) and
+disables the LSCS inventory menu / desktop icon since the
+unlock tree replaces LSCS&#x27;s built-in inventory management.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/derma/cl_force_tab.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Force Management Tab Panel
+Integrates into the skeleton tab menu, providing force-sensitive players
+with stance/power management, keybind configuration, and LSCS client settings.
+Replaces the disabled LSCS menu for all features except inventory and lightsaber construction.</p>
+<p>(depends on: impmainmenu plugin, LSCS addon, theos-forcesystem)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_crystal.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Crystal Item Base
+A Helix item base for kyber crystals (and other lightsaber
+attachment components). Crystals can be dragged onto a lightsaber
+item to install them into the matching slot.</p>
+<p>Set <code>ITEM.attachmentType</code> to one of the slot types accepted by
+the lightsaber base (&quot;crystal&quot;, &quot;lens&quot;, &quot;cell&quot;, &quot;emitter&quot;, &quot;grip&quot;).</p>
+<p>Crystals installed in a lightsaber are hidden from the inventory
+grid. They reappear when removed from the saber.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_lightsaber.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Lightsaber Item Base
+A Helix item base for lightsaber hilts with a KOTOR 2-style
+attachment/upgrade system. Crystals, lenses, cells, emitters,
+and other components can be installed via drag-drop (combine).</p>
+<p>Equipping a lightsaber syncs its hilt + crystal to LSCS and
+gives the player the weapon_lscs SWEP.</p>
+<p>When an attachment is installed, it is <strong>deleted</strong> and its blueprint
+(uniqueID + data + display info) is stored on the lightsaber.
+When removed, a brand-new item is created from that blueprint.
+This avoids all limbo/restore issues across server restarts.</p>
+<p>Override <code>ITEM.attachmentSlots</code> in subclass items to add or
+change slots. Override <code>ITEM:OnAttachmentChanged()</code> for custom
+behaviour when a part is installed/removed.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sh_force_pool.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Force Pool Bridge
+Monkey-patches LSCS force pool to derive max force from the Helix
+&quot;force&quot; attribute, scaled by <code>forcePoolMultiplier</code> config and
+the player_effects <code>force.pool_max</code> modifier.</p>
+<p>(depends on: LSCS addon Player meta, player_effects plugin)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sh_lscs_effects_bridge.lua:1</span>
+    </div>
+    <div class="function-desc"><p>LSCS → Player Effects Bridge
+Registers LSCS-specific effect types and monkey-patches LSCS functions
+to integrate with the player_effects framework.</p>
+<p>New effect types:
+force.cloak            — Boolean (&gt;0 = cloaked), drives cloak rendering + NoTarget
+force.rebuke           — Fraction (0-1) of incoming damage reflected to attacker
+force.fall_immune      — Boolean (&gt;0 = fall damage suppressed)
+force.saber_damage     — Multiplier on lightsaber hit damage (attacker side)
+force.saber_resistance — Multiplier on lightsaber damage received (victim side)
+force.power_resistance — Multiplier on Force power damage received (victim side)
+force.immunity         — Boolean (&gt;0 = immune to incoming Force powers)
+force.sense            — Tier value (1-4) for Force Sense levels</p>
+<p>Monkey-patches:
+lscsTakeForce        — Applies force.cost modifier to all force drains
+LSCS:ApplyDamage     — Applies force.saber_damage (attacker) + force.saber_resistance (victim)
+lscsSuppressFalldamage — Replaced by force.fall_immune AddEffect
+GetFallDamage        — Checks force.fall_immune
+EntityTakeDamage     — Checks force.rebuke + force.power_resistance
+LSCS:PlayerCanManipulate — Checks force.immunity (replaces force_sense.lua hook)
+LSCS.Force[*].StartUse — Tagged for force power damage detection
+LSCS:PlayerForcePowerThink hooks — Tagged for force power damage detection</p>
+<p>(depends on: player_effects plugin, LSCS addon)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sh_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>The Force — Core Plugin
+Manages Force sensitivity, the LSCS bridge, stamina integration,
+meditation, and the framework for perk-tree-driven power grants.</p>
+<p>Architecture:
+sh_plugin.lua         → config, meditation command, player effects registration, power registry API
+sh_unlocktree.lua     → force power / saber stance unlock tree (unlocktrees plugin)
+sv_forcesystem.lua    → server: force pool scaling, power LSCS sync, spawn hooks
+cl_forcesystem.lua    → client: force whisper rendering + LSCS menu disable
+sh_stamina_bridge.lua → replaces LSCS Block Points with Helix stamina (direct takeover)
+sh_force_pool.lua     → monkey-patch LSCS force pool to derive from Helix &#x27;force&#x27; attribute
+sv_whispers.lua       → server: periodic force whisper dispatch
+sv_lscs_overrides.lua → server: disables LSCS auto-equip, inventory save/restore hooks</p>
+<p>Cross-plugin dependencies (called directly):
+• player_effects   — ix.playerEffects.RegisterEffectType, ply:AddEffect/RemoveEffect/GetEffectValue
+• smartdisease     — ix.disease.HandleClientEvent (intrusive_thought, fleeting_thought) style rendering
+• helix/stamina    — ply:ConsumeStamina, ply:RestoreStamina, GetLocalVar(&quot;stm&quot;), brth netvar
+• LSCS addon       — Player meta: lscsGet/Set Force/MaxForce, lscsAddInventory, etc.
+• LSCS weapon_lscs — SWEP:DrainBP, SWEP:CalcBPRegen, SWEP:GetBlockPoints (melee stamina)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sh_stamina_bridge.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Stamina Takeover
+Makes LSCS weapon_lscs Block Points (BP) read and write directly
+from/to Helix stamina instead of the weapon&#x27;s own NetworkVar pool.</p>
+<p>How it works:
+• GetBlockPoints() → returns Helix stamina scaled to combo&#x27;s MaxBlockPoints
+• DrainBP(amount)  → calls ply:ConsumeStamina(normalized amount)
+• CalcBPRegen()    → disabled (Helix stamina has its own regen system)
+• GetMaxBlockPoints() → unchanged (combo-defined, used for HUD/scaling)</p>
+<p>Effect: sprinting drains the same pool as saber blocking/attacking.
+A tired fighter blocks worse. Guard break = Helix exhaustion.</p>
+<p>(depends on: LSCS weapon_lscs SWEP, helix/plugins/stamina)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sh_unlocktree.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Force Power Unlock Tree
+Registers a full force power / saber stance unlock tree using the
+unlocktrees plugin. Each node grants or revokes an LSCS power via
+ix.force.Grant() / ix.force.Revoke().</p>
+<p>Registration is deferred to InitPostEntity because this plugin
+loads before unlocktrees alphabetically (t &lt; u).</p>
+<p>(depends on: unlocktrees plugin, ix.force API from sh_plugin.lua)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_forcesystem.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Server-Side Force System
+Handles spawn-time LSCS inventory sync from granted powers,
+force pool recalculation, and character lifecycle events.</p>
+<p>(depends on: LSCS addon Player meta, sh_force_pool.lua)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_lscs_overrides.lua:1</span>
+    </div>
+    <div class="function-desc"><p>LSCS Overrides
+Disables LSCS&#x27;s built-in inventory management, auto-equip, menu UI,
+and inventory persistence. The force system plugin replaces all of
+this with the Helix unlock tree and ix.force API.</p>
+<p>Also bridges Helix config options to LSCS server ConVars so that
+admin settings are managed through Helix&#x27;s config UI instead of
+the disabled LSCS admin menu.</p>
+<p>Works by removing LSCS hooks and stubbing functions AFTER LSCS loads.
+Non-destructive — the addon files are not modified.</p>
+<p>(depends on: LSCS addon)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>DEPRECATED: This file is no longer loaded.
+All server-side logic has been split into:
+sv_forcesystem.lua — spawn hooks, LSCS inventory sync
+sv_whispers.lua    — periodic force whisper dispatch
+sh_force_pool.lua  — force pool monkey-patch
+sh_stamina_bridge.lua — bilateral stamina bridge</p>
+<p>This file is kept for reference. It can be safely deleted.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_whispers.lua:1</span>
+    </div>
+    <div class="function-desc"><p>Force Whispers — Server Dispatch
+Periodically checks each Force-sensitive player and sends
+alignment-specific whispers via the ixForceWhisper net string.</p>
+<p>Three whisper tracks exist (dark, light, grey), each with 9 tiers
+keyed to the player&#x27;s &#x27;force&#x27; attribute level (5-100).
+Alignment is read from char:GetData(&quot;forceAlignment&quot;) — when nil
+(early/uncommitted), whispers are drawn randomly from all three tracks.</p>
+<p>The client renders differently per alignment:
+dark  → menacing red glitch text (intrusive style)
+light → warm golden glow (serene style)
+grey  → calm silver drift (contemplative style)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Client-Side State &amp; Net Receivers
+Maintains the client-side cache that derma panels read from.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/commands/sh_admin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Admin Commands
+Superadmin and admin override commands for unit management.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/commands/sh_testing.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Testing Commands
+Development/testing commands that simulate entity interactions.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_help_panel.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Help &amp; Info Panel
+Describes all unit and squad roles, permissions, and system overview.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_intel_panel.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Cross-Faction Intel Panel
+Allows authorized players to view other factions&#x27; unit overview data.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_invite_popup.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Invite Popup
+A notification popup that appears when the player receives an invite.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_loadout_panel.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Loadout Panel
+Displays current class info, available classes, loadout items and costs, gear-up button.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_log_panel.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Log Panel
+Enhanced filterable, scrollable activity log viewer with search, time range,
+character filter, expandable detail rows, and copy-to-clipboard.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_mission_panel.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Mission Panel
+Displays active and historical missions, with creation dialog for officers/squad leaders.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_service_record.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Service Record Panel
+Popup panel showing a character&#x27;s commendations, promotion history, and service info.
+Opened via roster right-click → &quot;View Service Record&quot;.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_squad_panel.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Squad Management Panel
+Squad cards, create/leave/disband controls, member list per squad.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_unit_overview.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Unit Overview Sidebar
+Shows unit info, current squad, and loadout summary in the left sidebar.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_unit_roster.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Unit Roster Panel
+Sortable member table showing all unit members.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/derma/cl_usms_tab.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Tab Menu Registration &amp; Main Panel Container
+Registers the &quot;DEPLOYMENT&quot; tab in the Helix tab menu.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_catalogs.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Equipment Catalog System
+Shared definitions for equipment available through the armory/gear-up system.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_database.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Persistence Layer
+Uses PLUGIN:SetData/GetData (Helix file-based persistence) instead of MySQL tables.
+All data is stored in a single file: data/helix/&lt;schema&gt;/&lt;pluginID&gt;.txt
+Data is auto-saved every 10 minutes and on server shutdown via SaveData hook.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_logging.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Logging System
+Dual-purpose: admin oversight + in-RP intelligence.
+Logs are stored in the plugin data file alongside other USMS data.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Server-Side API
+Full unit/squad/resource/gearup API implementation.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/meta/sh_character.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Character Meta Extensions
+Registers character variables and adds helper methods to the character meta.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_0">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_0()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:1</span>
+    </div>
+    <div class="function-desc"><p>USMS Server Hooks
+Handles plugin lifecycle, character load/unload, SaveData/LoadData, and HUD sync timer.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_10">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_10()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_plugin.lua:11</span>
+    </div>
+    <div class="function-desc"><p>System configuration constants matching the Bacta-Synth Protocol v2.2 GDD.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_10">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_10()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:11</span>
+    </div>
+    <div class="function-desc"><p>Map of item_type to Helix item uniqueID.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_1014">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_1014()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:1015</span>
+    </div>
+    <div class="function-desc"><p>Category display data for UI rendering.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_1049">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_1049()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:1050</span>
+    </div>
+    <div class="function-desc"><p>Subcategory display data for UI rendering.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_105">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_105()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_crystal.lua:106</span>
+    </div>
+    <div class="function-desc"><p>Prevent dropping while installed.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_1066">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_1066()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_strands.lua:1067</span>
+    </div>
+    <div class="function-desc"><p>Pool rarity weights for session pool generation.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_111">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_111()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_networking.lua:112</span>
+    </div>
+    <div class="function-desc"><p>Handle a respec request from the client.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_1187">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_1187()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_effects.lua:1188</span>
+    </div>
+    <div class="function-desc"><p>Active effect tracking for HUD display.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_12">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_12()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_synthesis.lua:13</span>
+    </div>
+    <div class="function-desc"><p>Active synthesis sessions indexed by player entity.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_122">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_122()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:123</span>
+    </div>
+    <div class="function-desc"><p>Log sync.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_136">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_136()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_canister.lua:137</span>
+    </div>
+    <div class="function-desc"><p>Fabricate a batch from this canister.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_146">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_146()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:147</span>
+    </div>
+    <div class="function-desc"><p>Intel sync (cross-faction unit data).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_152">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_152()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/base/sh_synth.lua:153</span>
+    </div>
+    <div class="function-desc"><p>Use the compound on yourself.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_157">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_157()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_canister.lua:158</span>
+    </div>
+    <div class="function-desc"><p>Refine the canister to improve stability.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_16">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_16()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sh_stamina_bridge.lua:17</span>
+    </div>
+    <div class="function-desc"><p>Patch weapon_lscs SWEP table after all weapons are registered.
+Uses timer.Simple(0) to ensure weapon files have loaded.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_16">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_16()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:17</span>
+    </div>
+    <div class="function-desc"><p>Full unit data sync.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_169">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_169()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:170</span>
+    </div>
+    <div class="function-desc"><p>Receive full mission list for the unit.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_17">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_17()</code>
+            
+        </div>
+        <span class="file-ref">plugins/faction_container/faction_containers/sh_faction_containers.lua:18</span>
+    </div>
+    <div class="function-desc"><p>------------------------------------------------|Format|---------------------------------------------------</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_179">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_179()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/base/sh_synth.lua:180</span>
+    </div>
+    <div class="function-desc"><p>Apply the compound to a player you are looking at.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_179">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_179()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_canister.lua:180</span>
+    </div>
+    <div class="function-desc"><p>View the full formula summary.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_18">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_18()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:19</span>
+    </div>
+    <div class="function-desc"><p>Map of compound status to item base class.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_184">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_184()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:185</span>
+    </div>
+    <div class="function-desc"><p>Core voice routing hook. When a talker is on radio, only listeners on</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_185">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_185()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:186</span>
+    </div>
+    <div class="function-desc"><p>their channel hear them (bypassing proximity). Otherwise falls through</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_19">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_19()</code>
+            
+        </div>
+        <span class="file-ref">plugins/faction_container/faction_containers/sh_faction_containers.lua:20</span>
+    </div>
+    <div class="function-desc"><p>------------------------------------------------|Example|--------------------------------------------------</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_19">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_19()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_crystal.lua:20</span>
+    </div>
+    <div class="function-desc"><p>Which lightsaber attachment slot this item fills.
+Must match one of the <code>accepts</code> entries in the lightsaber&#x27;s
+<code>attachmentSlots</code> table. Common types:
+&quot;crystal&quot;, &quot;lens&quot;, &quot;cell&quot;, &quot;emitter&quot;, &quot;grip&quot;</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_19">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_19()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_lscs_overrides.lua:20</span>
+    </div>
+    <div class="function-desc"><p>Defer until next tick to ensure LSCS hooks are registered first.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_190">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_190()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/items/synth/sh_synth_canister.lua:191</span>
+    </div>
+    <div class="function-desc"><p>Transfer ownership (drop the canister — default Helix behaviour).
+The canister is a normal item and can be dropped/traded.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_190">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_190()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:191</span>
+    </div>
+    <div class="function-desc"><p>Receive a service record for a specific character.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_200">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_200()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:201</span>
+    </div>
+    <div class="function-desc"><p>Receive full disease state sync from server.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_205">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_205()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:206</span>
+    </div>
+    <div class="function-desc"><p>Receive a notification message.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_215">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_215()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:216</span>
+    </div>
+    <div class="function-desc"><p>Draw a bordered panel with transparent background and colored left border.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_216">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_216()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:217</span>
+    </div>
+    <div class="function-desc"><p>Receive visual effect instructions (one-shot, from symptoms).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_222">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_222()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:223</span>
+    </div>
+    <div class="function-desc"><p>Receive an invite from the server and display a popup.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_223">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_223()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:224</span>
+    </div>
+    <div class="function-desc"><p>Receive cure notification (clear client visuals).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_237">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_237()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:238</span>
+    </div>
+    <div class="function-desc"><p>Receive sound from server.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_239">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_239()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:240</span>
+    </div>
+    <div class="function-desc"><p>Draw a horizontal bar (health, stamina, overheat, etc.)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_246">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_246()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:247</span>
+    </div>
+    <div class="function-desc"><p>Receive shadow stalker spawn from server (schizophrenia horror effect).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_25">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_25()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_crystal.lua:26</span>
+    </div>
+    <div class="function-desc"><p>LSCS blade class (e.g. &quot;item_crystal_bluehor&quot;).
+Determines the visual blade when installed in a lightsaber.
+Only relevant for crystal-type attachments; leave nil for others.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_256">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_256()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:257</span>
+    </div>
+    <div class="function-desc"><p>Pending syncs batched until end-of-frame to coalesce rapid add/remove churn.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_26">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_26()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_lightsaber.lua:27</span>
+    </div>
+    <div class="function-desc"><p>LSCS hilt class (e.g. &quot;item_saberhilt_katarn&quot;). Must be set by subclass items.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_265">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_265()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:266</span>
+    </div>
+    <div class="function-desc"><p>Client → Server: Submit a sequence for exploratory synthesis.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_281">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_281()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:282</span>
+    </div>
+    <div class="function-desc"><p>Get bar gradient color for a value.
+Pre-allocated to avoid per-frame Color() garbage.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_281">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_281()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:282</span>
+    </div>
+    <div class="function-desc"><p>Receive client event from server (heartbeat, phantom_sound, clone, etc.).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_29">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_29()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/sh_plugin.lua:30</span>
+    </div>
+    <div class="function-desc"><p>Start a hacking session with an optional preset name.
+Usage: /HackingTest [preset]
+Presets: very_easy, easy, average, hard, very_hard</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_29">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_29()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_lightsaber.lua:30</span>
+    </div>
+    <div class="function-desc"><p>Attachment slot definitions — KOTOR 2 style.
+Keys are slot IDs, values describe the slot.
+Subclass items can override this table to add / remove slots.</p>
+<p>Each slot:
+name        — display name
+accepts     — table of attachmentType strings this slot accepts
+icon        — icon16 path for UI (optional)
+description — short help text (optional)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_297">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_297()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:298</span>
+    </div>
+    <div class="function-desc"><p>Get overheat color (gold &lt; yellow &lt; red).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_30">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_30()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_crystal.lua:31</span>
+    </div>
+    <div class="function-desc"><p>Optional display colour for the crystal swatch on the saber tooltip.
+Set to a Color() value in subclass items.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_308">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_308()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:309</span>
+    </div>
+    <div class="function-desc"><p>Client → Server: Register a formula from the last synthesis result (creates canister).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_312">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_312()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:313</span>
+    </div>
+    <div class="function-desc"><p>Get a directional arrow for a bearing relative to compass.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_327">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_327()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:328</span>
+    </div>
+    <div class="function-desc"><p>When a player starts transmitting, fire the diegetic HUD transmission display.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_33">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_33()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:34</span>
+    </div>
+    <div class="function-desc"><p>Modifier type constants.
+MULT: value = base * modifier   (e.g. 0.9 = -10 %)
+ADD:  value = base + modifier   (e.g. -20  = minus 20 flat)
+SET:  value = modifier          (direct override; highest priority wins)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_33">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_33()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:34</span>
+    </div>
+    <div class="function-desc"><p>Partial unit update (resources, etc.).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_332">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_332()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:333</span>
+    </div>
+    <div class="function-desc"><p>Client → Server: Initiate batch fabrication from a canister.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_34">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_34()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_crystal.lua:35</span>
+    </div>
+    <div class="function-desc"><p>Optional stat modifiers this attachment provides when installed.
+These are aggregated by the lightsaber base&#x27;s <code>GetModifierTotal()</code>.
+Example: { damage = 5, deflection = 2 }</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_344">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_344()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/sv_plugin.lua:345</span>
+    </div>
+    <div class="function-desc"><p>When a player stops transmitting, clear the diegetic HUD transmission.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_345">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_345()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:346</span>
+    </div>
+    <div class="function-desc"><p>Client → Server: Request pool influence (add strand from outside pool).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_357">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_357()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:358</span>
+    </div>
+    <div class="function-desc"><p>Client → Server: Refine a canister.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_369">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_369()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:370</span>
+    </div>
+    <div class="function-desc"><p>Client → Server: Confirm integrity check and proceed with fabrication.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_388">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_388()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:389</span>
+    </div>
+    <div class="function-desc"><p>Clean up session data when a player disconnects.
+v2.0: Sessions persist for 30 minutes (timer-based), cleaned up on disconnect.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_404">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_404()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:405</span>
+    </div>
+    <div class="function-desc"><p>When a character is loaded, flush pending test credits.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_41">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_41()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:42</span>
+    </div>
+    <div class="function-desc"><p>Convenience alias on the PLUGIN table so other plugins can use</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_410">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_410()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_data.lua:411</span>
+    </div>
+    <div class="function-desc"><p>On player initial spawn, initialise test credit tracking.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_42">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_42()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:43</span>
+    </div>
+    <div class="function-desc"><p>ix.plugin.list.player_effects.ModifierTypes.MULT</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_47">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_47()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/sh_plugin.lua:48</span>
+    </div>
+    <div class="function-desc"><p>Force-end the caller&#x27;s active hacking session.
+Usage: /HackingEnd</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_47">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_47()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/base/sh_medicine.lua:48</span>
+    </div>
+    <div class="function-desc"><p>Take the medicine yourself.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_49">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_49()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:50</span>
+    </div>
+    <div class="function-desc"><p>Layer processing order (lower index = applied earlier).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_51">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_51()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_hooks.lua:52</span>
+    </div>
+    <div class="function-desc"><p>Periodically clean expired one-shot visuals.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_51">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_51()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:52</span>
+    </div>
+    <div class="function-desc"><p>Full roster sync.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_54">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_54()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:55</span>
+    </div>
+    <div class="function-desc"><p>Pending invites: key = target charID, value = {type, unitID, squadID, inviterCharID, inviterName, unitName, squadName, timestamp}</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_542">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_542()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_sequencer.lua:543</span>
+    </div>
+    <div class="function-desc"><p>v2.0: Pool sync (when pool influence adds a strand).</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_547">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_547()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_sequencer.lua:548</span>
+    </div>
+    <div class="function-desc"><p>v2.0: Integrity check prompt from server.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_551">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_551()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:552</span>
+    </div>
+    <div class="function-desc"><p>Default squad creation permission hook.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_565">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_565()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_sequencer.lua:566</span>
+    </div>
+    <div class="function-desc"><p>v2.0: Experimental broadcast notification.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_580">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_580()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/cl_sequencer.lua:581</span>
+    </div>
+    <div class="function-desc"><p>v2.0: Status promotion notification.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_6">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_6()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/sh_plugin.lua:7</span>
+    </div>
+    <div class="function-desc"><p>Terminal Hacking System namespace.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_6">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_6()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sh_plugin.lua:7</span>
+    </div>
+    <div class="function-desc"><p>Bacta-Synth Protocol system namespace.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_61">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_61()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/sh_plugin.lua:62</span>
+    </div>
+    <div class="function-desc"><p>Dump info about the caller&#x27;s active session to server console.
+Usage: /HackingDebug</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_628">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_628()</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/items/base/sh_lightsaber.lua:629</span>
+    </div>
+    <div class="function-desc"><p>When the item is dropped, unequip it first.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_640">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_640()</code>
+            
+        </div>
+        <span class="file-ref">plugins/player_effects/sh_plugin.lua:641</span>
+    </div>
+    <div class="function-desc"><p>Receive effect state from the server.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_675">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_675()</code>
+            
+        </div>
+        <span class="file-ref">plugins/comms_sys/cl_plugin.lua:676</span>
+    </div>
+    <div class="function-desc"><p>Override the diegetic HUD&#x27;s available channels to use real comms data.
+This replaces the static channel definitions in the HUD with live data.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_7">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_7()</code>
+            
+        </div>
+        <span class="file-ref">plugins/medicalsys/sv_production.lua:8</span>
+    </div>
+    <div class="function-desc"><p>Active fabrication lock to prevent double-submit.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_74">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_74()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_networking.lua:75</span>
+    </div>
+    <div class="function-desc"><p>Handle an unlock request from the client.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_8">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_8(table, string, string, string, context)</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_progression.lua:9</span>
+    </div>
+    <div class="function-desc"><p>Record an unlock event for debugging and analytics.
+Stored per-character in &quot;ixUnlockLog&quot; as an array of recent events.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">table</td><td class="param-type"><span class="type">character</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">action</span></td><td>&quot;unlock&quot; | &quot;refund&quot; | &quot;respec&quot; | &quot;admin_grant&quot; | &quot;admin_remove&quot;</td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">treeID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">nodeID</span></td><td>|nil</td></tr><tr><td class="param-name">context</td><td class="param-type"><span class="type">extra table|nil  Additional</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_81">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_81()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/sv_plugin.lua:82</span>
+    </div>
+    <div class="function-desc"><p>When a character loads, cache their info for roster display and sync data.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_86">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">__doc_86()</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:87</span>
+    </div>
+    <div class="function-desc"><p>Single roster entry update.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_93">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_93()</code>
+            
+        </div>
+        <span class="file-ref">plugins/hackingsys/sh_plugin.lua:94</span>
+    </div>
+    <div class="function-desc"><p>Start a hacking session on a target player (by name).
+Usage: /HackingForce &lt;player&gt; [preset]</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_93">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">__doc_93()</code>
+            
+        </div>
+        <span class="file-ref">plugins/unlocktrees/sv_networking.lua:94</span>
+    </div>
+    <div class="function-desc"><p>Handle a single node refund request from the client.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="__doc_98">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">__doc_98()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/items/base/sh_medicine.lua:99</span>
+    </div>
+    <div class="function-desc"><p>Administer to another player.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="getPlayerAlignment">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">getPlayerAlignment(Character)</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_whispers.lua:1731</span>
+    </div>
+    <div class="function-desc"><p>Determine a player&#x27;s force alignment from character data.
+Returns &quot;dark&quot;, &quot;light&quot;, &quot;grey&quot;, or nil if unaligned.
+The perk system will set this via char:SetData(&quot;forceAlignment&quot;, alignment).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Character</td><td class="param-type"><span class="type">char</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>string|nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="getThoughtsForLevel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">getThoughtsForLevel(WHISPER_TIERS_DARK, player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_whispers.lua:1718</span>
+    </div>
+    <div class="function-desc"><p>Pick appropriate messages for a player&#x27;s force level from a specific tier table.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">WHISPER_TIERS_DARK</td><td class="param-type"><span class="type">tierTable table One of</span></td><td>/LIGHT/GREY</td></tr><tr><td class="param-name">player</td><td class="param-type"><span class="type">forceAttr number The</span></td><td>&#x27;s force attribute value</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Array of thought strings, or nil if none match</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="sendWhisper">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">sendWhisper(Player, string, string, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_whispers.lua:1740</span>
+    </div>
+    <div class="function-desc"><p>Dispatch a single force whisper packet to a client.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">alignment</span></td><td>&quot;dark&quot;|&quot;light&quot;|&quot;grey&quot;</td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">intensity</span></td><td>&quot;strong&quot;|&quot;subtle&quot;</td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">thought</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="syncPowersToLSCS">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">syncPowersToLSCS(Player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/theos-forcesystem/sv_forcesystem.lua:10</span>
+    </div>
+    <div class="function-desc"><p>Rebuild a player&#x27;s LSCS inventory from their grantedPowers character data.
+Wipes current LSCS inventory and re-adds everything from the persistent list.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">client</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+</div></article>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ix.diegeticHUD - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li class="active"><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    
+<article><div class="wrapper">
+
+<div class="module-header">
+    <span class="kind-badge module">Library</span>
+    <h1>ix.diegeticHUD</h1>
+    <p class="module-file">plugins/diagetichud/cl_plugin.lua</p>
+</div>
+
+
+<div class="toc"><h3>Functions</h3><ul><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.AddGlobalWaypoint">ix.diegeticHUD.AddGlobalWaypoint</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.AddToSquad">ix.diegeticHUD.AddToSquad</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.AddWaypoint">ix.diegeticHUD.AddWaypoint</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.ClearGlobalObjective">ix.diegeticHUD.ClearGlobalObjective</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.ClearObjective">ix.diegeticHUD.ClearObjective</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.ClearPriorityOrder">ix.diegeticHUD.ClearPriorityOrder</a></li><li><span class="realm client" title="client"></span><a href="#ix.diegeticHUD.ConnectChannel">ix.diegeticHUD.ConnectChannel</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.CreateSquad">ix.diegeticHUD.CreateSquad</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.DisbandSquad">ix.diegeticHUD.DisbandSquad</a></li><li><span class="realm client" title="client"></span><a href="#ix.diegeticHUD.DisconnectAllChannels">ix.diegeticHUD.DisconnectAllChannels</a></li><li><span class="realm client" title="client"></span><a href="#ix.diegeticHUD.DisconnectChannel">ix.diegeticHUD.DisconnectChannel</a></li><li><span class="realm client" title="client"></span><a href="#ix.diegeticHUD.GetAvailableChannels">ix.diegeticHUD.GetAvailableChannels</a></li><li><span class="realm client" title="client"></span><a href="#ix.diegeticHUD.GetConnectedChannels">ix.diegeticHUD.GetConnectedChannels</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.diegeticHUD.GetDEFCON">ix.diegeticHUD.GetDEFCON</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.diegeticHUD.GetObjective">ix.diegeticHUD.GetObjective</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.diegeticHUD.GetPriorityOrder">ix.diegeticHUD.GetPriorityOrder</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.diegeticHUD.GetSquadName">ix.diegeticHUD.GetSquadName</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.diegeticHUD.HasObjective">ix.diegeticHUD.HasObjective</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.diegeticHUD.HasPriorityOrder">ix.diegeticHUD.HasPriorityOrder</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.diegeticHUD.IsInSquad">ix.diegeticHUD.IsInSquad</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.NotifyDamageDirection">ix.diegeticHUD.NotifyDamageDirection</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.RemoveFromSquad">ix.diegeticHUD.RemoveFromSquad</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.RemoveGlobalWaypoint">ix.diegeticHUD.RemoveGlobalWaypoint</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.RemoveWaypoint">ix.diegeticHUD.RemoveWaypoint</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.SendTransmission">ix.diegeticHUD.SendTransmission</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.SetDEFCON">ix.diegeticHUD.SetDEFCON</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.SetGlobalObjective">ix.diegeticHUD.SetGlobalObjective</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.SetObjective">ix.diegeticHUD.SetObjective</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.SetPriorityOrder">ix.diegeticHUD.SetPriorityOrder</a></li><li><span class="realm server" title="server"></span><a href="#ix.diegeticHUD.SyncSquad">ix.diegeticHUD.SyncSquad</a></li></ul></div>
+<h2>Functions</h2>
+<div class="function-block" id="ix.diegeticHUD.AddGlobalWaypoint">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.AddGlobalWaypoint(id, label, pos, waypointType)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:143</span>
+    </div>
+    <div class="function-desc"><p>Add a waypoint for all players.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">id</td><td class="param-type"><span class="type">string</span></td><td>Unique identifier</td></tr><tr><td class="param-name">label</td><td class="param-type"><span class="type">string</span></td><td>Display label</td></tr><tr><td class="param-name">pos</td><td class="param-type"><span class="type">vector</span></td><td>World position</td></tr><tr><td class="param-name">waypointType</td><td class="param-type"><span class="type">string</span></td><td>&quot;TGT&quot; or &quot;THR&quot;</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.AddToSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.AddToSquad(id, ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:200</span>
+    </div>
+    <div class="function-desc"><p>Add a player to a squad.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">id</td><td class="param-type"><span class="type">string</span></td><td>Squad identifier</td></tr><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>Player to add</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.AddWaypoint">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.AddWaypoint(ply, id, label, pos, waypointType)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:113</span>
+    </div>
+    <div class="function-desc"><p>Add a waypoint for a specific player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player to add the waypoint for</td></tr><tr><td class="param-name">id</td><td class="param-type"><span class="type">string</span></td><td>Unique identifier for the waypoint</td></tr><tr><td class="param-name">label</td><td class="param-type"><span class="type">string</span></td><td>Display label</td></tr><tr><td class="param-name">pos</td><td class="param-type"><span class="type">vector</span></td><td>World position of the waypoint</td></tr><tr><td class="param-name">waypointType</td><td class="param-type"><span class="type">string</span></td><td>&quot;TGT&quot; for objective targets, &quot;THR&quot; for threats</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.ClearGlobalObjective">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.ClearGlobalObjective()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:98</span>
+    </div>
+    <div class="function-desc"><p>Clear all players&#x27; objectives.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.ClearObjective">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.ClearObjective(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:75</span>
+    </div>
+    <div class="function-desc"><p>Clear a player&#x27;s objective.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player to clear</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.ClearPriorityOrder">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.ClearPriorityOrder()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:49</span>
+    </div>
+    <div class="function-desc"><p>Clear the current priority order.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.ConnectChannel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.diegeticHUD.ConnectChannel(channelName)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:472</span>
+    </div>
+    <div class="function-desc"><p>Connect to a comms channel by name (client-side).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">channelName</td><td class="param-type"><span class="type">string</span></td><td>Channel name to connect to</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.CreateSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.CreateSquad(id, designation)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:176</span>
+    </div>
+    <div class="function-desc"><p>Create a squad with a designation and members.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">id</td><td class="param-type"><span class="type">string</span></td><td>Unique squad identifier</td></tr><tr><td class="param-name">designation</td><td class="param-type"><span class="type">string</span></td><td>Display name (e.g. &quot;FIRETEAM AUREK&quot;)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.DisbandSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.DisbandSquad(id)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:242</span>
+    </div>
+    <div class="function-desc"><p>Disband a squad entirely.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">id</td><td class="param-type"><span class="type">string</span></td><td>Squad identifier</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.DisconnectAllChannels">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.diegeticHUD.DisconnectAllChannels()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:496</span>
+    </div>
+    <div class="function-desc"><p>Disconnect from all comms channels.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.DisconnectChannel">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.diegeticHUD.DisconnectChannel(channelName)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:485</span>
+    </div>
+    <div class="function-desc"><p>Disconnect from a comms channel.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">channelName</td><td class="param-type"><span class="type">string</span></td><td>Channel name to disconnect from</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.GetAvailableChannels">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.diegeticHUD.GetAvailableChannels()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:507</span>
+    </div>
+    <div class="function-desc"><p>Get available channel definitions.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">table</span></td><td>Array of channel definition tables</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.GetConnectedChannels">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.diegeticHUD.GetConnectedChannels()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/cl_plugin.lua:501</span>
+    </div>
+    <div class="function-desc"><p>Get current connected channels.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">table</span></td><td>Array of channel name strings</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.GetDEFCON">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.diegeticHUD.GetDEFCON()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:366</span>
+    </div>
+    <div class="function-desc"><p>Get the current DEFCON level.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">int</span></td><td>DEFCON level 1-5</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.GetObjective">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.diegeticHUD.GetObjective(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:391</span>
+    </div>
+    <div class="function-desc"><p>Get a player&#x27;s current objective.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player (defaults to LocalPlayer on client)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">string</span></td><td>title</td></tr><tr><td class="param-type"><span class="type">string</span></td><td>desc</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.GetPriorityOrder">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.diegeticHUD.GetPriorityOrder()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:380</span>
+    </div>
+    <div class="function-desc"><p>Get current priority order data.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">string</span></td><td>text The order text</td></tr><tr><td class="param-type"><span class="type">string</span></td><td>issuer The issuer</td></tr><tr><td class="param-type"><span class="type">string</span></td><td>desc The description</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.GetSquadName">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.diegeticHUD.GetSquadName(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:429</span>
+    </div>
+    <div class="function-desc"><p>Get a player&#x27;s squad name.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player (defaults to LocalPlayer on client)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">string</span></td><td>Squad designation</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.HasObjective">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.diegeticHUD.HasObjective(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:405</span>
+    </div>
+    <div class="function-desc"><p>Check if a player has an active objective.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player (defaults to LocalPlayer on client)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">bool</span></td><td></td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.HasPriorityOrder">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.diegeticHUD.HasPriorityOrder()</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:373</span>
+    </div>
+    <div class="function-desc"><p>Check if there is an active priority order.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">bool</span></td><td>Whether a priority order is active</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.IsInSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.diegeticHUD.IsInSquad(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:417</span>
+    </div>
+    <div class="function-desc"><p>Check if a player is in a squad.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player (defaults to LocalPlayer on client)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">bool</span></td><td></td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.NotifyDamageDirection">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.NotifyDamageDirection(ply, attacker)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:347</span>
+    </div>
+    <div class="function-desc"><p>Notify a player of damage direction (for directional flash indicator).
+This is normally called automatically from EntityTakeDamage, but can be
+called manually for custom damage effects.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player who took damage</td></tr><tr><td class="param-name">attacker</td><td class="param-type"><span class="type">Entity</span></td><td>The attacker entity</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.RemoveFromSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.RemoveFromSquad(ply)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:216</span>
+    </div>
+    <div class="function-desc"><p>Remove a player from their squad.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>Player to remove</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.RemoveGlobalWaypoint">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.RemoveGlobalWaypoint(id)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:158</span>
+    </div>
+    <div class="function-desc"><p>Remove a waypoint for all players.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">id</td><td class="param-type"><span class="type">string</span></td><td>Waypoint identifier</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.RemoveWaypoint">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.RemoveWaypoint(ply, id)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:131</span>
+    </div>
+    <div class="function-desc"><p>Remove a waypoint for a specific player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player</td></tr><tr><td class="param-name">id</td><td class="param-type"><span class="type">string</span></td><td>Waypoint identifier to remove</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.SendTransmission">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.SendTransmission(speaker, channel, freq, encrypted, duration)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:316</span>
+    </div>
+    <div class="function-desc"><p>Broadcast a comms transmission to players (shows the active transmission overlay).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">speaker</td><td class="param-type"><span class="type">Entity</span></td><td>The player who is speaking</td></tr><tr><td class="param-name">channel</td><td class="param-type"><span class="type">string</span></td><td>Channel name (e.g. &quot;COMMAND NET&quot;)</td></tr><tr><td class="param-name">freq</td><td class="param-type"><span class="type">string</span></td><td>Frequency string (e.g. &quot;8858.0&quot;)</td></tr><tr><td class="param-name">encrypted</td><td class="param-type"><span class="type">boolean</span></td><td>Whether the channel is encrypted</td></tr><tr><td class="param-name">duration</td><td class="param-type"><span class="type">number</span></td><td>How long to show the transmission (seconds)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.SetDEFCON">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.SetDEFCON(level)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:24</span>
+    </div>
+    <div class="function-desc"><p>Set the current DEFCON level server-wide.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">level</td><td class="param-type"><span class="type">any</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.SetGlobalObjective">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.SetGlobalObjective(title, desc)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:88</span>
+    </div>
+    <div class="function-desc"><p>Set an objective for all players.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">title</td><td class="param-type"><span class="type">string</span></td><td>The objective header text</td></tr><tr><td class="param-name">desc</td><td class="param-type"><span class="type">string</span></td><td>Optional description/details</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.SetObjective">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.SetObjective(ply, title, desc)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:60</span>
+    </div>
+    <div class="function-desc"><p>Set an objective for a specific player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ply</td><td class="param-type"><span class="type">Entity</span></td><td>The player to set the objective for</td></tr><tr><td class="param-name">title</td><td class="param-type"><span class="type">string</span></td><td>The objective header text</td></tr><tr><td class="param-name">desc</td><td class="param-type"><span class="type">string</span></td><td>Optional description/details</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.SetPriorityOrder">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.SetPriorityOrder(text, issuer, desc)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:35</span>
+    </div>
+    <div class="function-desc"><p>Set a priority order (highest priority transmission).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">text</td><td class="param-type"><span class="type">string</span></td><td>The order text to display</td></tr><tr><td class="param-name">issuer</td><td class="param-type"><span class="type">string</span></td><td>The issuer name (e.g. &quot;ISS VENGEANCE // CMDR TARKIN&quot;)</td></tr><tr><td class="param-name">desc</td><td class="param-type"><span class="type">string</span></td><td>Optional description/subtext</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.diegeticHUD.SyncSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.diegeticHUD.SyncSquad(id)</code>
+            
+        </div>
+        <span class="file-ref">plugins/diagetichud/libs/sh_api.lua:263</span>
+    </div>
+    <div class="function-desc"><p>Sync squad data to all squad members.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">id</td><td class="param-type"><span class="type">string</span></td><td>Squad identifier</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+
+</div></article>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>

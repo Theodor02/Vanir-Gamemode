@@ -308,48 +308,138 @@ function PANEL:RebuildDetail()
         lbl:SetText("No loadout items defined.")
     end
 
+    -- Check player inventory for owned items
+    local char = LocalPlayer():GetCharacter()
+    local ownedItems = {}
+    if (char) then
+        local inv = char:GetInventory()
+        if (inv) then
+            for _, invItem in pairs(inv:GetItems()) do
+                ownedItems[invItem.uniqueID] = true
+            end
+        end
+    end
+
     for i, item in ipairs(loadout) do
         local itemName = item
         local itemCost = 0
+        local itemUID = ""
+        local itemDesc = ""
+        local itemCategory = ""
 
         -- If loadout items have catalog cost, look them up
         if (type(item) == "table") then
             itemName = item.name or item.uniqueID or item[1] or "Unknown"
             itemCost = item.cost or 0
+            itemUID = item.uniqueID or item[1] or ""
+            itemDesc = item.description or ""
+            itemCategory = item.category or ""
         elseif (type(item) == "string") then
+            itemUID = item
             -- Lookup cost from catalog
             local catalogItem = ix.usms and ix.usms.catalogs and ix.usms.catalogs.global and ix.usms.catalogs.global[item]
             if (catalogItem) then
                 itemCost = catalogItem.cost or 0
                 itemName = catalogItem.name or item
-            else
-                -- Try item base
-                local ixItem = ix.item and ix.item.list and ix.item.list[item]
-                if (ixItem) then
+                itemCategory = catalogItem.category or ""
+            end
+            -- Try item base for name and description
+            local ixItem = ix.item and ix.item.list and ix.item.list[item]
+            if (ixItem) then
+                if (itemName == item) then
                     itemName = ixItem.name or item
                 end
+                itemDesc = ixItem.description or ""
+                itemCategory = itemCategory != "" and itemCategory or (ixItem.category or "")
             end
         end
 
         totalCost = totalCost + itemCost
 
+        local isOwned = ownedItems[itemUID] or false
+
         local row = self.itemScroll:Add("EditablePanel")
         row:Dock(TOP)
-        row:SetTall(Scale(26))
+        row:SetTall(Scale(34))
+        row:DockMargin(0, Scale(1), 0, 0)
+        row:SetMouseInputEnabled(true)
         row.rowIndex = i
         row.itemName = itemName
         row.itemCost = itemCost
+        row.itemUID = itemUID
+        row.itemDesc = itemDesc
+        row.itemCategory = itemCategory
+        row.isOwned = isOwned
+
+        row.OnCursorEntered = function(s)
+            s.bHovered = true
+            -- Show tooltip if item has a description
+            if (s.itemDesc != "" and !IsValid(s.tooltip)) then
+                local tip = vgui.Create("EditablePanel")
+                tip:SetSize(Scale(220), Scale(60))
+                tip:SetDrawOnTop(true)
+                tip.desc = s.itemDesc
+                tip.Paint = function(t, w, h)
+                    surface.SetDrawColor(20, 20, 20, 240)
+                    surface.DrawRect(0, 0, w, h)
+                    surface.SetDrawColor(THEME.frameSoft)
+                    surface.DrawOutlinedRect(0, 0, w, h, 1)
+                    draw.DrawText(t.desc, "ixImpMenuDiag", Scale(6), Scale(6), THEME.text, TEXT_ALIGN_LEFT)
+                end
+                tip:SetParent(vgui.GetWorldPanel())
+                local mx, my = gui.MousePos()
+                tip:SetPos(mx + Scale(12), my - Scale(30))
+                s.tooltip = tip
+            end
+        end
+        row.OnCursorExited = function(s)
+            s.bHovered = false
+            if (IsValid(s.tooltip)) then s.tooltip:Remove() end
+        end
+        row.OnRemove = function(s)
+            if (IsValid(s.tooltip)) then s.tooltip:Remove() end
+        end
 
         row.Paint = function(s, w, h)
-            local bg = (s.rowIndex % 2 == 0) and THEME.rowEven or THEME.rowOdd
+            local bg
+            if (s.bHovered) then
+                bg = THEME.rowHover
+            elseif (s.rowIndex % 2 == 0) then
+                bg = THEME.rowEven
+            else
+                bg = THEME.rowOdd
+            end
             surface.SetDrawColor(bg)
             surface.DrawRect(0, 0, w, h)
 
-            draw.SimpleText(s.itemName, "ixImpMenuDiag", Scale(8), h * 0.5, THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            -- Left color bar: green if owned, muted if not
+            local barColor = s.isOwned and THEME.ready or Color(60, 60, 60, 100)
+            surface.SetDrawColor(barColor)
+            surface.DrawRect(0, 0, Scale(3), h)
 
+            local pad = Scale(10)
+
+            -- Category tag (small, muted, left-aligned)
+            if (s.itemCategory != "") then
+                draw.SimpleText(string.upper(s.itemCategory), "ixImpMenuStatus", pad, Scale(3), THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+                draw.SimpleText(s.itemName, "ixImpMenuDiag", pad, Scale(16), THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+            else
+                draw.SimpleText(s.itemName, "ixImpMenuDiag", pad, h * 0.5, THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            end
+
+            -- Owned indicator
+            if (s.isOwned) then
+                draw.SimpleText("✓", "ixImpMenuDiag", w - Scale(40), h * 0.5, THEME.ready, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+            end
+
+            -- Cost
             if (s.itemCost > 0) then
                 draw.SimpleText("-" .. s.itemCost, "ixImpMenuDiag", w - Scale(8), h * 0.5, THEME.supply, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
+
+            -- Bottom separator
+            surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 15)
+            surface.DrawRect(0, h - 1, w, 1)
         end
     end
 

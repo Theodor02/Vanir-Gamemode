@@ -614,3 +614,270 @@ Officer right-clicks roster row → "Manage Class Whitelist" submenu
   → Server updates member.classWhitelist, logs, saves, syncs
   → Target player's loadout panel updates to show/hide classes
 ```
+
+---
+
+## 17. Mission System
+
+### Overview
+Officers and squad leaders can create, track, and complete missions assigned to squads or entire units. Missions appear in a dedicated MISSIONS tab and sync to all unit members.
+
+### Constants (`libs/sh_usms.lua`)
+```lua
+USMS_MISSION_ACTIVE    = "active"
+USMS_MISSION_COMPLETE  = "complete"
+USMS_MISSION_CANCELLED = "cancelled"
+
+USMS_MISSION_PRIORITY_LOW      = 1
+USMS_MISSION_PRIORITY_NORMAL   = 2
+USMS_MISSION_PRIORITY_CRITICAL = 3
+
+USMS_LOG_MISSION_CREATED   = "mission_created"
+USMS_LOG_MISSION_COMPLETED = "mission_completed"
+USMS_LOG_MISSION_CANCELLED = "mission_cancelled"
+```
+
+### Data Structure (Mission)
+```lua
+{
+    id          = number,      -- auto-incremented via AllocMissionID()
+    unitID      = number,
+    createdBy   = number,      -- charID of creator
+    assignedTo  = {            -- assignment target
+        type = "squad"|"unit",
+        id   = number          -- squadID or unitID
+    },
+    title       = string,      -- max 128 chars
+    description = string,      -- max 512 chars
+    priority    = 1|2|3,       -- low/normal/critical
+    status      = "active"|"complete"|"cancelled",
+    createdAt   = number,      -- os.time()
+    completedAt = number|nil
+}
+```
+
+### Server Caches
+```lua
+ix.usms.missions      = {} -- [missionID] → missionData
+ix.usms.nextMissionID  = 1
+```
+
+### Server API (`libs/sv_usms.lua`)
+```
+ix.usms.CreateMission(unitID, createdByCharID, title, description, priority, assignedTo)
+ix.usms.CompleteMission(missionID, completedByCharID)
+ix.usms.CancelMission(missionID, cancelledByCharID)
+ix.usms.GetActiveMissions(unitID) → table
+ix.usms.GetUnitMissions(unitID)   → table (all statuses)
+ix.usms.SyncMissionsToPlayer(ply, unitID)
+ix.usms.SyncMissionsToUnit(unitID)
+```
+
+### Request Handlers
+| Action | Permission | Description |
+|--------|-----------|-------------|
+| `mission_create` | >= UNIT_XO, SQUAD_LEADER, or superadmin | Create a new mission |
+| `mission_complete` | >= UNIT_XO, SQUAD_LEADER, or superadmin | Mark active mission complete |
+| `mission_cancel` | >= UNIT_XO, SQUAD_LEADER, or superadmin | Cancel active mission |
+| `mission_request` | any unit member or superadmin | Request mission sync |
+
+### Net Messages
+| Name | Direction | Purpose |
+|------|-----------|---------|
+| `ixUSMSMissionSync` | S→C | Full mission list (compressed JSON) |
+| `ixUSMSMissionUpdate` | S→C | (reserved for delta updates) |
+
+### Client Hooks
+| Hook | Fired When |
+|------|------------|
+| `USMSMissionsUpdated` | Mission sync received |
+
+### UI Panel: `ixUSMSMissionPanel` (`derma/cl_mission_panel.lua`)
+- Split layout: 35% mission list (left) / 65% detail (right)
+- Status filter dropdown: Active / Completed / Cancelled / All
+- Mission cards show priority color bar (green=low, gold=normal, red=critical)
+- Detail view: title, status badge, priority, assigned target, creator, timestamps, description
+- Context menu on active missions: Complete / Cancel
+- CREATE MISSION button (permission-gated) opens dialog with title, description, priority dropdown, assignment target combo
+- Critical priority missions also update the diegetic HUD objectives
+
+---
+
+## 18. Commendation & Service Record System
+
+### Overview
+Officers can award commendations (medals, citations, reprimands) to unit members. These build a persistent service record viewable by right-clicking a roster entry.
+
+### Constants (`libs/sh_usms.lua`)
+```lua
+USMS_COMMENDATION_MEDAL       = "medal"
+USMS_COMMENDATION_COMMENDATION = "commendation"
+USMS_COMMENDATION_REPRIMAND   = "reprimand"
+
+USMS_LOG_COMMENDATION_AWARDED = "commendation_awarded"
+USMS_LOG_COMMENDATION_REVOKED = "commendation_revoked"
+```
+
+### Data Structure (Commendation)
+```lua
+{
+    id              = number,      -- auto-incremented via AllocCommendationID()
+    unitID          = number,
+    recipientCharID = number,
+    awardedBy       = number,      -- charID of awarding officer
+    type            = "medal"|"commendation"|"reprimand",
+    title           = string,      -- max 128 chars
+    reason          = string,      -- max 512 chars
+    timestamp       = number,      -- os.time()
+    revoked         = false|true
+}
+```
+
+### Server Caches
+```lua
+ix.usms.commendations      = {} -- [commendationID] → commendationData
+ix.usms.nextCommendationID  = 1
+```
+
+### Server API (`libs/sv_usms.lua`)
+```
+ix.usms.AwardCommendation(unitID, recipientCharID, awardedByCharID, type, title, reason)
+ix.usms.RevokeCommendation(commendationID, revokedByCharID)
+ix.usms.GetServiceRecord(charID) → { commendations={}, promotions={} }
+ix.usms.SendServiceRecord(ply, targetCharID)
+```
+
+### Request Handlers
+| Action | Permission | Description |
+|--------|-----------|-------------|
+| `commendation_award` | >= UNIT_XO or superadmin | Award a commendation |
+| `commendation_revoke` | >= UNIT_XO or superadmin | Revoke a commendation |
+| `service_record_request` | any unit member or superadmin | Request target's service record |
+
+### Net Messages
+| Name | Direction | Purpose |
+|------|-----------|---------|
+| `ixUSMSServiceRecord` | S→C | Service record data (compressed JSON) |
+
+### Client Hooks
+| Hook | Args | Fired When |
+|------|------|------------|
+| `USMSServiceRecordReceived` | data | Service record sync received |
+
+### UI Panel: `ixUSMSServiceRecord` (`derma/cl_service_record.lua`)
+- DFrame popup (500×400), opened from roster right-click → "View Service Record"
+- Sections: Personnel File (name, rank, class, join date), Commendations & Awards (color-coded by type: gold=medal, blue=commendation, red=reprimand), Promotion History
+- Right-click commendation entry to revoke (officers only)
+- "Award Commendation" button opens dialog with type/title/reason inputs
+
+---
+
+## 19. Enhanced Log Viewer
+
+### Improvements over base log panel (`derma/cl_log_panel.lua`)
+- **Text search bar**: Filters log detail text and action labels client-side (case-insensitive substring match)
+- **Time range dropdown**: All Time / Last 24 Hours / Last 7 Days / Last 30 Days
+- **Expandable rows**: Click any log row to expand inline detail showing full timestamp, actor (with charID), target (with charID), and all metadata fields
+- **Copy to Clipboard**: Exports currently filtered logs as formatted text via `SetClipboardText()`
+- **Client-side filtering**: All filters (action type, time range, search text) apply client-side on bulk-fetched data, with pagination on the filtered result set
+- **New log action labels**: mission_created, mission_completed, mission_cancelled, commendation_awarded, commendation_revoked
+
+---
+
+## 20. Enhanced Loadout Panel
+
+### Improvements over base loadout panel (`derma/cl_loadout_panel.lua`)
+- **Styled item rows**: Taller rows (34px scaled) with left color bar indicating ownership status (green = owned, gray = not owned)
+- **Category labels**: If an item has a category (from catalog or item base), it's shown as a small uppercase tag above the item name
+- **Ownership indicator**: Green checkmark (✓) for items already in the player's inventory, checked via `char:GetInventory():GetItems()`
+- **Hover tooltips**: Hovering an item row shows a floating tooltip with the item's description (from `ix.item.list[uid].description` or catalog)
+- **Cost display**: Right-aligned supply cost in blue, unchanged from original
+
+---
+
+## 21. Updated File Map
+
+```
+usms/
+├── sh_plugin.lua              — Plugin metadata, constants, config, include order
+├── sv_plugin.lua              — Server hooks (char load, disconnect, HUD sync timer)
+├── cl_plugin.lua              — Client state cache + all net.Receive handlers
+├── USMS_REFERENCE.md          — THIS FILE
+│
+├── meta/
+│   └── sh_character.lua       — CharVar definitions + character meta methods
+│
+├── libs/
+│   ├── sh_usms.lua            — Shared constants, caches (units/squads/members/missions/commendations)
+│   ├── sh_catalogs.lua        — Equipment catalog
+│   ├── sv_database.lua        — Persistence (Load/Save/AllocID/AllocMissionID/AllocCommendationID)
+│   ├── sv_logging.lua         — Log system
+│   └── sv_usms.lua            — ★ MAIN SERVER FILE (~2200+ lines)
+│                                 Unit/Squad/Member/Resource/Class/Mission/Commendation APIs
+│
+├── commands/
+│   ├── sh_admin.lua           — Admin chat commands
+│   └── sh_testing.lua         — Dev/test commands
+│
+└── derma/                     — Client VGUI panels (auto-loaded by Helix)
+    ├── cl_usms_tab.lua        — Main container, tabs: ROSTER | SQUADS | MISSIONS | LOGS | LOADOUT | INFO
+    ├── cl_unit_overview.lua   — Left sidebar
+    ├── cl_unit_roster.lua     — Sortable member table + right-click (incl. View Service Record)
+    ├── cl_squad_panel.lua     — Squad list + detail view
+    ├── cl_mission_panel.lua   — ★ NEW: Mission list/detail/create UI
+    ├── cl_service_record.lua  — ★ NEW: Service record popup (commendations + promotions)
+    ├── cl_log_panel.lua       — Enhanced log viewer (search, time range, expandable rows, copy)
+    ├── cl_loadout_panel.lua   — Enhanced class selector (styled rows, tooltips, ownership)
+    ├── cl_invite_popup.lua    — Slide-in invite notification popup
+    └── cl_help_panel.lua      — Role documentation / info tab
+```
+
+### All Net Messages (Updated)
+| Name | Direction | Purpose |
+|------|-----------|---------|
+| `ixUSMSUnitSync` | S→C | Full unit data |
+| `ixUSMSUnitUpdate` | S→C | Partial unit update |
+| `ixUSMSRosterSync` | S→C | Full roster (compressed JSON) |
+| `ixUSMSRosterUpdate` | S→C | Single roster entry delta |
+| `ixUSMSLogSync` | S→C | Log data (compressed JSON) |
+| `ixUSMSIntelSync` | S→C | Cross-faction intel |
+| `ixUSMSRequest` | C→S | Client action request |
+| `ixUSMSInvite` | S→C | Invite notification |
+| `ixUSMSInviteResponse` | C→S | Accept/decline invite |
+| `ixUSMSMissionSync` | S→C | ★ Mission list (compressed JSON) |
+| `ixUSMSMissionUpdate` | S→C | ★ Mission delta (reserved) |
+| `ixUSMSServiceRecord` | S→C | ★ Service record (compressed JSON) |
+
+### All Request Handlers (Updated)
+| Action | Permission | Description |
+|--------|-----------|-------------|
+| `squad_create` | USMSCanCreateSquad hook | Create squad |
+| `squad_invite` | >= SQUAD_INVITER or superadmin | Send squad invite |
+| `squad_kick` | >= SQUAD_XO or superadmin | Kick from squad |
+| `squad_leave` | any squad member | Leave squad |
+| `squad_disband` | SQUAD_LEADER or superadmin | Disband own squad |
+| `squad_force_disband` | >= UNIT_XO or superadmin | Force disband |
+| `squad_set_role` | SQUAD_LEADER, >= UNIT_XO, or superadmin | Set squad role |
+| `squad_set_description` | SQUAD_LEADER, >= UNIT_XO, or superadmin | Set squad description |
+| `squad_force_remove` | >= UNIT_XO or superadmin | Force remove from squad |
+| `squad_force_add` | >= UNIT_XO or superadmin | Force add to squad |
+| `unit_invite` | >= UNIT_XO or superadmin | Send unit invite |
+| `unit_kick` | >= UNIT_XO or superadmin | Remove from unit |
+| `unit_set_role` | >= UNIT_CO or superadmin | Set unit role |
+| `unit_set_class` | >= UNIT_XO or superadmin | Assign class |
+| `gearup` | any unit member with class | Gear up |
+| `class_change` | any unit member (whitelisted) | Self class change |
+| `class_whitelist_add` | >= UNIT_XO or superadmin | Add class whitelist |
+| `class_whitelist_remove` | >= UNIT_XO or superadmin | Remove class whitelist |
+| `roster_request` | any unit member or superadmin | Request roster sync |
+| `log_request` | >= UNIT_XO or superadmin | Request log data |
+| `mission_create` | >= UNIT_XO, SQUAD_LEADER, or superadmin | ★ Create mission |
+| `mission_complete` | >= UNIT_XO, SQUAD_LEADER, or superadmin | ★ Complete mission |
+| `mission_cancel` | >= UNIT_XO, SQUAD_LEADER, or superadmin | ★ Cancel mission |
+| `mission_request` | any unit member or superadmin | ★ Request mission sync |
+| `commendation_award` | >= UNIT_XO or superadmin | ★ Award commendation |
+| `commendation_revoke` | >= UNIT_XO or superadmin | ★ Revoke commendation |
+| `service_record_request` | any unit member or superadmin | ★ Request service record |
+
+### Persistence (Updated)
+Saved data now includes: `units`, `squads`, `members`, `squadMembers`, `logs`, `missions`, `commendations`, `nextUnitID`, `nextSquadID`, `nextMissionID`, `nextCommendationID`

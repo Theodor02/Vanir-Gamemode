@@ -1,760 +1,13 @@
-local THEME = {
-	background = Color(10, 10, 10, 255),
-	frame = Color(191, 148, 53, 255),
-	frameSoft = Color(191, 148, 53, 120),
-	text = Color(235, 235, 235, 255),
-	textMuted = Color(168, 168, 168, 140),
-	accent = Color(191, 148, 53, 255),
-	accentSoft = Color(191, 148, 53, 220),
-	danger = Color(180, 60, 60, 255),
-	ready = Color(60, 170, 90, 255),
-	buttonBg = Color(16, 16, 16, 255),
-	buttonBgHover = Color(26, 26, 26, 255)
-}
-
-local SOUND_HOVER = "everfall/miscellaneous/ux/navigation/navigation_tab_01.mp3"
-local SOUND_CLICK = "everfall/miscellaneous/ux/navigation/navigation_activate_01.mp3"
-local SOUND_ERROR = "everfall/miscellaneous/ux/navigation/navigation_error_01.mp3"
-
-local BUTTON = {}
-
-function BUTTON:Init()
-	self:SetText("")
-	self.label = ""
-	self.style = "default"
-	self.labelColor = THEME.text
-	self.borderColor = THEME.accent
-	self.backgroundColor = THEME.buttonBg
-	self.hoverBorderColor = THEME.accent
-	self.hoverBackgroundColor = THEME.buttonBgHover
-	self.hoverLabelColor = THEME.text
-	self.disabledAlpha = 60
-	self.pulseOffset = math.Rand(0, 4)
-	self.nextHoverSound = 0
-end
-
-function BUTTON:SetLabel(text)
-	self.label = text
-end
-
-function BUTTON:SetStyle(style)
-	self.style = style or "default"
-
-	if (self.style == "accent") then
-		self.labelColor = THEME.accent
-		self.borderColor = THEME.accent
-		self.hoverBorderColor = THEME.accent
-		self.hoverBackgroundColor = Color(25, 20, 10, 220)
-		self.hoverLabelColor = THEME.accent
-	elseif (self.style == "danger") then
-		self.labelColor = THEME.danger
-		self.borderColor = THEME.danger
-		self.hoverBorderColor = THEME.danger
-		self.hoverBackgroundColor = Color(35, 10, 10, 220)
-		self.hoverLabelColor = THEME.danger
-	else
-		self.labelColor = THEME.text
-		self.borderColor = THEME.accentSoft
-		self.hoverBorderColor = THEME.accent
-		self.hoverBackgroundColor = THEME.buttonBgHover
-		self.hoverLabelColor = THEME.text
-	end
-end
-
-function BUTTON:Paint(width, height)
-	local disabled = self:GetDisabled()
-	local hovered = self:IsHovered() or self:IsDown()
-	local pulse = (math.sin(CurTime() * 2 + self.pulseOffset) + 1) * 0.5
-	local border = hovered and self.hoverBorderColor or self.borderColor
-	local bg = hovered and self.hoverBackgroundColor or self.backgroundColor
-	local textColor = hovered and self.hoverLabelColor or self.labelColor
-	local glow = hovered and 40 or math.Round(12 + pulse * 18)
-
-	if (disabled) then
-		border = Color(border.r, border.g, border.b, self.disabledAlpha)
-		bg = Color(bg.r, bg.g, bg.b, self.disabledAlpha)
-		textColor = Color(textColor.r, textColor.g, textColor.b, self.disabledAlpha)
-	end
-
-	surface.SetDrawColor(bg)
-	surface.DrawRect(0, 0, width, height)
-
-	surface.SetDrawColor(Color(border.r, border.g, border.b, math.min(255, border.a + glow)))
-	surface.DrawOutlinedRect(0, 0, width, height)
-	surface.DrawOutlinedRect(1, 1, width - 2, height - 2)
-
-	draw.SimpleText(self.label, "ixImpMenuButton", width * 0.5, height * 0.5, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-end
-
-function BUTTON:OnCursorEntered()
-	if (self.nextHoverSound > CurTime()) then
-		return
-	end
-
-	self.nextHoverSound = CurTime() + 0.08
-	surface.PlaySound(SOUND_HOVER)
-end
-
-function BUTTON:OnMousePressed(code)
-	if (self:GetDisabled()) then
-		surface.PlaySound(SOUND_ERROR)
-		return
-	end
-
-	surface.PlaySound(SOUND_CLICK)
-	if (code == MOUSE_LEFT and self.DoClick) then
-		self:DoClick(self)
-	end
-end
-
-vgui.Register("ixImpMenuButtonChar", BUTTON, "DButton")
-
-local function Scale(value)
-	return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
-local function CreateFonts()
-	surface.CreateFont("ixImpMenuTitle", {
-		font = "Orbitron Bold",
-		size = Scale(54),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuSubtitle", {
-		font = "Orbitron Medium",
-		size = Scale(14),
-		weight = 400,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuLabel", {
-		font = "Orbitron Medium",
-		size = Scale(12),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuButton", {
-		font = "Orbitron Medium",
-		size = Scale(16),
-		weight = 600,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuStatus", {
-		font = "Orbitron Medium",
-		size = Scale(11),
-		weight = 600,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuAurebesh", {
-		font = "Aurebesh",
-		size = Scale(12),
-		weight = 400,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuDiag", {
-		font = "Orbitron Light",
-		size = Scale(11),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-end
-
-CreateFonts()
-
-hook.Add("OnScreenSizeChanged", "ixImpMainMenuCharFonts", function()
-	CreateFonts()
-end)
-
-local function DrawScreeningPanel(panel, width, height, headerText)
-	local now = CurTime()
-	local flicker = 0.85 + (math.sin(now * 2.4) + 1) * 0.075
-	local innerPad = Scale(10)
-	local footerHeight = panel.__ixImpFooterHeight or 0
-	local drawH = height - footerHeight
-	local headerH = Scale(24)
-
-	local innerX = innerPad - Scale(2)
-	local innerY = headerH + innerPad
-	local innerW = width - innerPad * 2
-	local innerH = drawH - innerY - Scale(46)
-
-	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawRect(0, 0, width, height)
-	
-	-- Header Bar
-	surface.SetDrawColor(THEME.frameSoft)
-	surface.DrawRect(0, 0, width, headerH)
-	
-	-- Frame Outline
-	surface.DrawOutlinedRect(0, 0, width, drawH)
-
-	-- Static Header
-	draw.SimpleText(headerText, "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-	draw.SimpleText("BIOSCAN", "ixImpMenuDiag", width - Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-
-	local scanY = innerY + (now * 40 % innerH)
-
-	surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 35))
-	-- Clamp scan within inner area
-	if (scanY < innerY + innerH) then
-		surface.DrawRect(innerX, scanY, innerW, Scale(2))
-	end
-
-	surface.SetDrawColor(Color(255, 255, 255, 6))
-	for i = 0, 6 do
-		local y = innerY + i * (innerH / 6)
-		if (y < drawH) then
-			surface.DrawLine(innerX, y, innerX + innerW, y)
-		end
-	end
-
-	local lines = {
-		"MED-CORE: STABLE", "CARDIAC: 98%", "RESP: NORMAL", "NEURAL: CLEAR",
-		"VISUAL: 20/20", "MUSCLE: PRIME", "SYNC: ACTIVE"
-	}
-
-	-- Typewriter effec
-	local cycle = 8.0
-	local typeSpeed = 0.05
-	local timeInCycle = now % cycle
-	local cycleAlpha = 255
-	
-	-- Fade out near end
-	if (timeInCycle > cycle - 2.0) then
-		cycleAlpha = math.Clamp(255 * (1 - ((timeInCycle - (cycle - 2.0)) / 1.0)), 0, 255)
-	end
-	
-	local charsToShow = math.floor(timeInCycle / typeSpeed)
-	local charsConsumed = 0
-	local lineY = innerY + Scale(2)
-
-	for i = 1, #lines do
-		if (lineY < drawH - Scale(20)) then
-			local lineLen = #lines[i]
-			local charsForThisLine = charsToShow - charsConsumed
-			
-			if (charsForThisLine > 0 and cycleAlpha > 0) then
-				local textToDraw = lines[i]
-				if (charsForThisLine < lineLen) then
-					textToDraw = string.sub(lines[i], 1, charsForThisLine)
-				end
-				draw.SimpleText(textToDraw, "ixImpMenuAurebesh", innerX, lineY, Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, cycleAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-			end
-			
-			charsConsumed = charsConsumed + lineLen
-			lineY = lineY + Scale(13)
-		end
-	end
-
-    -- Animated boxes clamped to bottom
-	local barY = drawH - Scale(24)
-	for i = 1, 3 do
-		local phase = now * (0.7 + i * 0.4)
-		local fill = 0.35 + (math.sin(phase) + 1) * 0.3
-        local barH = Scale(6)
-        
-        -- Ensure bar doesn't go below drawH
-        if (barY + barH > drawH) then break end
-
-		surface.SetDrawColor(Color(255, 255, 255, 10))
-		surface.DrawRect(innerX, barY, innerW, barH)
-		surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 120))
-		surface.DrawRect(innerX, barY, innerW * fill, barH)
-		barY = barY - Scale(10) -- Stack upwards from bottom
-	end
-
-	if (footerHeight > 0) then
-		-- surface.SetDrawColor(Color(255, 255, 255, 12))
-		-- surface.DrawLine(innerX, height - footerHeight, innerX + innerW, height - footerHeight)
-	end
-end
-
-local function ApplyScreeningPanel(panel, headerText)
-	if (!IsValid(panel)) then
-		return
-	end
-
-	panel.__ixImpHasScreening = true
-	panel.Paint = function(this, width, height)
-		DrawScreeningPanel(this, width, height, headerText)
-	end
-end
-
-local function ApplyDataPanel(panel, headerText)
-	if (!IsValid(panel)) then
-		return
-	end
-
-	panel.__ixImpHasDataPanel = true
-
-	panel.Paint = function(this, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 200))
-		surface.DrawRect(0, 0, width, height)
-
-		local headerH = Scale(24)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawRect(0, 0, width, headerH)
-		surface.DrawOutlinedRect(0, 0, width, height)
-
-		if (headerText) then
-			draw.SimpleText(headerText, "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-		end
-	end
-end
+local THEME = ix.ui.THEME
+local Scale = ix.ui.Scale
 
 local function ApplySubpanelTitle(panel)
-	if (!IsValid(panel) or !IsValid(panel.title)) then
-		return
-	end
-
+	if (!IsValid(panel) or !IsValid(panel.title)) then return end
 	panel.title:SetFont("ixImpMenuTitle")
 	panel.title:SetTextColor(THEME.text)
 	panel.title:SetContentAlignment(4)
 	panel.title:DockMargin(Scale(8), 0, 0, Scale(10))
 	panel.title:SizeToContents()
-end
-
-local function ApplyLabelStyle(label)
-	if (!IsValid(label)) then
-		return
-	end
-
-	label:SetFont("ixImpMenuLabel")
-	label:SetTextColor(THEME.textMuted)
-	label:SizeToContents()
-end
-
-local function ApplyTextEntryStyle(entry)
-	if (!IsValid(entry)) then
-		return
-	end
-
-	entry:SetPaintBackground(false)
-	entry:SetFont("ixImpMenuButton")
-	entry:SetTextColor(THEME.text)
-	entry:SetHighlightColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 120))
-	entry:SetCursorColor(THEME.accent)
-
-	-- Force override any background color set by Helix (e.g. faction color on name)
-	if (entry.SetBackgroundColor) then
-		entry:SetBackgroundColor(Color(0, 0, 0, 0))
-	end
-
-    -- Explicit disable of background painting for DTextEntry
-    if (entry.SetPaintBackground) then
-        entry:SetPaintBackground(false)
-    end
-    if (entry.SetDrawBackground) then
-        entry:SetDrawBackground(false)
-    end
-
-	-- Override any attempt to re-enable painting via OnFocus or other Helix callbacks
-	local originalOnFocus = entry.OnFocus
-	entry.OnFocus = function(this)
-		if (originalOnFocus) then
-			originalOnFocus(this)
-		end
-		if (this.SetPaintBackground) then this:SetPaintBackground(false) end
-        if (this.SetDrawBackground) then this:SetDrawBackground(false) end
-	end
-
-	entry.Paint = function(this, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawOutlinedRect(0, 0, width, height)
-		this:DrawTextEntryText(this:GetTextColor(), this:GetHighlightColor(), this:GetCursorColor())
-	end
-end
-
-local function ApplyModelPanelStyle(panel)
-	if (!IsValid(panel)) then return end
-
-	-- Helix puts a DScrollPanel for the model character var
-	if (panel:GetClassName() == "DScrollPanel") then
-        if (panel.SetPaintBackground) then panel:SetPaintBackground(false) end
-        
-		if (panel.GetCanvas and IsValid(panel:GetCanvas())) then
-			panel:GetCanvas().Paint = nil
-            if (panel:GetCanvas().SetPaintBackground) then panel:GetCanvas():SetPaintBackground(false) end
-		end
-		-- Hide the scrollbar if possible or style it
-		local vbar = panel:GetVBar()
-		if (IsValid(vbar)) then
-			vbar:SetWide(0)
-		end
-	end
-end
-
-local function ApplyCharVarLabelStyle(panel)
-	if (!IsValid(panel)) then return end
-	
-	-- These are the labels ABOVE the inputs (NAME, DESCRIPTION, etc.)
-	panel:SetFont("ixImpMenuLabel")
-	panel:SetTextColor(THEME.accent)
-	panel:SetContentAlignment(4)
-end
-
-local function ApplyCategoryPanelStyle(panel)
-	if (!IsValid(panel)) then
-		return
-	end
-
-	panel.Paint = function(this, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawOutlinedRect(0, 0, width, height)
-
-		local title = this.GetText and this:GetText() or ""
-		if (title ~= "") then
-			draw.SimpleText(title:utf8upper(), "ixImpMenuLabel", Scale(10), Scale(8), THEME.accent, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-			surface.SetDrawColor(Color(255, 255, 255, 12))
-			surface.DrawLine(Scale(8), Scale(24), width - Scale(8), Scale(24))
-		end
-	end
-end
-
-local function ApplyProgressStyle(progress)
-	if (!IsValid(progress)) then
-		return
-	end
-
-	progress:SetTall(Scale(26))
-	progress:SetTextColor(THEME.textMuted)
-	progress:SetBarColor(THEME.accent)
-	progress:SetFont("ixImpMenuDiag")
-
-	progress.Paint = function(this, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawOutlinedRect(0, 0, width, height)
-
-		local segments = this:GetSegments()
-		local count = #segments
-		if (count == 0) then
-			return
-		end
-
-		local segWidth = width / count
-		local fraction = this:GetFraction() or 0
-
-		for i = 1, count do
-			local x = (i - 1) * segWidth
-			local active = fraction >= (i - 1) / count + 0.001
-			local labelColor = active and THEME.accent or THEME.textMuted
-			surface.SetDrawColor(Color(255, 255, 255, 12))
-			surface.DrawLine(x, 0, x, height)
-			draw.SimpleText(segments[i], "ixImpMenuDiag", x + segWidth * 0.5, height * 0.5, labelColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		end
-
-		surface.SetDrawColor(THEME.accent)
-		surface.DrawRect(0, height - Scale(2), width * fraction, Scale(2))
-	end
-end
-
-local function FitModelContainer(panel, widthRatio)
-	if (!IsValid(panel)) then
-		return
-	end
-
-	panel.__ixImpWidthRatio = widthRatio or 0.34
-	panel.__ixImpMargin = Scale(8)
-
-	panel.PerformLayout = function(this)
-		local parent = this:GetParent()
-		if (IsValid(parent)) then
-			this:SetWide(math.Round(parent:GetWide() * (this.__ixImpWidthRatio or 0.34)))
-		end
-		this:DockMargin(this.__ixImpMargin, Scale(12), this.__ixImpMargin, Scale(12))
-	end
-
-	panel:InvalidateLayout(true)
-end
-
-local function ApplyButtonSounds(button)
-	if (!IsValid(button)) then
-		return
-	end
-
-	function button:OnCursorEntered()
-		if (self:GetDisabled()) then
-			return
-		end
-
-		local color = self:GetTextColor()
-		self:SetTextColorInternal(Color(math.max(color.r - 25, 0), math.max(color.g - 25, 0), math.max(color.b - 25, 0)))
-		self:CreateAnimation(0.15, {target = {currentBackgroundAlpha = self.backgroundAlpha}})
-		surface.PlaySound(SOUND_HOVER)
-	end
-
-	function button:OnMousePressed(code)
-		if (self:GetDisabled()) then
-			surface.PlaySound(SOUND_ERROR)
-			return
-		end
-
-		if (self.color) then
-			self:SetTextColor(self.color)
-		else
-			self:SetTextColor(ix.config.Get("color"))
-		end
-
-		surface.PlaySound(SOUND_CLICK)
-
-		if (code == MOUSE_LEFT and self.DoClick) then
-			self:DoClick(self)
-		elseif (code == MOUSE_RIGHT and self.DoRightClick) then
-			self:DoRightClick(self)
-		end
-	end
-end
-
-local function ApplyImpButtonStyle(button, style)
-	if (!IsValid(button)) then
-		return
-	end
-
-	button.__ixImpStyle = style or "default"
-	button.__ixImpPulseOffset = button.__ixImpPulseOffset or math.Rand(0, 4)
-	button.__ixImpNextHoverSound = 0
-	button:SetFont("ixImpMenuButton")
-	button:SetTextColor(THEME.text)
-	button:SetPaintBackground(false)
-	button:SetContentAlignment(5)
-	button:SetTextInset(0, 0)
-
-	function button:GetImpColors()
-		if (self.__ixImpStyle == "accent") then
-			return THEME.accent, THEME.accent, Color(25, 20, 10, 220), THEME.accent
-		elseif (self.__ixImpStyle == "danger") then
-			return THEME.danger, THEME.danger, Color(35, 10, 10, 220), THEME.danger
-		end
-
-		return THEME.text, THEME.accentSoft, THEME.buttonBgHover, THEME.text
-	end
-
-	function button:Paint(width, height)
-		local disabled = self:GetDisabled()
-		local selected = self.GetSelected and self:GetSelected() or false
-		local hovered = self:IsHovered() or self:IsDown() or selected
-		local labelColor, borderColor, hoverBg, hoverLabel = self:GetImpColors()
-		local bg = THEME.buttonBg
-		local glow = math.Round(12 + (math.sin(CurTime() * 2 + self.__ixImpPulseOffset) + 1) * 9)
-
-		if (selected and self.__ixImpStyle == "default") then
-			labelColor = THEME.accent
-			borderColor = THEME.accent
-		end
-
-		if (hovered) then
-			borderColor = Color(borderColor.r, borderColor.g, borderColor.b, math.min(255, borderColor.a + 40))
-			bg = hoverBg
-			labelColor = hoverLabel
-		end
-
-		if (disabled) then
-			borderColor = Color(borderColor.r, borderColor.g, borderColor.b, 60)
-			bg = Color(bg.r, bg.g, bg.b, 60)
-			labelColor = Color(labelColor.r, labelColor.g, labelColor.b, 60)
-		else
-			borderColor = Color(borderColor.r, borderColor.g, borderColor.b, math.min(255, borderColor.a + glow))
-		end
-
-		surface.SetDrawColor(bg)
-		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(borderColor)
-		surface.DrawOutlinedRect(0, 0, width, height)
-		surface.DrawOutlinedRect(1, 1, width - 2, height - 2)
-
-		draw.SimpleText(self:GetText(), "ixImpMenuButton", width * 0.5, height * 0.5, labelColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	end
-
-	function button:OnCursorEntered()
-		if (self:GetDisabled()) then
-			return
-		end
-
-		if (self.__ixImpNextHoverSound <= CurTime()) then
-			self.__ixImpNextHoverSound = CurTime() + 0.08
-			surface.PlaySound(SOUND_HOVER)
-		end
-	end
-end
-
-local function FindScreeningParent(panel)
-	local current = panel
-
-	while (IsValid(current)) do
-		if (current.__ixImpHasScreening) then
-			return current
-		end
-		current = current:GetParent()
-	end
-
-	return nil
-end
-
-local function FindDataPanelParent(panel)
-	local current = panel
-
-	while (IsValid(current)) do
-		if (current.__ixImpHasDataPanel) then
-			return current
-		end
-		current = current:GetParent()
-	end
-
-	return nil
-end
-
-local function ApplyModelScrollStyle(scroll)
-	if (!IsValid(scroll)) then
-		return
-	end
-
-	if (scroll.GetVBar) then
-		scroll:GetVBar():SetWide(0)
-		scroll:GetVBar():SetVisible(false)
-	end
-
-	scroll.Paint = function(panel, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawOutlinedRect(0, 0, width, height)
-	end
-	if (scroll:GetDock() == FILL) then
-		scroll:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
-	end
-end
-
-local function ApplyIconLayoutStyle(layout)
-	if (!IsValid(layout)) then
-		return
-	end
-
-	layout:SetSpaceX(Scale(6))
-	layout:SetSpaceY(Scale(6))
-end
-
-local function ApplySpawnIconStyle(icon)
-	if (!IsValid(icon)) then
-		return
-	end
-
-	if (!icon.__ixImpOldPaintOver) then
-		icon.__ixImpOldPaintOver = icon.PaintOver
-	end
-
-	icon.PaintOver = function(this, width, height)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawOutlinedRect(0, 0, width, height)
-		surface.DrawOutlinedRect(1, 1, width - 2, height - 2)
-
-		if (this.__ixImpOldPaintOver) then
-			this.__ixImpOldPaintOver(this, width, height)
-		end
-
-		surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 200))
-		surface.DrawOutlinedRect(2, 2, width - 4, height - 4)
-	end
-end
-
-local function ContainsSpawnIcon(panel)
-	for _, child in ipairs(panel:GetChildren() or {}) do
-		local className = child:GetClassName()
-		if (className == "SpawnIcon") then
-			return true
-		end
-		if (ContainsSpawnIcon(child)) then
-			return true
-		end
-	end
-
-	return false
-end
-
-local function ApplyAttributeButtonStyle(button, symbol)
-	if (!IsValid(button)) then
-		return
-	end
-
-	button.__ixImpSymbol = symbol
-	button.__ixImpHover = false
-	button:SetImage("")
-	button:SetSize(Scale(18), Scale(18))
-	button.OnCursorEntered = function(this)
-		this.__ixImpHover = true
-	end
-	button.OnCursorExited = function(this)
-		this.__ixImpHover = false
-	end
-	button.Paint = function(this, width, height)
-		local border = this.__ixImpHover and THEME.accent or THEME.frameSoft
-		surface.SetDrawColor(THEME.buttonBg)
-		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(border)
-		surface.DrawOutlinedRect(0, 0, width, height)
-		draw.SimpleText(this.__ixImpSymbol, "ixImpMenuDiag", width * 0.5, height * 0.5, THEME.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	end
-end
-
-local function ApplyAttributeBarStyle(panel)
-	if (!IsValid(panel)) then
-		return
-	end
-
-	panel:SetTall(Scale(22))
-
-	if (IsValid(panel.label)) then
-		panel.label:SetFont("ixImpMenuDiag")
-		panel.label:SetTextColor(THEME.textMuted)
-		panel.label:SetContentAlignment(5)
-	end
-
-	if (IsValid(panel.bar)) then
-		panel.bar.Paint = function(this, w, h)
-			surface.SetDrawColor(Color(0, 0, 0, 255))
-			surface.DrawRect(0, 0, w, h)
-			surface.SetDrawColor(THEME.frameSoft)
-			surface.DrawOutlinedRect(0, 0, w, h)
-
-			local max = math.max(panel.max or 1, 1)
-			local value = (panel.deltaValue or 0) / max
-			local fillW = math.max(0, (w - 4) * value)
-
-			if (fillW > 0) then
-				surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 180))
-				surface.DrawRect(2, 2, fillW, h - 4)
-			end
-		end
-	end
-
-	if (IsValid(panel.add)) then
-		ApplyAttributeButtonStyle(panel.add, "+")
-	end
-
-	if (IsValid(panel.sub)) then
-		ApplyAttributeButtonStyle(panel.sub, "-")
-	end
-
-	if (panel.GetColor and panel:GetColor() ~= THEME.accent) then
-		panel:SetColor(THEME.accent)
-	end
 end
 
 local function ApplyToChildren(panel, callback)
@@ -800,18 +53,18 @@ local function ApplyCharMenuStatic(panel)
         attributesModelPanel:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8)) 
     end
 
-	ApplyScreeningPanel(factionModelPanel, "ENLISTMENT SCREENING")
-	ApplyScreeningPanel(descriptionModelPanel, "BIOGRAPHIC REVIEW")
-	ApplyScreeningPanel(attributesModelPanel, "APTITUDE SCREENING")
+	ix.ui.ApplyScreeningPanel(factionModelPanel, "ENLISTMENT SCREENING")
+	ix.ui.ApplyScreeningPanel(descriptionModelPanel, "BIOGRAPHIC REVIEW")
+	ix.ui.ApplyScreeningPanel(attributesModelPanel, "APTITUDE SCREENING")
 
 	-- If factionButtonsPanel is inside a container that already has ApplyDataPanel (our new layout), don't apply it again
     -- We detect this by checking if it's a ScrollPanel
     if (panel.factionButtonsPanel:GetName() != "DScrollPanel") then
-	    ApplyDataPanel(panel.factionButtonsPanel, "ENLISTMENT OPTIONS")
+	    ix.ui.ApplyDataPanel(panel.factionButtonsPanel, "ENLISTMENT OPTIONS")
     end
 
-	ApplyDataPanel(panel.descriptionPanel, "PERSONNEL RECORD")
-	ApplyDataPanel(panel.attributesPanel, "APTITUDE MATRIX")
+	ix.ui.ApplyDataPanel(panel.descriptionPanel, "PERSONNEL RECORD")
+	ix.ui.ApplyDataPanel(panel.attributesPanel, "APTITUDE MATRIX")
 
 	local sideMargin = Scale(8)
 	local sideTop = Scale(12)
@@ -848,7 +101,7 @@ local function ApplyCharMenuStatic(panel)
 		ApplySubpanelTitle(panel.attributes)
 	end
 
-	ApplyProgressStyle(panel.progress)
+	ix.ui.ApplyProgressStyle(panel.progress)
 end
 
 local function ApplyCharMenuDynamic(panel)
@@ -859,7 +112,7 @@ local function ApplyCharMenuDynamic(panel)
 	ApplySubpanelTitle(panel.factionPanel)
 	ApplySubpanelTitle(panel.description)
 	ApplySubpanelTitle(panel.attributes)
-	ApplyProgressStyle(panel.progress)
+	ix.ui.ApplyProgressStyle(panel.progress)
 
 	ApplyToChildren(panel, function(child)
 		local className = child:GetClassName()
@@ -874,19 +127,19 @@ local function ApplyCharMenuDynamic(panel)
 				style = "danger"
 			end
 
-			ApplyButtonSounds(child)
-			ApplyImpButtonStyle(child, style)
+			ix.ui.ApplyButtonSounds(child)
+			ix.ui.ApplyImpButtonStyle(child, style)
 			child:SetTall(Scale(44))
 
 			local dock = child:GetDock()
 			if (dock == BOTTOM) then
 				child:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
-				local screeningParent = FindScreeningParent(child)
+				local screeningParent = ix.ui.FindScreeningParent(child)
 				if (IsValid(screeningParent)) then
 					local footer = child:GetTall() + Scale(16)
 					screeningParent.__ixImpFooterHeight = math.max(screeningParent.__ixImpFooterHeight or 0, footer)
 				else
-					local dataParent = FindDataPanelParent(child)
+					local dataParent = ix.ui.FindDataPanelParent(child)
 					if (IsValid(dataParent)) then
 						local footer = child:GetTall() + Scale(16)
 						dataParent.__ixImpFooterHeight = math.max(dataParent.__ixImpFooterHeight or 0, footer)
@@ -909,24 +162,26 @@ local function ApplyCharMenuDynamic(panel)
 		end
 
 		if (child.IsA and child:IsA("DLabel")) then
-			ApplyCharVarLabelStyle(child)
+			ix.ui.ApplyCharVarLabelStyle(child)
 			if (child:GetText() == "NAME" or child:GetText() == "DESCRIPTION") then
 				-- Specific forcing for known labels if needed
 				child:SetFont("ixImpMenuLabel")
 				child:SetTextColor(THEME.accentSoft)
 			end
 		elseif (child.IsA and (child:IsA("DTextEntry") or child:GetClassName() == "ixTextEntry")) then
-			ApplyTextEntryStyle(child)
+			ix.ui.ApplyTextEntryStyle(child)
 		elseif (className == "DScrollPanel") then
-			ApplyModelPanelStyle(child)
+			ix.ui.ApplyModelPanelStyle(child)
 		elseif (className == "DIconLayout") then
-			ApplyIconLayoutStyle(child)
+			ix.ui.ApplyIconLayoutStyle(child)
 		elseif (className == "SpawnIcon") then
-			ApplySpawnIconStyle(child)
+			ix.ui.ApplySpawnIconStyle(child)
 		elseif (className == "ixAttributeBar") then
-			ApplyAttributeBarStyle(child)
+			ix.ui.ApplyAttributeBarStyle(child)
+			if (IsValid(child.add)) then ix.ui.ApplyAttributeButtonStyle(child.add, "+") end
+			if (IsValid(child.sub)) then ix.ui.ApplyAttributeButtonStyle(child.sub, "-") end
 		elseif (className == "ixCategoryPanel") then
-			ApplyCategoryPanelStyle(child)
+			ix.ui.ApplyCategoryPanelStyle(child)
 		end
 	end)
 end
@@ -969,7 +224,7 @@ function PANEL:Init()
 	factionFooter:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
 	factionFooter.Paint = function() end
 
-	local proceed = factionFooter:Add("ixImpMenuButtonChar")
+	local proceed = factionFooter:Add("ixImpButton")
 	proceed:SetLabel("PROCEED")
 	proceed:SetStyle("accent")
 	proceed:Dock(RIGHT)
@@ -982,7 +237,7 @@ function PANEL:Init()
 		self:SetActiveSubpanel("description")
 	end
 
-	local factionBack = factionFooter:Add("ixImpMenuButtonChar")
+	local factionBack = factionFooter:Add("ixImpButton")
 	factionBack:SetLabel("RETURN")
 	factionBack:SetStyle("danger")
 	factionBack:Dock(LEFT)
@@ -1016,23 +271,14 @@ function PANEL:Init()
     factionListContainer:Dock(FILL)
     -- Add margins to simulate spacing between boxes
     factionListContainer:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
-	ApplyDataPanel(factionListContainer, "ENLISTMENT OPTIONS")
+	ix.ui.ApplyDataPanel(factionListContainer, "ENLISTMENT OPTIONS")
 
 	self.factionButtonsPanel = factionListContainer:Add("DScrollPanel")
 	self.factionButtonsPanel:Dock(FILL)
 	self.factionButtonsPanel:DockMargin(Scale(8), Scale(32), Scale(8), Scale(8))
     self.factionButtonsPanel.Paint = function() end
     
-    -- Scrollbar styling
-    local vbar = self.factionButtonsPanel:GetVBar()
-    vbar:SetWide(Scale(4))
-    vbar.Paint = function() end
-    vbar.btnUp.Paint = function() end
-    vbar.btnDown.Paint = function() end
-    vbar.btnGrip.Paint = function(this, w, h)
-        surface.SetDrawColor(THEME.accentSoft)
-        surface.DrawRect(0, 0, w, h)
-    end
+    ix.ui.ApplyScrollbarStyle(self.factionButtonsPanel)
 
 	-- Faction Info Panel (Bottom Box)
 	self.factionInfoPanel = factionLeft:Add("Panel")
@@ -1110,7 +356,7 @@ function PANEL:Init()
 	descriptionFooter:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
 	descriptionFooter.Paint = function() end
 
-	local descriptionBack = descriptionFooter:Add("ixImpMenuButtonChar")
+	local descriptionBack = descriptionFooter:Add("ixImpButton")
 	descriptionBack:SetLabel("RETURN")
 	descriptionBack:SetStyle("danger")
 	descriptionBack:Dock(FILL)
@@ -1147,7 +393,7 @@ function PANEL:Init()
 	descriptionFooterPanel:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
 	descriptionFooterPanel.Paint = function() end
 
-	local descriptionProceed = descriptionFooterPanel:Add("ixImpMenuButtonChar")
+	local descriptionProceed = descriptionFooterPanel:Add("ixImpButton")
 	descriptionProceed:SetLabel("PROCEED")
 	descriptionProceed:SetStyle("accent")
 	descriptionProceed:Dock(FILL)
@@ -1185,7 +431,7 @@ function PANEL:Init()
 	attributesFooter:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
 	attributesFooter.Paint = function() end
 
-	local attributesBack = attributesFooter:Add("ixImpMenuButtonChar")
+	local attributesBack = attributesFooter:Add("ixImpButton")
 	attributesBack:SetLabel("RETURN")
 	attributesBack:SetStyle("danger")
 	attributesBack:Dock(FILL)
@@ -1216,7 +462,7 @@ function PANEL:Init()
 	attributesFooterPanel:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
 	attributesFooterPanel.Paint = function() end
 
-	local create = attributesFooterPanel:Add("ixImpMenuButtonChar")
+	local create = attributesFooterPanel:Add("ixImpButton")
 	create:SetLabel("FINISH")
 	create:SetStyle("accent")
 	create:Dock(FILL)
@@ -1416,7 +662,7 @@ function PANEL:Populate()
 
 		for _, v in SortedPairs(ix.faction.teams) do
 			if (ix.faction.HasWhitelist(v.index)) then
-				local button = self.factionButtonsPanel:Add("ixImpMenuButtonChar")
+				local button = self.factionButtonsPanel:Add("ixImpButton")
 				button:SetLabel(L(v.name):utf8upper())
 				-- button:SizeToContents()
 				-- button:SetButtonList(self.factionButtons)
@@ -1537,13 +783,13 @@ function PANEL:Populate()
 				label:Dock(TOP)
 
                 -- Apply styles to label
-                ApplyCharVarLabelStyle(label)
+                ix.ui.ApplyCharVarLabelStyle(label)
 
                 -- Apply styles to panel
                 if (panel.IsA and panel:IsA("DTextEntry")) then
-                    ApplyTextEntryStyle(panel)
+                    ix.ui.ApplyTextEntryStyle(panel)
                 elseif (panel:GetClassName() == "DScrollPanel") then
-                    ApplyModelPanelStyle(panel)
+                    ix.ui.ApplyModelPanelStyle(panel)
                 end
                 
                 -- Also apply basic check for dynamic children if it's a complex panel
@@ -1583,7 +829,7 @@ function PANEL:Populate()
                     
                     -- Re-apply critical styles if OnPostSetup overrode them
                     if (panel.IsA and panel:IsA("DTextEntry")) then
-                         ApplyTextEntryStyle(panel)
+                         ix.ui.ApplyTextEntryStyle(panel)
                     end
 				end
 

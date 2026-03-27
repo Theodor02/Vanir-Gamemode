@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ix.usms - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li class="active"><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    
+<article><div class="wrapper">
+
+<div class="module-header">
+    <span class="kind-badge module">Library</span>
+    <h1>ix.usms</h1>
+    <p class="module-file">plugins/usms/cl_plugin.lua</p>
+</div>
+
+
+<div class="toc"><h3>Functions</h3><ul><li><span class="realm server" title="server"></span><a href="#ix.usms.AddMember">ix.usms.AddMember</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.AddResources">ix.usms.AddResources</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.AddToSquad">ix.usms.AddToSquad</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.AwardCommendation">ix.usms.AwardCommendation</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.CancelMission">ix.usms.CancelMission</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.ChangeClass">ix.usms.ChangeClass</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.ClearSquadFromHUD">ix.usms.ClearSquadFromHUD</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.CompleteMission">ix.usms.CompleteMission</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.CreateMission">ix.usms.CreateMission</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.CreateSquad">ix.usms.CreateSquad</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.CreateUnit">ix.usms.CreateUnit</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.DeductResources">ix.usms.DeductResources</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.DeleteUnit">ix.usms.DeleteUnit</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.DisbandSquad">ix.usms.DisbandSquad</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.FullSyncToPlayer">ix.usms.FullSyncToPlayer</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.FullSyncToUnit">ix.usms.FullSyncToUnit</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.GearUp">ix.usms.GearUp</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.GetActiveMissions">ix.usms.GetActiveMissions</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetAvailableCatalog">ix.usms.GetAvailableCatalog</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetCharacterByID">ix.usms.GetCharacterByID</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetClassIndexByUID">ix.usms.GetClassIndexByUID</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.GetClassLoadout">ix.usms.GetClassLoadout</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetFactionUnits">ix.usms.GetFactionUnits</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.GetLoadoutCost">ix.usms.GetLoadoutCost</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.GetLogs">ix.usms.GetLogs</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetOnlineUnitMembers">ix.usms.GetOnlineUnitMembers</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetPlayerByCharID">ix.usms.GetPlayerByCharID</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetResourceStatus">ix.usms.GetResourceStatus</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.GetResources">ix.usms.GetResources</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.GetServiceRecord">ix.usms.GetServiceRecord</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetSquadData">ix.usms.GetSquadData</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetSquadMembers">ix.usms.GetSquadMembers</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetUnitData">ix.usms.GetUnitData</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetUnitMemberCount">ix.usms.GetUnitMemberCount</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetUnitMembers">ix.usms.GetUnitMembers</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.GetUnitMissions">ix.usms.GetUnitMissions</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetUnitSquadCount">ix.usms.GetUnitSquadCount</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.GetUnitSquads">ix.usms.GetUnitSquads</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.HandleSquadLeaderVacancy">ix.usms.HandleSquadLeaderVacancy</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.Log">ix.usms.Log</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.RegisterFactionItem">ix.usms.RegisterFactionItem</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.usms.RegisterGlobalItem">ix.usms.RegisterGlobalItem</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.RemoveFromSquad">ix.usms.RemoveFromSquad</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.RemoveMember">ix.usms.RemoveMember</a></li><li><span class="realm client" title="client"></span><a href="#ix.usms.Request">ix.usms.Request</a></li><li><span class="realm client" title="client"></span><a href="#ix.usms.RespondToInvite">ix.usms.RespondToInvite</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.RespondToInvite">ix.usms.RespondToInvite</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.RevokeCommendation">ix.usms.RevokeCommendation</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SendInvite">ix.usms.SendInvite</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SendRoster">ix.usms.SendRoster</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SendServiceRecord">ix.usms.SendServiceRecord</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SetMemberRole">ix.usms.SetMemberRole</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SetResources">ix.usms.SetResources</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SetSquadLeader">ix.usms.SetSquadLeader</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SyncMissionsToPlayer">ix.usms.SyncMissionsToPlayer</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SyncMissionsToUnit">ix.usms.SyncMissionsToUnit</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SyncResourceToUnit">ix.usms.SyncResourceToUnit</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SyncRosterUpdateToUnit">ix.usms.SyncRosterUpdateToUnit</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SyncSquadToHUD">ix.usms.SyncSquadToHUD</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SyncUnitToAllMembers">ix.usms.SyncUnitToAllMembers</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.SyncUnitToPlayer">ix.usms.SyncUnitToPlayer</a></li><li><span class="realm server" title="server"></span><a href="#ix.usms.TransferCO">ix.usms.TransferCO</a></li></ul></div>
+<h2>Functions</h2>
+<div class="function-block" id="ix.usms.AddMember">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.AddMember(ID, ID, USMS_ROLE_, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:258</span>
+    </div>
+    <div class="function-desc"><p>Add a character to a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">charID number Character</span></td><td></td></tr><tr><td class="param-name">ID</td><td class="param-type"><span class="type">unitID number Unit</span></td><td></td></tr><tr><td class="param-name">USMS_ROLE_</td><td class="param-type"><span class="type">role number</span></td><td>* (default USMS_ROLE_MEMBER)</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.AddResources">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.AddResources(number, number, string, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:824</span>
+    </div>
+    <div class="function-desc"><p>Add resources to a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">amount</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">reason</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">actorCharID</span></td><td>|nil</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.AddToSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.AddToSquad(number, number, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:570</span>
+    </div>
+    <div class="function-desc"><p>Add a character to a squad.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">charID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.AwardCommendation">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.AwardCommendation(number, number, officer, table, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2257</span>
+    </div>
+    <div class="function-desc"><p>Award a commendation to a character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">recipientCharID</span></td><td></td></tr><tr><td class="param-name">officer</td><td class="param-type"><span class="type">awardedBy number charID of awarding</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">data</span></td><td>{type, title, reason}</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error|commendationID)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.CancelMission">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.CancelMission(number, charID, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2154</span>
+    </div>
+    <div class="function-desc"><p>Cancel a mission.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">missionID</span></td><td></td></tr><tr><td class="param-name">charID</td><td class="param-type"><span class="type">cancelledBy number</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.ChangeClass">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.ChangeClass(ID, index, number, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:875</span>
+    </div>
+    <div class="function-desc"><p>Change a character&#x27;s class.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">charID number Character</span></td><td></td></tr><tr><td class="param-name">index</td><td class="param-type"><span class="type">classIndex number Target class</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">authorizerCharID</span></td><td>|nil</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.ClearSquadFromHUD">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.ClearSquadFromHUD(number, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:1274</span>
+    </div>
+    <div class="function-desc"><p>Clear a USMS squad from the HUD.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.CompleteMission">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.CompleteMission(number, charID, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2122</span>
+    </div>
+    <div class="function-desc"><p>Complete a mission.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">missionID</span></td><td></td></tr><tr><td class="param-name">charID</td><td class="param-type"><span class="type">completedBy number</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.CreateMission">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.CreateMission(number, creator, table, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2062</span>
+    </div>
+    <div class="function-desc"><p>Create a new mission.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">creator</td><td class="param-type"><span class="type">createdBy number charID of</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">data</span></td><td>{title, description, priority, assignedTo={type, id}}</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error|missionID)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.CreateSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.CreateSquad(squad, designation, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:473</span>
+    </div>
+    <div class="function-desc"><p>Create a squad within a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">squad</td><td class="param-type"><span class="type">ply Player The player creating the</span></td><td></td></tr><tr><td class="param-name">designation</td><td class="param-type"><span class="type">name string Squad</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error|squadID)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.CreateUnit">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.CreateUnit(name, index, Optional, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:174</span>
+    </div>
+    <div class="function-desc"><p>Create a new unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">name</td><td class="param-type"><span class="type">name string Unit</span></td><td></td></tr><tr><td class="param-name">index</td><td class="param-type"><span class="type">factionID number Helix faction</span></td><td></td></tr><tr><td class="param-name">Optional</td><td class="param-type"><span class="type">data table</span></td><td>{description, resourceCap, maxMembers, maxSquads, resources}</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(unitID)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string success/error</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.DeductResources">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.DeductResources(number, number, string, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:835</span>
+    </div>
+    <div class="function-desc"><p>Deduct resources from a unit. Returns false if insufficient.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">amount</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">reason</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">actorCharID</span></td><td>|nil</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.DeleteUnit">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.DeleteUnit(number, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:211</span>
+    </div>
+    <div class="function-desc"><p>Delete a unit and all associated data.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>()</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.DisbandSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.DisbandSquad(number, number, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:742</span>
+    </div>
+    <div class="function-desc"><p>Disband a squad entirely.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">disbandedByCharID</span></td><td>|nil</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.FullSyncToPlayer">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.FullSyncToPlayer(Player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:27</span>
+    </div>
+    <div class="function-desc"><p>Full sync to a single player: unit data + roster.
+Call after any action that affects the player&#x27;s USMS state.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">ply</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.FullSyncToUnit">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.FullSyncToUnit(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:42</span>
+    </div>
+    <div class="function-desc"><p>Sync all online unit members (full unit + roster refresh).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GearUp">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.GearUp(Player, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:963</span>
+    </div>
+    <div class="function-desc"><p>Gear up a character with their class loadout.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">ply</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error, itemsGranted, cost)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetActiveMissions">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.GetActiveMissions(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2186</span>
+    </div>
+    <div class="function-desc"><p>Get active missions for a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table array of mission data</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetAvailableCatalog">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetAvailableCatalog(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_catalogs.lua:41</span>
+    </div>
+    <div class="function-desc"><p>Get all catalog items available to a faction (global + faction-specific).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">factionID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table [uniqueID] = itemData</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetCharacterByID">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetCharacterByID(ID)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:102</span>
+    </div>
+    <div class="function-desc"><p>Get a character object by ID (online characters only).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">charID number Character</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>Character|nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetClassIndexByUID">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetClassIndexByUID(uniqueID, filter)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:85</span>
+    </div>
+    <div class="function-desc"><p>Resolve a class uniqueID to its runtime numeric index.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">uniqueID</td><td class="param-type"><span class="type">uniqueID string Class</span></td><td>(e.g., &quot;army_recruit&quot;)</td></tr><tr><td class="param-name">filter</td><td class="param-type"><span class="type">factionID number|nil Optional faction</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number|nil classIndex</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetClassLoadout">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.GetClassLoadout(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:866</span>
+    </div>
+    <div class="function-desc"><p>Get loadout items for a class.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">classIndex</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetFactionUnits">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetFactionUnits(index)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:221</span>
+    </div>
+    <div class="function-desc"><p>Get all units for a faction.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">index</td><td class="param-type"><span class="type">factionID number Helix faction</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table [unitID] = unitData</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetLoadoutCost">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.GetLoadoutCost(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:851</span>
+    </div>
+    <div class="function-desc"><p>Get the total resource cost for a class loadout.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">classIndex</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetLogs">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.GetLogs(number, table, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_logging.lua:73</span>
+    </div>
+    <div class="function-desc"><p>Fetch logs for a unit from the in-memory log store.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">options</span></td><td>{limit, offset, action, startTime, endTime}</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(logs)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetOnlineUnitMembers">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetOnlineUnitMembers(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:128</span>
+    </div>
+    <div class="function-desc"><p>Get all online player entities who are members of a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table of Player entities</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetPlayerByCharID">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetPlayerByCharID(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:115</span>
+    </div>
+    <div class="function-desc"><p>Get the player entity for a character ID (online only).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">charID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>Player|nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetResourceStatus">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetResourceStatus(number, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:236</span>
+    </div>
+    <div class="function-desc"><p>Get resource status text from resources and cap.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">resources</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">cap</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>string</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetResources">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.GetResources(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:787</span>
+    </div>
+    <div class="function-desc"><p>Get a unit&#x27;s current resources.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetServiceRecord">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.GetServiceRecord(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2344</span>
+    </div>
+    <div class="function-desc"><p>Get the service record for a character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">charID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table {commendations, member, promotionHistory}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetSquadData">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetSquadData(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:268</span>
+    </div>
+    <div class="function-desc"><p>Get squad data from client cache.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table|nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetSquadMembers">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetSquadMembers(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:191</span>
+    </div>
+    <div class="function-desc"><p>Get all members of a squad.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table [charID] = squadMemberData</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetUnitData">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetUnitData(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:254</span>
+    </div>
+    <div class="function-desc"><p>Get unit data from client cache.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table|nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetUnitMemberCount">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetUnitMemberCount(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:146</span>
+    </div>
+    <div class="function-desc"><p>Get count of members in a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetUnitMembers">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetUnitMembers(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:161</span>
+    </div>
+    <div class="function-desc"><p>Get all member data for a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table [charID] = memberData</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetUnitMissions">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.GetUnitMissions(number, boolean)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2200</span>
+    </div>
+    <div class="function-desc"><p>Get all missions for a unit (including completed/cancelled).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">boolean</td><td class="param-type"><span class="type">includeInactive</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table array of mission data</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetUnitSquadCount">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetUnitSquadCount(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:206</span>
+    </div>
+    <div class="function-desc"><p>Get the squad count for a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.GetUnitSquads">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.GetUnitSquads(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_usms.lua:176</span>
+    </div>
+    <div class="function-desc"><p>Get all squads in a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table [squadID] = squadData</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.HandleSquadLeaderVacancy">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.HandleSquadLeaderVacancy(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:672</span>
+    </div>
+    <div class="function-desc"><p>Handle when a squad leader leaves.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.Log">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.Log(number, USMS_LOG_, number, number, context)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_logging.lua:30</span>
+    </div>
+    <div class="function-desc"><p>Add a USMS log entry (writes to data file + fires Helix ix.log).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">USMS_LOG_</td><td class="param-type"><span class="type">action string</span></td><td>* constant</td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">actorCharID</span></td><td>|nil</td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">targetCharID</span></td><td>|nil</td></tr><tr><td class="param-name">context</td><td class="param-type"><span class="type">data table|nil Additional</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.RegisterFactionItem">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.RegisterFactionItem(index, uniqueID, table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_catalogs.lua:24</span>
+    </div>
+    <div class="function-desc"><p>Register a faction-specific catalog item.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">index</td><td class="param-type"><span class="type">factionID number Helix faction</span></td><td></td></tr><tr><td class="param-name">uniqueID</td><td class="param-type"><span class="type">uniqueID string Helix item</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">data</span></td><td>{name, cost, category}</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.RegisterGlobalItem">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.usms.RegisterGlobalItem(uniqueID, table)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sh_catalogs.lua:12</span>
+    </div>
+    <div class="function-desc"><p>Register a global catalog item (available to all factions).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">uniqueID</td><td class="param-type"><span class="type">uniqueID string Helix item</span></td><td></td></tr><tr><td class="param-name">table</td><td class="param-type"><span class="type">data</span></td><td>{name, cost, category}</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.RemoveFromSquad">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.RemoveFromSquad(number, number, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:626</span>
+    </div>
+    <div class="function-desc"><p>Remove a character from their squad.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">charID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">kickerCharID</span></td><td>|nil</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.RemoveMember">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.RemoveMember(ID, them, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:337</span>
+    </div>
+    <div class="function-desc"><p>Remove a character from their unit (and squad if applicable).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">charID number Character</span></td><td></td></tr><tr><td class="param-name">them</td><td class="param-type"><span class="type">kickerCharID number|nil Who kicked</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.Request">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.usms.Request(identifier, Action)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:209</span>
+    </div>
+    <div class="function-desc"><p>Send a USMS request to the server.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">action string The action</span></td><td></td></tr><tr><td class="param-name">Action</td><td class="param-type"><span class="type">data table</span></td><td>-specific payload</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.RespondToInvite">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.usms.RespondToInvite(boolean)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/cl_plugin.lua:247</span>
+    </div>
+    <div class="function-desc"><p>Send invite response to server.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">boolean</td><td class="param-type"><span class="type">accept</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.RespondToInvite">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.RespondToInvite(Player, boolean)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:113</span>
+    </div>
+    <div class="function-desc"><p>Process an invite response from a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">ply</span></td><td></td></tr><tr><td class="param-name">boolean</td><td class="param-type"><span class="type">accept</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.RevokeCommendation">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.RevokeCommendation(number, charID, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2315</span>
+    </div>
+    <div class="function-desc"><p>Revoke a commendation.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">commID</span></td><td></td></tr><tr><td class="param-name">charID</td><td class="param-type"><span class="type">revokedBy number</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SendInvite">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SendInvite(number, string, number, number, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:60</span>
+    </div>
+    <div class="function-desc"><p>Send an invite to a player (unit or squad).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">targetCharID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">inviteType</span></td><td>&quot;unit&quot; or &quot;squad&quot;</td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">inviterCharID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td>|nil (for squad invites)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SendRoster">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SendRoster(Player, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:1122</span>
+    </div>
+    <div class="function-desc"><p>Build and send roster data for a unit to a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">ply</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SendServiceRecord">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SendServiceRecord(Player, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2400</span>
+    </div>
+    <div class="function-desc"><p>Send a service record to a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">ply</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">targetCharID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SetMemberRole">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SetMemberRole(number, USMS_ROLE_, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:384</span>
+    </div>
+    <div class="function-desc"><p>Set a member&#x27;s unit role.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">charID</span></td><td></td></tr><tr><td class="param-name">USMS_ROLE_</td><td class="param-type"><span class="type">newRole number</span></td><td>*</td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SetResources">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SetResources(number, number, string, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:795</span>
+    </div>
+    <div class="function-desc"><p>Set a unit&#x27;s resources (clamped to 0..cap).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">amount</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">reason</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">actorCharID</span></td><td>|nil</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SetSquadLeader">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SetSquadLeader(number, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:707</span>
+    </div>
+    <div class="function-desc"><p>Set a new squad leader.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">newLeaderCharID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SyncMissionsToPlayer">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SyncMissionsToPlayer(Player, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2221</span>
+    </div>
+    <div class="function-desc"><p>Send all missions for a unit to a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">ply</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SyncMissionsToUnit">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SyncMissionsToUnit(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:2244</span>
+    </div>
+    <div class="function-desc"><p>Sync missions to all online unit members.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SyncResourceToUnit">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SyncResourceToUnit(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:1105</span>
+    </div>
+    <div class="function-desc"><p>Send resource update to all online unit members.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SyncRosterUpdateToUnit">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SyncRosterUpdateToUnit(number, number, string)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:1194</span>
+    </div>
+    <div class="function-desc"><p>Send a single roster update to all unit members.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">charID</span></td><td></td></tr><tr><td class="param-name">string</td><td class="param-type"><span class="type">action</span></td><td>&quot;add&quot;|&quot;remove&quot;|&quot;update&quot;</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SyncSquadToHUD">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SyncSquadToHUD(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:1237</span>
+    </div>
+    <div class="function-desc"><p>Send squad sync to all squad member HUDs.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">squadID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SyncUnitToAllMembers">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SyncUnitToAllMembers(number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:1096</span>
+    </div>
+    <div class="function-desc"><p>Send unit data to all online members.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.SyncUnitToPlayer">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.SyncUnitToPlayer(Player, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:1077</span>
+    </div>
+    <div class="function-desc"><p>Send full unit data to a player.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">Player</td><td class="param-type"><span class="type">ply</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.usms.TransferCO">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.usms.TransferCO(number, number, function)</code>
+            
+        </div>
+        <span class="file-ref">plugins/usms/libs/sv_usms.lua:422</span>
+    </div>
+    <div class="function-desc"><p>Transfer CO status within a unit.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">number</td><td class="param-type"><span class="type">unitID</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">newCOCharID</span></td><td></td></tr><tr><td class="param-name">function</td><td class="param-type"><span class="type">callback</span></td><td>(success, error)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+
+</div></article>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>

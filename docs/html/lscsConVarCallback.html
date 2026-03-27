@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: lscsConVarCallback - Skeleton</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Skeleton</h1>
+        <p>Skeleton Documentation</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="functions.html">Functions</a>
+        <a href="modules.html">Modules</a>
+    </nav>
+    <p class="text-muted"><a href="modules.html">Modules</a> / lscsConVarCallback</p>
+
+    <div class="content">
+        <h2>Module: lscsConVarCallback</h2>
+        <p>Total functions: <strong>1</strong></p>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">lscsConVarCallback</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                The Force — Core Plugin -- Manages Force sensitivity, the LSCS bridge, stamina integration, -- meditation, and the framework for perk-tree-driven power grants. -- -- Architecture: --   sh_plugin.lua         → config, meditation command, player effects registration, power registry API --   sh_unlocktree.lua     → force power / saber stance unlock tree (unlocktrees plugin) --   sv_forcesystem.lua    → server: force pool scaling, power LSCS sync, spawn hooks --   cl_forcesystem.lua    → client: force whisper rendering + LSCS menu disable --   sh_stamina_bridge.lua → replaces LSCS Block Points with Helix stamina (direct takeover) --   sh_force_pool.lua     → monkey-patch LSCS force pool to derive from Helix &#x27;force&#x27; attribute --   sv_whispers.lua       → server: periodic force whisper dispatch --   sv_lscs_overrides.lua → server: disables LSCS auto-equip, inventory save/restore hooks -- -- Cross-plugin dependencies (called directly): --   • player_effects   — ix.playerEffects.RegisterEffectType, ply:AddEffect/RemoveEffect/GetEffectValue --   • smartdisease     — ix.disease.HandleClientEvent (intrusive_thought, fleeting_thought) style rendering --   • helix/stamina    — ply:ConsumeStamina, ply:RestoreStamina, GetLocalVar(&quot;stm&quot;), brth netvar --   • LSCS addon       — Player meta: lscsGet/Set Force/MaxForce, lscsAddInventory, etc. --   • LSCS weapon_lscs — SWEP:DrainBP, SWEP:CalcBPRegen, SWEP:GetBlockPoints (melee stamina) -- @module theos-forcesystem local PLUGIN = PLUGIN PLUGIN.name        = &quot;The Force&quot; PLUGIN.author      = &quot;Theodor&quot; PLUGIN.description = &quot;Force sensitivity framework with LSCS integration, stamina bridging, and perk-tree-ready power management.&quot; -- ───────────────────────────────────────────── -- Sub-file includes (order matters) -- ───────────────────────────────────────────── ix.util.Include(&quot;sh_lscs_effects_bridge.lua&quot;) ix.util.Include(&quot;sh_force_pool.lua&quot;) ix.util.Include(&quot;sh_stamina_bridge.lua&quot;) ix.util.Include(&quot;sh_unlocktree.lua&quot;) ix.util.Include(&quot;sv_forcesystem.lua&quot;) ix.util.Include(&quot;sv_whispers.lua&quot;) ix.util.Include(&quot;sv_lscs_overrides.lua&quot;) ix.util.Include(&quot;cl_forcesystem.lua&quot;) -- ───────────────────────────────────────────── -- Networking -- ───────────────────────────────────────────── if SERVER then util.AddNetworkString(&quot;ixForceWhisper&quot;) end -- ───────────────────────────────────────────── -- Configuration -- ───────────────────────────────────────────── ix.config.Add(&quot;forcePoolMultiplier&quot;, 1.5, &quot;Multiplier applied to the &#x27;force&#x27; attribute to derive max LSCS force pool.&quot;, nil, { data = {min = 0.1, max = 10, decimals = 2}, category = &quot;The Force&quot; }) ix.config.Add(&quot;forceWhisperInterval&quot;, 120, &quot;Seconds between force whisper checks per player.&quot;, nil, { data = {min = 10, max = 600}, category = &quot;The Force&quot; }) ix.config.Add(&quot;forceWhisperChance&quot;, 5, &quot;Chance (1-100%) for a force whisper to trigger each interval.&quot;, nil, { data = {min = 1, max = 100}, category = &quot;The Force&quot; }) ix.config.Add(&quot;meditateDuration&quot;, 60, &quot;Duration (seconds) of the meditate action.&quot;, nil, { data = {min = 5, max = 300}, category = &quot;The Force&quot; }) ix.config.Add(&quot;meditateCooldown&quot;, 300, &quot;Cooldown (seconds) before meditating again.&quot;, nil, { data = {min = 10, max = 3600}, category = &quot;The Force&quot; }) ix.config.Add(&quot;forceTouchChance&quot;, 1, &quot;Base chance (%) to gain force attribute when touching a holocron.&quot;, nil, { data = {min = 1, max = 100}, category = &quot;The Force&quot; }) ix.config.Add(&quot;forceLearnChance&quot;, 1, &quot;Base chance (%) to gain force attribute when learning from a holocron.&quot;, nil, { data = {min = 1, max = 100}, category = &quot;The Force&quot; }) ix.config.Add(&quot;wisdomEffect&quot;, 1, &quot;Percentage increase per &#x27;wis&#x27; point for force interactions.&quot;, nil, { data = {min = 0, max = 100}, category = &quot;The Force&quot; }) ix.config.Add(&quot;staminaBridgeEnabled&quot;, true, &quot;Whether LSCS Block Points are replaced by Helix stamina — sprinting, blocking, and attacking all share one pool.&quot;, nil, { category = &quot;The Force&quot; }) -- ───────────────────────────────────────────── -- LSCS Lightsaber Configuration (replaces admin menu) -- Callbacks push values to LSCS server ConVars on change. -- ─────────────────────────────────────────────
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>convar</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\theos-forcesystem\sh_plugin.lua</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Generated on 2026-03-10 20:48:19 | Skeleton
+    </footer>
+</div>
+</body>
+</html>

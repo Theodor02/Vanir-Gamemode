@@ -307,8 +307,24 @@ function ix.disease.RecalculateSpeed(character)
         end
     end
 
-    -- Apply speed reduction via character variable
-    character:SetVar("diseaseSpeedMult", 1 - speedReduction)
+    -- Apply speed reduction via player_effects
+    local PE   = ix.playerEffects
+    local MULT = PE.MOD_MULT
+
+    if (speedReduction > 0) then
+        local mult = 1 - speedReduction
+        client:AddEffect("speed.run", "diseaseSpeed", MULT, mult, {
+            layer    = "debuff",
+            priority = 3,
+        })
+        client:AddEffect("speed.walk", "diseaseSpeed", MULT, mult, {
+            layer    = "debuff",
+            priority = 3,
+        })
+    else
+        client:RemoveEffect("speed.run", "diseaseSpeed")
+        client:RemoveEffect("speed.walk", "diseaseSpeed")
+    end
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════

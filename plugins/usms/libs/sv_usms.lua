@@ -16,6 +16,9 @@ util.AddNetworkString("ixUSMSIntelSync")
 util.AddNetworkString("ixUSMSRequest")
 util.AddNetworkString("ixUSMSInvite")
 util.AddNetworkString("ixUSMSInviteResponse")
+util.AddNetworkString("ixUSMSMissionSync")
+util.AddNetworkString("ixUSMSMissionUpdate")
+util.AddNetworkString("ixUSMSServiceRecord")
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- HELPERS
@@ -2051,3 +2054,534 @@ hook.Add("USMSCanViewIntel", "ixUSMSDefaultIntel", function(ply, char, targetUni
 
     return false, "Unauthorized"
 end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- MISSION SYSTEM
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+--- Create a new mission.
+-- @param unitID number
+-- @param createdBy number charID of creator
+-- @param data table {title, description, priority, assignedTo={type, id}}
+-- @param callback function(success, error|missionID)
+function ix.usms.CreateMission(unitID, createdBy, data, callback)
+    local unit = ix.usms.units[unitID]
+    if (!unit) then
+        if (callback) then callback(false, "Unit not found") end
+        return
+    end
+
+    local title = tostring(data.title or ""):sub(1, 128)
+    if (title == "") then
+        if (callback) then callback(false, "Title is required") end
+        return
+    end
+
+    local missionID = ix.usms.db.AllocMissionID()
+    local now = os.time()
+
+    local assignedTo = data.assignedTo or {type = "unit", id = unitID}
+    local priority = math.Clamp(tonumber(data.priority) or USMS_MISSION_PRIORITY_NORMAL, 1, 3)
+
+    ix.usms.missions[missionID] = {
+        id = missionID,
+        unitID = unitID,
+        createdBy = createdBy,
+        assignedTo = assignedTo,
+        title = title,
+        description = tostring(data.description or ""):sub(1, 512),
+        priority = priority,
+        status = USMS_MISSION_ACTIVE,
+        createdAt = now,
+        completedAt = nil
+    }
+
+    ix.usms.db.Save()
+
+    ix.usms.Log(unitID, USMS_LOG_MISSION_CREATED, createdBy, nil, {
+        missionID = missionID,
+        title = title,
+        priority = priority
+    })
+
+    -- Sync missions to all unit members
+    ix.usms.SyncMissionsToUnit(unitID)
+
+    -- Diegetic HUD: critical priority → set priority order unit-wide
+    if (priority == USMS_MISSION_PRIORITY_CRITICAL and ix.diegeticHUD and ix.diegeticHUD.SetPriorityOrder) then
+        local recipients = ix.usms.GetOnlineUnitMembers(unitID)
+        for _, ply in ipairs(recipients) do
+            ix.diegeticHUD.SetPriorityOrder(ply, title)
+        end
+    end
+
+    if (callback) then callback(true, missionID) end
+    hook.Run("USMSMissionCreated", missionID, unitID, createdBy)
+end
+
+--- Complete a mission.
+-- @param missionID number
+-- @param completedBy number charID
+-- @param callback function(success, error)
+function ix.usms.CompleteMission(missionID, completedBy, callback)
+    local mission = ix.usms.missions[missionID]
+    if (!mission) then
+        if (callback) then callback(false, "Mission not found") end
+        return
+    end
+
+    if (mission.status != USMS_MISSION_ACTIVE) then
+        if (callback) then callback(false, "Mission is not active") end
+        return
+    end
+
+    mission.status = USMS_MISSION_COMPLETE
+    mission.completedAt = os.time()
+
+    ix.usms.db.Save()
+
+    ix.usms.Log(mission.unitID, USMS_LOG_MISSION_COMPLETED, completedBy, nil, {
+        missionID = missionID,
+        title = mission.title
+    })
+
+    ix.usms.SyncMissionsToUnit(mission.unitID)
+
+    if (callback) then callback(true) end
+    hook.Run("USMSMissionCompleted", missionID, mission.unitID, completedBy)
+end
+
+--- Cancel a mission.
+-- @param missionID number
+-- @param cancelledBy number charID
+-- @param callback function(success, error)
+function ix.usms.CancelMission(missionID, cancelledBy, callback)
+    local mission = ix.usms.missions[missionID]
+    if (!mission) then
+        if (callback) then callback(false, "Mission not found") end
+        return
+    end
+
+    if (mission.status != USMS_MISSION_ACTIVE) then
+        if (callback) then callback(false, "Mission is not active") end
+        return
+    end
+
+    mission.status = USMS_MISSION_CANCELLED
+    mission.completedAt = os.time()
+
+    ix.usms.db.Save()
+
+    ix.usms.Log(mission.unitID, USMS_LOG_MISSION_CANCELLED, cancelledBy, nil, {
+        missionID = missionID,
+        title = mission.title
+    })
+
+    ix.usms.SyncMissionsToUnit(mission.unitID)
+
+    if (callback) then callback(true) end
+    hook.Run("USMSMissionCancelled", missionID, mission.unitID, cancelledBy)
+end
+
+--- Get active missions for a unit.
+-- @param unitID number
+-- @return table array of mission data
+function ix.usms.GetActiveMissions(unitID)
+    local result = {}
+    for _, mission in pairs(ix.usms.missions) do
+        if (mission.unitID == unitID and mission.status == USMS_MISSION_ACTIVE) then
+            table.insert(result, mission)
+        end
+    end
+    table.sort(result, function(a, b) return (a.priority or 2) > (b.priority or 2) end)
+    return result
+end
+
+--- Get all missions for a unit (including completed/cancelled).
+-- @param unitID number
+-- @param includeInactive boolean
+-- @return table array of mission data
+function ix.usms.GetUnitMissions(unitID, includeInactive)
+    local result = {}
+    for _, mission in pairs(ix.usms.missions) do
+        if (mission.unitID == unitID) then
+            if (includeInactive or mission.status == USMS_MISSION_ACTIVE) then
+                table.insert(result, mission)
+            end
+        end
+    end
+    table.sort(result, function(a, b)
+        if (a.status == USMS_MISSION_ACTIVE and b.status != USMS_MISSION_ACTIVE) then return true end
+        if (a.status != USMS_MISSION_ACTIVE and b.status == USMS_MISSION_ACTIVE) then return false end
+        return (a.createdAt or 0) > (b.createdAt or 0)
+    end)
+    return result
+end
+
+--- Send all missions for a unit to a player.
+-- @param ply Player
+-- @param unitID number
+function ix.usms.SyncMissionsToPlayer(ply, unitID)
+    local missions = ix.usms.GetUnitMissions(unitID, true)
+
+    -- Resolve creator names
+    for _, mission in ipairs(missions) do
+        local creatorChar = ix.usms.GetCharacterByID(mission.createdBy)
+        mission.createdByName = creatorChar and creatorChar:GetName() or (ix.usms.members[mission.createdBy] and ix.usms.members[mission.createdBy].cachedName or "Unknown")
+    end
+
+    local encoded = util.TableToJSON(missions)
+    local compressed = util.Compress(encoded)
+    if (!compressed) then return end
+
+    net.Start("ixUSMSMissionSync")
+        net.WriteUInt(unitID, 32)
+        net.WriteUInt(#compressed, 32)
+        net.WriteData(compressed, #compressed)
+    net.Send(ply)
+end
+
+--- Sync missions to all online unit members.
+-- @param unitID number
+function ix.usms.SyncMissionsToUnit(unitID)
+    local recipients = ix.usms.GetOnlineUnitMembers(unitID)
+    for _, ply in ipairs(recipients) do
+        ix.usms.SyncMissionsToPlayer(ply, unitID)
+    end
+end
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- COMMENDATION / SERVICE RECORD SYSTEM
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+--- Award a commendation to a character.
+-- @param unitID number
+-- @param recipientCharID number
+-- @param awardedBy number charID of awarding officer
+-- @param data table {type, title, reason}
+-- @param callback function(success, error|commendationID)
+function ix.usms.AwardCommendation(unitID, recipientCharID, awardedBy, data, callback)
+    local unit = ix.usms.units[unitID]
+    if (!unit) then
+        if (callback) then callback(false, "Unit not found") end
+        return
+    end
+
+    local member = ix.usms.members[recipientCharID]
+    if (!member or member.unitID != unitID) then
+        if (callback) then callback(false, "Recipient is not in this unit") end
+        return
+    end
+
+    local commType = data.type or USMS_COMMENDATION_COMMENDATION
+    if (commType != USMS_COMMENDATION_MEDAL and commType != USMS_COMMENDATION_COMMENDATION and commType != USMS_COMMENDATION_REPRIMAND) then
+        if (callback) then callback(false, "Invalid commendation type") end
+        return
+    end
+
+    local title = tostring(data.title or ""):sub(1, 128)
+    if (title == "") then
+        if (callback) then callback(false, "Title is required") end
+        return
+    end
+
+    local commID = ix.usms.db.AllocCommendationID()
+    local now = os.time()
+
+    ix.usms.commendations[commID] = {
+        id = commID,
+        unitID = unitID,
+        recipientCharID = recipientCharID,
+        awardedBy = awardedBy,
+        type = commType,
+        title = title,
+        reason = tostring(data.reason or ""):sub(1, 512),
+        timestamp = now,
+        revoked = false
+    }
+
+    ix.usms.db.Save()
+
+    ix.usms.Log(unitID, USMS_LOG_COMMENDATION_AWARDED, awardedBy, recipientCharID, {
+        commendationID = commID,
+        commType = commType,
+        title = title
+    })
+
+    if (callback) then callback(true, commID) end
+    hook.Run("USMSCommendationAwarded", commID, unitID, recipientCharID, awardedBy)
+end
+
+--- Revoke a commendation.
+-- @param commID number
+-- @param revokedBy number charID
+-- @param callback function(success, error)
+function ix.usms.RevokeCommendation(commID, revokedBy, callback)
+    local comm = ix.usms.commendations[commID]
+    if (!comm) then
+        if (callback) then callback(false, "Commendation not found") end
+        return
+    end
+
+    if (comm.revoked) then
+        if (callback) then callback(false, "Already revoked") end
+        return
+    end
+
+    comm.revoked = true
+
+    ix.usms.db.Save()
+
+    ix.usms.Log(comm.unitID, USMS_LOG_COMMENDATION_REVOKED, revokedBy, comm.recipientCharID, {
+        commendationID = commID,
+        title = comm.title
+    })
+
+    if (callback) then callback(true) end
+    hook.Run("USMSCommendationRevoked", commID, comm.unitID, revokedBy)
+end
+
+--- Get the service record for a character.
+-- @param charID number
+-- @return table {commendations, member, promotionHistory}
+function ix.usms.GetServiceRecord(charID)
+    local member = ix.usms.members[charID]
+    if (!member) then return nil end
+
+    -- Gather commendations
+    local commendations = {}
+    for _, comm in pairs(ix.usms.commendations) do
+        if (comm.recipientCharID == charID and !comm.revoked) then
+            local awarderName = "Unknown"
+            local awarderChar = ix.usms.GetCharacterByID(comm.awardedBy)
+            if (awarderChar) then
+                awarderName = awarderChar:GetName()
+            elseif (ix.usms.members[comm.awardedBy]) then
+                awarderName = ix.usms.members[comm.awardedBy].cachedName or "Unknown"
+            end
+
+            table.insert(commendations, {
+                id = comm.id,
+                type = comm.type,
+                title = comm.title,
+                reason = comm.reason,
+                timestamp = comm.timestamp,
+                awardedByName = awarderName
+            })
+        end
+    end
+    table.sort(commendations, function(a, b) return (a.timestamp or 0) > (b.timestamp or 0) end)
+
+    -- Gather promotion history from logs
+    local promotions = {}
+    for _, entry in ipairs(ix.usms.logs or {}) do
+        if (entry.action == USMS_LOG_UNIT_ROLE_CHANGED and entry.targetCharID == charID and entry.unitID == member.unitID) then
+            table.insert(promotions, {
+                timestamp = entry.timestamp,
+                oldRole = entry.data and entry.data.oldRole,
+                newRole = entry.data and entry.data.newRole,
+                actorName = entry.data and entry.data.actorName or "System"
+            })
+        end
+    end
+    table.sort(promotions, function(a, b) return (a.timestamp or 0) > (b.timestamp or 0) end)
+
+    return {
+        charID = charID,
+        name = member.cachedName or "Unknown",
+        role = member.role,
+        joinedAt = member.joinedAt,
+        className = member.cachedClassName or "Unassigned",
+        commendations = commendations,
+        promotions = promotions
+    }
+end
+
+--- Send a service record to a player.
+-- @param ply Player
+-- @param targetCharID number
+function ix.usms.SendServiceRecord(ply, targetCharID)
+    local record = ix.usms.GetServiceRecord(targetCharID)
+    if (!record) then return end
+
+    local encoded = util.TableToJSON(record)
+    local compressed = util.Compress(encoded)
+    if (!compressed) then return end
+
+    net.Start("ixUSMSServiceRecord")
+        net.WriteUInt(#compressed, 32)
+        net.WriteData(compressed, #compressed)
+    net.Send(ply)
+end
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- MISSION REQUEST HANDLERS
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+ix.usms.requestHandlers["mission_create"] = function(ply, char, data)
+    local member = ix.usms.members[char:GetID()]
+    if (!member) then return end
+
+    -- CO/XO or squad leaders can create missions
+    local isOfficer = member.role >= USMS_ROLE_XO
+    local sm = ix.usms.squadMembers[char:GetID()]
+    local isSquadLeader = sm and sm.role == USMS_SQUAD_LEADER
+
+    if (!ply:IsSuperAdmin() and !isOfficer and !isSquadLeader) then
+        ply:Notify("Only officers or squad leaders can create missions.")
+        return
+    end
+
+    -- Squad leaders can only assign to their own squad
+    local assignedTo = data.assignedTo
+    if (isSquadLeader and !isOfficer and !ply:IsSuperAdmin()) then
+        assignedTo = {type = "squad", id = sm.squadID}
+    end
+
+    ix.usms.CreateMission(member.unitID, char:GetID(), {
+        title = data.title,
+        description = data.description,
+        priority = data.priority,
+        assignedTo = assignedTo
+    }, function(ok, result)
+        ply:Notify(ok and ("Mission created: " .. tostring(data.title)) or ("Failed: " .. tostring(result)))
+    end)
+end
+
+ix.usms.requestHandlers["mission_complete"] = function(ply, char, data)
+    local missionID = tonumber(data.missionID)
+    if (!missionID) then return end
+
+    local mission = ix.usms.missions[missionID]
+    if (!mission) then
+        ply:Notify("Mission not found.")
+        return
+    end
+
+    local member = ix.usms.members[char:GetID()]
+    if (!member or member.unitID != mission.unitID) then
+        ply:Notify("Not in the same unit as this mission.")
+        return
+    end
+
+    -- CO/XO can complete any mission, squad leaders can complete their squad's missions
+    local isOfficer = member.role >= USMS_ROLE_XO
+    local sm = ix.usms.squadMembers[char:GetID()]
+    local isAssignedSL = sm and sm.role == USMS_SQUAD_LEADER and mission.assignedTo and mission.assignedTo.type == "squad" and mission.assignedTo.id == sm.squadID
+
+    if (!ply:IsSuperAdmin() and !isOfficer and !isAssignedSL) then
+        ply:Notify("You don't have permission to complete this mission.")
+        return
+    end
+
+    ix.usms.CompleteMission(missionID, char:GetID(), function(ok, err)
+        ply:Notify(ok and "Mission completed." or ("Failed: " .. (err or "unknown")))
+    end)
+end
+
+ix.usms.requestHandlers["mission_cancel"] = function(ply, char, data)
+    local missionID = tonumber(data.missionID)
+    if (!missionID) then return end
+
+    local mission = ix.usms.missions[missionID]
+    if (!mission) then
+        ply:Notify("Mission not found.")
+        return
+    end
+
+    local member = ix.usms.members[char:GetID()]
+    if (!member or member.unitID != mission.unitID) then
+        ply:Notify("Not in the same unit as this mission.")
+        return
+    end
+
+    -- Only the creator, CO/XO, or superadmin can cancel
+    local isOfficer = member.role >= USMS_ROLE_XO
+    local isCreator = mission.createdBy == char:GetID()
+
+    if (!ply:IsSuperAdmin() and !isOfficer and !isCreator) then
+        ply:Notify("You don't have permission to cancel this mission.")
+        return
+    end
+
+    ix.usms.CancelMission(missionID, char:GetID(), function(ok, err)
+        ply:Notify(ok and "Mission cancelled." or ("Failed: " .. (err or "unknown")))
+    end)
+end
+
+ix.usms.requestHandlers["mission_request"] = function(ply, char, data)
+    local member = ix.usms.members[char:GetID()]
+    if (!member and !ply:IsSuperAdmin()) then return end
+
+    local unitID = member and member.unitID
+    if (unitID) then
+        ix.usms.SyncMissionsToPlayer(ply, unitID)
+    end
+end
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- COMMENDATION REQUEST HANDLERS
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+ix.usms.requestHandlers["commendation_award"] = function(ply, char, data)
+    local member = ix.usms.members[char:GetID()]
+    if (!ply:IsSuperAdmin() and (!member or member.role < USMS_ROLE_XO)) then
+        ply:Notify("Only officers can award commendations.")
+        return
+    end
+
+    local targetCharID = tonumber(data.charID)
+    if (!targetCharID) then return end
+
+    local unitID = member and member.unitID
+    if (!unitID) then return end
+
+    ix.usms.AwardCommendation(unitID, targetCharID, char:GetID(), {
+        type = data.commType,
+        title = data.title,
+        reason = data.reason
+    }, function(ok, result)
+        ply:Notify(ok and "Commendation awarded." or ("Failed: " .. tostring(result)))
+    end)
+end
+
+ix.usms.requestHandlers["commendation_revoke"] = function(ply, char, data)
+    local member = ix.usms.members[char:GetID()]
+    if (!ply:IsSuperAdmin() and (!member or member.role < USMS_ROLE_XO)) then
+        ply:Notify("Only officers can revoke commendations.")
+        return
+    end
+
+    local commID = tonumber(data.commendationID)
+    if (!commID) then return end
+
+    -- Verify same unit
+    local comm = ix.usms.commendations[commID]
+    if (!comm) then
+        ply:Notify("Commendation not found.")
+        return
+    end
+    if (!ply:IsSuperAdmin() and member and comm.unitID != member.unitID) then
+        ply:Notify("Commendation is not from your unit.")
+        return
+    end
+
+    ix.usms.RevokeCommendation(commID, char:GetID(), function(ok, err)
+        ply:Notify(ok and "Commendation revoked." or ("Failed: " .. (err or "unknown")))
+    end)
+end
+
+ix.usms.requestHandlers["service_record_request"] = function(ply, char, data)
+    local targetCharID = tonumber(data.charID)
+    if (!targetCharID) then return end
+
+    local member = ix.usms.members[char:GetID()]
+    local targetMember = ix.usms.members[targetCharID]
+
+    -- Must be in the same unit, or superadmin
+    if (!ply:IsSuperAdmin() and (!member or !targetMember or member.unitID != targetMember.unitID)) then
+        return
+    end
+
+    ix.usms.SendServiceRecord(ply, targetCharID)
+end

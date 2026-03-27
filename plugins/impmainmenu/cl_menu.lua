@@ -1,244 +1,5 @@
-local THEME = {
-	background = Color(10, 10, 10, 240),
-	frame = Color(191, 148, 53, 220),
-	frameSoft = Color(191, 148, 53, 120),
-	text = Color(235, 235, 235, 245),
-	textMuted = Color(205, 205, 205, 140),
-	accent = Color(191, 148, 53, 255),
-	accentSoft = Color(191, 148, 53, 220),
-	danger = Color(180, 60, 60, 255),
-	ready = Color(60, 170, 90, 255),
-	buttonBg = Color(16, 16, 16, 220),
-	buttonBgHover = Color(26, 26, 26, 230)
-}
-
-local function Scale(value)
-	return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
-local function CreateFonts()
-	surface.CreateFont("ixImpMenuTitle", {
-		font = "Times New Roman",
-		size = Scale(64),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuSubtitle", {
-		font = "Times New Roman",
-		size = Scale(16),
-		weight = 400,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuLabel", {
-		font = "Roboto",
-		size = Scale(12),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuButton", {
-		font = "Roboto",
-		size = Scale(16),
-		weight = 600,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuStatus", {
-		font = "Roboto",
-		size = Scale(11),
-		weight = 600,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuAurebesh", {
-		font = "Aurebesh",
-		size = Scale(12),
-		weight = 400,
-		extended = true,
-		antialias = true
-	})
-
-	surface.CreateFont("ixImpMenuDiag", {
-		font = "Roboto Condensed",
-		size = Scale(11),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-end
-
-CreateFonts()
-
-hook.Add("OnScreenSizeChanged", "ixImpMainMenuFonts", function()
-	CreateFonts()
-end)
-
-local function GetSpacedTextSize(text, font, spacing)
-	surface.SetFont(font)
-	local totalWidth = 0
-	local textHeight = 0
-
-	for i = 1, #text do
-		local ch = text:sub(i, i)
-		local w, h = surface.GetTextSize(ch)
-		totalWidth = totalWidth + w
-		textHeight = math.max(textHeight, h)
-
-		if (i < #text) then
-			totalWidth = totalWidth + spacing
-		end
-	end
-
-	return totalWidth, textHeight
-end
-
-local function DrawSpacedText(text, font, x, y, color, spacing, align)
-	align = align or TEXT_ALIGN_CENTER
-	spacing = spacing or 0
-
-	local totalWidth, textHeight = GetSpacedTextSize(text, font, spacing)
-	local startX = x
-
-	if (align == TEXT_ALIGN_CENTER) then
-		startX = x - totalWidth * 0.5
-	elseif (align == TEXT_ALIGN_RIGHT) then
-		startX = x - totalWidth
-	end
-
-	surface.SetFont(font)
-
-	local offsetX = startX
-	for i = 1, #text do
-		local ch = text:sub(i, i)
-		local w = surface.GetTextSize(ch)
-		draw.SimpleText(ch, font, offsetX, y, color, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		offsetX = offsetX + w + spacing
-	end
-
-	return totalWidth, textHeight
-end
-
-local BUTTON = {}
-
-local SOUND_HOVER = "everfall/miscellaneous/ux/navigation/navigation_tab_01.mp3"
-local SOUND_CLICK = "everfall/miscellaneous/ux/navigation/navigation_activate_01.mp3"
-local SOUND_ERROR = "everfall/miscellaneous/ux/navigation/navigation_error_01.mp3"
-
-function BUTTON:Init()
-	self:SetText("")
-	self.label = ""
-	self.style = "default"
-	self.labelColor = THEME.text
-	self.borderColor = THEME.accent
-	self.backgroundColor = THEME.buttonBg
-	self.hoverBorderColor = THEME.accent
-	self.hoverBackgroundColor = THEME.buttonBgHover
-	self.hoverLabelColor = THEME.text
-	self.disabledAlpha = 60
-	self.pulseOffset = math.Rand(0, 4)
-	self.nextHoverSound = 0
-end
-
-function BUTTON:SetLabel(text)
-	self.label = text
-end
-
-function BUTTON:SetStyle(style)
-	self.style = style or "default"
-
-	if (self.style == "accent") then
-		self.labelColor = THEME.accent
-		self.borderColor = THEME.accent
-		self.hoverBorderColor = THEME.accent
-		self.hoverBackgroundColor = Color(25, 20, 10, 220)
-		self.hoverLabelColor = THEME.accent
-	elseif (self.style == "danger") then
-		self.labelColor = THEME.danger
-		self.borderColor = THEME.danger
-		self.hoverBorderColor = THEME.danger
-		self.hoverBackgroundColor = Color(35, 10, 10, 220)
-		self.hoverLabelColor = THEME.danger
-	else
-		self.labelColor = THEME.text
-		self.borderColor = THEME.accentSoft
-		self.hoverBorderColor = THEME.accent
-		self.hoverBackgroundColor = THEME.buttonBgHover
-		self.hoverLabelColor = THEME.text
-	end
-end
-
-function BUTTON:Paint(width, height)
-	local disabled = self:GetDisabled()
-	local hovered = self:IsHovered() or self:IsDown()
-	local pulse = (math.sin(CurTime() * 2 + self.pulseOffset) + 1) * 0.5
-	local border = hovered and self.hoverBorderColor or self.borderColor
-	local bg = hovered and self.hoverBackgroundColor or self.backgroundColor
-	local textColor = hovered and self.hoverLabelColor or self.labelColor
-	local glow = hovered and 40 or math.Round(12 + pulse * 18)
-
-	if (disabled) then
-		border = Color(border.r, border.g, border.b, self.disabledAlpha)
-		bg = Color(bg.r, bg.g, bg.b, self.disabledAlpha)
-		textColor = Color(textColor.r, textColor.g, textColor.b, self.disabledAlpha)
-	end
-
-	surface.SetDrawColor(bg)
-	surface.DrawRect(0, 0, width, height)
-
-	surface.SetDrawColor(Color(border.r, border.g, border.b, math.min(255, border.a + glow)))
-	surface.DrawOutlinedRect(0, 0, width, height)
-	surface.DrawOutlinedRect(1, 1, width - 2, height - 2)
-
-	draw.SimpleText(self.label, "ixImpMenuButton", width * 0.5, height * 0.5, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-end
-
-function BUTTON:OnCursorEntered()
-	if (self.nextHoverSound > CurTime()) then
-		return
-	end
-
-	self.nextHoverSound = CurTime() + 0.08
-	surface.PlaySound(SOUND_HOVER)
-end
-
-vgui.Register("ixImpMenuButton", BUTTON, "DButton")
-
-local STATUS = {}
-
-function STATUS:Init()
-	self.text = ""
-	self.borderColor = THEME.accentSoft
-	self.textColor = THEME.text
-	self:SetMouseInputEnabled(false)
-end
-
-function STATUS:SetTextValue(text)
-	self.text = text
-end
-
-function STATUS:SetColors(border, text)
-	self.borderColor = border or self.borderColor
-	self.textColor = text or self.textColor
-end
-
-function STATUS:Paint(width, height)
-	surface.SetDrawColor(Color(0, 0, 0, 160))
-	surface.DrawRect(0, 0, width, height)
-
-	surface.SetDrawColor(self.borderColor)
-	surface.DrawOutlinedRect(0, 0, width, height)
-
-	draw.SimpleText(self.text, "ixImpMenuStatus", width * 0.5, height * 0.5, self.textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-end
-
-vgui.Register("ixImpMenuStatus", STATUS, "Panel")
+local THEME = ix.ui.THEME
+local Scale = ix.ui.Scale
 
 DEFINE_BASECLASS("ixCharMenuPanel")
 local PANEL = {}
@@ -303,15 +64,15 @@ function PANEL:Init()
 	self.statusPanel = self:Add("Panel")
 	self.statusPanel:SetMouseInputEnabled(false)
 
-	self.statusReady = self.statusPanel:Add("ixImpMenuStatus")
+	self.statusReady = self.statusPanel:Add("ixImpStatus")
 	self.statusReady:SetTextValue("SYS READY")
 	self.statusReady:SetColors(THEME.ready, THEME.ready)
 
-	self.statusAuth = self.statusPanel:Add("ixImpMenuStatus")
+	self.statusAuth = self.statusPanel:Add("ixImpStatus")
 	self.statusAuth:SetTextValue("AUTH-LVL 3")
 	self.statusAuth:SetColors(THEME.accent, THEME.accent)
 
-	self.statusHelix = self.statusPanel:Add("ixImpMenuStatus")
+	self.statusHelix = self.statusPanel:Add("ixImpStatus")
 	self.statusHelix:SetTextValue("HELIX")
 	self.statusHelix:SetColors(THEME.accent, THEME.accent)
 
@@ -319,16 +80,16 @@ function PANEL:Init()
 end
 
 function PANEL:AddMenuButton(label, style, onClick)
-	local button = self:Add("ixImpMenuButton")
+	local button = self:Add("ixImpButton")
 	button:SetLabel(label)
 	button:SetStyle(style)
 	button.DoClick = function()
 		if (button:GetDisabled()) then
-			surface.PlaySound(SOUND_ERROR)
+			surface.PlaySound(ix.ui.SOUND_ERROR)
 			return
 		end
 
-		surface.PlaySound(SOUND_CLICK)
+		surface.PlaySound(ix.ui.SOUND_CLICK)
 		if (isfunction(onClick)) then
 			onClick()
 		end
@@ -425,15 +186,15 @@ function PANEL:Paint(width, height)
 	local titleText = "SKELETON"
 	local subtitleText = "IMPERIAL TERMINAL INTERFACE"
 
-	local titleW, titleH = GetSpacedTextSize(titleText, "ixImpMenuTitle", titleSpacing)
-	local subtitleW, subtitleH = GetSpacedTextSize(subtitleText, "ixImpMenuSubtitle", subtitleSpacing)
+	local titleW, titleH = ix.ui.GetSpacedTextSize(titleText, "ixImpMenuTitle", titleSpacing)
+	local subtitleW, subtitleH = ix.ui.GetSpacedTextSize(subtitleText, "ixImpMenuSubtitle", subtitleSpacing)
 
 	local titleX = width * 0.5
 	local titleY = height * 0.26
 	local subtitleY = titleY + titleH + Scale(6)
 
-	DrawSpacedText(titleText, "ixImpMenuTitle", titleX, titleY, THEME.text, titleSpacing, TEXT_ALIGN_CENTER)
-	DrawSpacedText(subtitleText, "ixImpMenuSubtitle", titleX, subtitleY, THEME.textMuted, subtitleSpacing, TEXT_ALIGN_CENTER)
+	ix.ui.DrawSpacedText(titleText, "ixImpMenuTitle", titleX, titleY, THEME.text, titleSpacing, TEXT_ALIGN_CENTER)
+	ix.ui.DrawSpacedText(subtitleText, "ixImpMenuSubtitle", titleX, subtitleY, THEME.textMuted, subtitleSpacing, TEXT_ALIGN_CENTER)
 
 	local panelWidth = math.Round(width * 0.19)
 	local panelHeight = math.Round(height * 0.58)

@@ -2,17 +2,7 @@
 local buttonPadding = ScreenScale(14) * 0.5
 local animationTime = 0.5
 
-local THEME = {
-	background = Color(10, 10, 10, 220),
-	frame = Color(191, 148, 53, 220),
-	frameSoft = Color(191, 148, 53, 120),
-	text = Color(235, 235, 235, 245),
-	textMuted = Color(205, 205, 205, 140),
-	accent = Color(191, 148, 53, 255),
-	accentSoft = Color(191, 148, 53, 200),
-	buttonBg = Color(16, 16, 16, 220),
-	buttonBgHover = Color(26, 26, 26, 230)
-}
+local THEME = ix.ui.THEME
 
 -- base menu button
 DEFINE_BASECLASS("DButton")

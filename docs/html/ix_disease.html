@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ix.disease - Skeleton</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="highlight.css" />
+</head>
+<body>
+<main>
+    
+<nav id="sidebar">
+    <header>
+        <a href="index.html"><h1>Skeleton</h1></a>
+        <input type="search" id="search" placeholder="Filter..." autocomplete="off" />
+    </header>
+    <section>
+        <h3 class="nav-heading">Libraries</h3><ul class="nav-list"><li><a href="CANVAS.html" data-search="canvas">CANVAS <span class="count">7</span></a></li><li><a href="CHAR.html" data-search="char">CHAR <span class="count">4</span></a></li><li><a href="EDITOR.html" data-search="editor">EDITOR <span class="count">5</span></a></li><li><a href="EFFECT.html" data-search="effect">EFFECT <span class="count">4</span></a></li><li><a href="ITEM.html" data-search="item">ITEM <span class="count">16</span></a></li><li><a href="MAIN.html" data-search="main">MAIN <span class="count">1</span></a></li><li><a href="PANEL.html" data-search="panel">PANEL <span class="count">6</span></a></li><li><a href="PLAYER.html" data-search="player">PLAYER <span class="count">4</span></a></li><li><a href="PLUGIN.html" data-search="plugin">PLUGIN <span class="count">27</span></a></li><li><a href="charMeta.html" data-search="charmeta">charMeta <span class="count">11</span></a></li><li><a href="ix_bacta.html" data-search="ix.bacta">ix.bacta <span class="count">50</span></a></li><li><a href="ix_comms.html" data-search="ix.comms">ix.comms <span class="count">17</span></a></li><li><a href="ix_diegeticHUD.html" data-search="ix.diegetichud">ix.diegeticHUD <span class="count">32</span></a></li><li class="active"><a href="ix_disease.html" data-search="ix.disease">ix.disease <span class="count">39</span></a></li><li><a href="ix_force.html" data-search="ix.force">ix.force <span class="count">7</span></a></li><li><a href="ix_hacking.html" data-search="ix.hacking">ix.hacking <span class="count">7</span></a></li><li><a href="ix_hacking_Effects.html" data-search="ix.hacking.effects">ix.hacking.Effects <span class="count">1</span></a></li><li><a href="ix_hacking_Generator.html" data-search="ix.hacking.generator">ix.hacking.Generator <span class="count">1</span></a></li><li><a href="ix_hacking_Sessions.html" data-search="ix.hacking.sessions">ix.hacking.Sessions <span class="count">5</span></a></li><li><a href="ix_hacking_UI.html" data-search="ix.hacking.ui">ix.hacking.UI <span class="count">1</span></a></li><li><a href="ix_playerEffects.html" data-search="ix.playereffects">ix.playerEffects <span class="count">6</span></a></li><li><a href="ix_symptom.html" data-search="ix.symptom">ix.symptom <span class="count">3</span></a></li><li><a href="ix_unlocks.html" data-search="ix.unlocks">ix.unlocks <span class="count">45</span></a></li><li><a href="ix_usms.html" data-search="ix.usms">ix.usms <span class="count">63</span></a></li><li><a href="ix_usms_db.html" data-search="ix.usms.db">ix.usms.db <span class="count">7</span></a></li><li><a href="playerMeta.html" data-search="playermeta">playerMeta <span class="count">8</span></a></li></ul>
+        
+        
+        <h3 class="nav-heading">Other</h3><ul class="nav-list"><li><a href="globals.html">Globals <span class="count">247</span></a></li></ul>
+    </section>
+</nav>
+    
+<article><div class="wrapper">
+
+<div class="module-header">
+    <span class="kind-badge module">Library</span>
+    <h1>ix.disease</h1>
+    <p class="module-file">plugins/smartdisease/cl_plugin.lua</p>
+</div>
+
+
+<div class="toc"><h3>Functions</h3><ul><li><span class="realm server" title="server"></span><a href="#ix.disease.ApplyDamage">ix.disease.ApplyDamage</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.ApplyMedicine">ix.disease.ApplyMedicine</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.ApplyStageEffects">ix.disease.ApplyStageEffects</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.ApplySymptom">ix.disease.ApplySymptom</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.ApplyVisual">ix.disease.ApplyVisual</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.Cure">ix.disease.Cure</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.Cure">ix.disease.Cure</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.CureAll">ix.disease.CureAll</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.CureAll">ix.disease.CureAll</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.Get">ix.disease.Get</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.GetActiveDiseases">ix.disease.GetActiveDiseases</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.GetAll">ix.disease.GetAll</a></li><li><span class="realm client" title="client"></span><a href="#ix.disease.GetClientDiseases">ix.disease.GetClientDiseases</a></li><li><span class="realm client" title="client"></span><a href="#ix.disease.GetSeverityColor">ix.disease.GetSeverityColor</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.GetStage">ix.disease.GetStage</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.GetStageCount">ix.disease.GetStageCount</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.GetStageOf">ix.disease.GetStageOf</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.GetVaccines">ix.disease.GetVaccines</a></li><li><span class="realm client" title="client"></span><a href="#ix.disease.HandleClientEvent">ix.disease.HandleClientEvent</a></li><li><span class="realm client" title="client"></span><a href="#ix.disease.HasClientDiseases">ix.disease.HasClientDiseases</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.HasDisease">ix.disease.HasDisease</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.Infect">ix.disease.Infect</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.Infect">ix.disease.Infect</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.IsVaccinated">ix.disease.IsVaccinated</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.OnPlayerCollision">ix.disease.OnPlayerCollision</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.OnPlayerDamaged">ix.disease.OnPlayerDamaged</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.ProcessTick">ix.disease.ProcessTick</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.RecalculateSpeed">ix.disease.RecalculateSpeed</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.Register">ix.disease.Register</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.SetProgress">ix.disease.SetProgress</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.SetProgress">ix.disease.SetProgress</a></li><li><span class="realm client" title="client"></span><a href="#ix.disease.StopAllClientEvents">ix.disease.StopAllClientEvents</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.TrackMedicineUse">ix.disease.TrackMedicineUse</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.TriggerShadowStalker">ix.disease.TriggerShadowStalker</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.TryCollisionSpread">ix.disease.TryCollisionSpread</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.TryPassiveSpread">ix.disease.TryPassiveSpread</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.TrySpreadFromSymptom">ix.disease.TrySpreadFromSymptom</a></li><li><span class="realm shared" title="shared"></span><a href="#ix.disease.Vaccinate">ix.disease.Vaccinate</a></li><li><span class="realm server" title="server"></span><a href="#ix.disease.Vaccinate">ix.disease.Vaccinate</a></li></ul></div>
+<h2>Functions</h2>
+<div class="function-block" id="ix.disease.ApplyDamage">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.ApplyDamage(object, config)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:666</span>
+    </div>
+    <div class="function-desc"><p>Apply damage to a character from a disease effect.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">config</td><td class="param-type"><span class="type">effect table Effect</span></td><td>{amount, damageType}</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.ApplyMedicine">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.ApplyMedicine(object, type)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:858</span>
+    </div>
+    <div class="function-desc"><p>Apply medicine to a character, treating diseases of the matching type.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">type</td><td class="param-type"><span class="type">medicineType string Medicine</span></td><td>(e.g. &quot;antiviral&quot;, &quot;antibiotic&quot;, &quot;antipsychotic&quot;)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool Whether any disease was treated</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.ApplyStageEffects">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.ApplyStageEffects(object, definition, definition, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:525</span>
+    </div>
+    <div class="function-desc"><p>Apply all effects from a disease stage to a character.
+Effects are scattered probabilistically to avoid spam and feel more natural.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">definition</td><td class="param-type"><span class="type">disease table Disease</span></td><td></td></tr><tr><td class="param-name">definition</td><td class="param-type"><span class="type">stageData table Current stage</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.ApplySymptom">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.ApplySymptom(object, identifier, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:590</span>
+    </div>
+    <div class="function-desc"><p>Apply a symptom to a character with cooldown checks.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">symptomID string Symptom</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td>(for context)</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.ApplyVisual">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.ApplyVisual(object, configuration)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:683</span>
+    </div>
+    <div class="function-desc"><p>Apply a visual effect to a character&#x27;s client.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">configuration</td><td class="param-type"><span class="type">visualConfig table Visual</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.Cure">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.Cure(object, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:151</span>
+    </div>
+    <div class="function-desc"><p>Cure a character of a specific disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.Cure">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.Cure(object, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:164</span>
+    </div>
+    <div class="function-desc"><p>Cure a character of a specific disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.CureAll">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.CureAll(object)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:158</span>
+    </div>
+    <div class="function-desc"><p>Cure a character of all diseases.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.CureAll">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.CureAll(object)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:210</span>
+    </div>
+    <div class="function-desc"><p>Cure a character of all active diseases.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.Get">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.Get(identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:47</span>
+    </div>
+    <div class="function-desc"><p>Get a registered disease definition by ID.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">id string Disease</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table|nil Disease data table or nil if not found</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.GetActiveDiseases">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.GetActiveDiseases(object)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:83</span>
+    </div>
+    <div class="function-desc"><p>Get all active diseases on a character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Dictionary of {diseaseID = {stage, infectedAt, treatedWith, ...}}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.GetAll">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.GetAll()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:54</span>
+    </div>
+    <div class="function-desc"><p>Get all registered disease definitions.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Dictionary of {id = data}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.GetClientDiseases">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.disease.GetClientDiseases()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:493</span>
+    </div>
+    <div class="function-desc"><p>Get the local player&#x27;s active diseases (client-side cached version).</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Dictionary of {diseaseID = info}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.GetSeverityColor">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.disease.GetSeverityColor(0)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:924</span>
+    </div>
+    <div class="function-desc"><p>Get a color representing disease severity (0 = mild, 1 = critical).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">0</td><td class="param-type"><span class="type">severity number</span></td><td>-1 fraction</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>Color</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.GetStage">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.GetStage(identifier, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:69</span>
+    </div>
+    <div class="function-desc"><p>Get a specific stage definition from a disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">id string Disease</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">stageNum number Stage</span></td><td>(1-indexed)</td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table|nil Stage data table</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.GetStageCount">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.GetStageCount(identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:60</span>
+    </div>
+    <div class="function-desc"><p>Get the total number of stages for a disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">id string Disease</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number Stage count</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.GetStageOf">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.GetStageOf(object, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:100</span>
+    </div>
+    <div class="function-desc"><p>Get the current stage of a disease on a character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>number|nil Current stage number or nil</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.GetVaccines">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.GetVaccines(object)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:110</span>
+    </div>
+    <div class="function-desc"><p>Get vaccines the character is immune to.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>table Dictionary of {diseaseID = timestamp}</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.HandleClientEvent">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.disease.HandleClientEvent(ID, payload)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:345</span>
+    </div>
+    <div class="function-desc"><p>Handle a client event dispatched from the server.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">ID</td><td class="param-type"><span class="type">eventType string Event</span></td><td>(heartbeat, phantom_sound, clone, etc.)</td></tr><tr><td class="param-name">payload</td><td class="param-type"><span class="type">data table Event data</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.HasClientDiseases">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.disease.HasClientDiseases()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:499</span>
+    </div>
+    <div class="function-desc"><p>Check if the local player has any active diseases.</p></div>
+    
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.HasDisease">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.HasDisease(object, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:91</span>
+    </div>
+    <div class="function-desc"><p>Check if a character has a specific active disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.Infect">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.Infect(object, identifier, checks)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:140</span>
+    </div>
+    <div class="function-desc"><p>Infect a character with a disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr><tr><td class="param-name">checks</td><td class="param-type"><span class="type">force bool If true, bypasses immunity and max disease</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string Success and optional error message</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.Infect">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.Infect(object, identifier, checks)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:85</span>
+    </div>
+    <div class="function-desc"><p>Infect a character with a disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr><tr><td class="param-name">checks</td><td class="param-type"><span class="type">force bool If true, bypasses immunity and max disease</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool, string Success and optional error message</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.IsVaccinated">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.IsVaccinated(object, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:118</span>
+    </div>
+    <div class="function-desc"><p>Check if a character is vaccinated against a specific disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.OnPlayerCollision">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.OnPlayerCollision(collided, entity)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:819</span>
+    </div>
+    <div class="function-desc"><p>Handle collision-vector transmission.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">collided</td><td class="param-type"><span class="type">client Entity Player who</span></td><td></td></tr><tr><td class="param-name">entity</td><td class="param-type"><span class="type">other Entity Other</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.OnPlayerDamaged">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.OnPlayerDamaged(player, player)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:791</span>
+    </div>
+    <div class="function-desc"><p>Handle damage-vector transmission when a player takes damage.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">player</td><td class="param-type"><span class="type">victim Entity Victim</span></td><td></td></tr><tr><td class="param-name">player</td><td class="param-type"><span class="type">attacker Entity Attacker</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.ProcessTick">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.ProcessTick()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:334</span>
+    </div>
+    <div class="function-desc"><p>Process progression tick for all infected players.
+Called periodically by the server tick timer.</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.RecalculateSpeed">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.RecalculateSpeed(object)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:284</span>
+    </div>
+    <div class="function-desc"><p>Recalculate a character&#x27;s movement speed based on active symptom effects.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.Register">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.Register(identifier, containing)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:13</span>
+    </div>
+    <div class="function-desc"><p>Register a new disease with the system.
+name (string), description (string), type (string: &quot;viral&quot;|&quot;bacterial&quot;|&quot;psychological&quot;),
+infectionRate (number 0-100), progressionDelay (number seconds),
+contagious (bool), baseIncubation (number stage),
+vectors (table: {air, collision, damage}),
+stages (table of stage definitions),
+cureWith (table: {[&quot;medicine_type&quot;] = true}),
+onStageProgression (function), onInfection (function), onCure (function)</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">id string Unique disease</span></td><td>(e.g. &quot;flu&quot;, &quot;ebola&quot;)</td></tr><tr><td class="param-name">containing</td><td class="param-type"><span class="type">data table Disease definition table</span></td><td>:</td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.SetProgress">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.SetProgress(object, identifier, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:171</span>
+    </div>
+    <div class="function-desc"><p>Set the progression stage of a disease on a character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">stage number Target stage</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.SetProgress">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.SetProgress(object, identifier, number)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:260</span>
+    </div>
+    <div class="function-desc"><p>Set the progression stage of a disease on a character.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr><tr><td class="param-name">number</td><td class="param-type"><span class="type">stage number Target stage</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.StopAllClientEvents">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm client" title="client"></span>
+            <code class="sig">ix.disease.StopAllClientEvents()</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/cl_plugin.lua:294</span>
+    </div>
+    <div class="function-desc"><p>Stop all active client events (heartbeat, tinnitus, clone models, etc.)</p></div>
+    
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.TrackMedicineUse">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.TrackMedicineUse(object, type)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:890</span>
+    </div>
+    <div class="function-desc"><p>Track medicine usage for overdose system.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">type</td><td class="param-type"><span class="type">medicineType string Medicine</span></td><td></td></tr></tbody></table></div>
+    <div class="returns"><h4>Returns</h4><table><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-type"><span class="type">any</span></td><td>bool Whether the character is now overdosing</td></tr></tbody></table></div>
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.TriggerShadowStalker">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.TriggerShadowStalker(object, configuration)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:695</span>
+    </div>
+    <div class="function-desc"><p>Trigger the shadow stalker effect (schizophrenia horror).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">configuration</td><td class="param-type"><span class="type">effect table Effect</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.TryCollisionSpread">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.TryCollisionSpread(character, character)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:835</span>
+    </div>
+    <div class="function-desc"><p>Try spreading diseases from one character to another via collision.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">character</td><td class="param-type"><span class="type">fromChar table Source</span></td><td></td></tr><tr><td class="param-name">character</td><td class="param-type"><span class="type">toChar table Target</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.TryPassiveSpread">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.TryPassiveSpread(character, spread)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:751</span>
+    </div>
+    <div class="function-desc"><p>Attempt passive proximity (breathing) transmission.
+Called during the main tick for players with airborne diseases.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">character</td><td class="param-type"><span class="type">character table Infected</span></td><td></td></tr><tr><td class="param-name">spread</td><td class="param-type"><span class="type">diseaseID string Disease to</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.TrySpreadFromSymptom">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.TrySpreadFromSymptom(character, spread, units)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:714</span>
+    </div>
+    <div class="function-desc"><p>Attempt to spread a disease from a symptomatic character to nearby players.
+Triggered when a contagion symptom fires (cough, sneeze, etc.).</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">character</td><td class="param-type"><span class="type">character table Infected</span></td><td></td></tr><tr><td class="param-name">spread</td><td class="param-type"><span class="type">diseaseID string Disease to</span></td><td></td></tr><tr><td class="param-name">units</td><td class="param-type"><span class="type">range number Contagion range in Source</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.Vaccinate">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm shared" title="shared"></span>
+            <code class="sig">ix.disease.Vaccinate(object, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/libs/sh_disease.lua:164</span>
+    </div>
+    <div class="function-desc"><p>Vaccinate a character against a disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+<div class="function-block" id="ix.disease.Vaccinate">
+    <div class="function-header">
+        <div class="function-sig">
+            <span class="realm server" title="server"></span>
+            <code class="sig">ix.disease.Vaccinate(object, identifier)</code>
+            
+        </div>
+        <span class="file-ref">plugins/smartdisease/sv_plugin.lua:243</span>
+    </div>
+    <div class="function-desc"><p>Vaccinate a character against a disease.</p></div>
+    <div class="params"><h4>Parameters</h4><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td class="param-name">object</td><td class="param-type"><span class="type">character table Helix character</span></td><td></td></tr><tr><td class="param-name">identifier</td><td class="param-type"><span class="type">diseaseID string Disease</span></td><td></td></tr></tbody></table></div>
+    
+    
+    
+</div>
+
+
+</div></article>
+
+</main>
+<script src="app.js"></script>
+</body>
+</html>

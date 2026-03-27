@@ -1,21 +1,5 @@
-local THEME = {
-	background = Color(10, 10, 10, 255),
-	frame = Color(191, 148, 53, 255),
-	frameSoft = Color(191, 148, 53, 120),
-	text = Color(235, 235, 235, 255),
-	textMuted = Color(168, 168, 168, 140),
-	accent = Color(191, 148, 53, 255),
-	accentSoft = Color(191, 148, 53, 220),
-	buttonBg = Color(16, 16, 16, 255),
-	buttonBgHover = Color(26, 26, 26, 255),
-	rowEven = Color(14, 14, 14, 255),
-	rowOdd = Color(18, 18, 18, 255),
-	rowHover = Color(24, 22, 14, 255)
-}
-
-local function Scale(value)
-	return math.max(1, math.Round(value * (ScrH() / 900)))
-end
+local THEME = ix.ui.THEME
+local Scale = ix.ui.Scale
 
 -- ---------------------------------------------------------------------------
 -- Character Icon (spawn-icon renderer)
@@ -451,15 +435,7 @@ function SCOREBOARD:Init()
 	self.scroll.Paint = function() end
 
 	-- Styled scrollbar
-	local vbar = self.scroll:GetVBar()
-	vbar:SetWide(Scale(4))
-	vbar.Paint = function() end
-	vbar.btnUp.Paint = function() end
-	vbar.btnDown.Paint = function() end
-	vbar.btnGrip.Paint = function(_, w, h)
-		surface.SetDrawColor(THEME.accentSoft)
-		surface.DrawRect(0, 0, w, h)
-	end
+	ix.ui.ApplyScrollbarStyle(self.scroll)
 
 	-- Status info strip
 	self.status = self.scroll:Add("EditablePanel")

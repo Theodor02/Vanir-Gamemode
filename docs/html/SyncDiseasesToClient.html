@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module: SyncDiseasesToClient - Skeleton</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Skeleton</h1>
+        <p>Skeleton Documentation</p>
+    </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="functions.html">Functions</a>
+        <a href="modules.html">Modules</a>
+    </nav>
+    <p class="text-muted"><a href="modules.html">Modules</a> / SyncDiseasesToClient</p>
+
+    <div class="content">
+        <h2>Module: SyncDiseasesToClient</h2>
+        <p>Total functions: <strong>2</strong></p>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">SyncDiseasesToClient</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Smart Disease — Server-Side Logic -- Implements the core disease infection, curing, progression, transmission, -- and symptom application on the server. Overrides the stub functions from -- libs/sh_disease.lua with full implementations. -- @module ix.disease (server) local PLUGIN = PLUGIN -- ═══════════════════════════════════════════════════════════════════════════════ -- NETWORKING -- ═══════════════════════════════════════════════════════════════════════════════ util.AddNetworkString(&quot;ixDiseaseSync&quot;) util.AddNetworkString(&quot;ixDiseaseNotify&quot;) util.AddNetworkString(&quot;ixDiseaseSymptom&quot;) util.AddNetworkString(&quot;ixDiseaseVisual&quot;) util.AddNetworkString(&quot;ixDiseaseCured&quot;) util.AddNetworkString(&quot;ixDiseaseSound&quot;) util.AddNetworkString(&quot;ixDiseaseShadowStalker&quot;) util.AddNetworkString(&quot;ixDiseaseClientEvent&quot;) -- ═══════════════════════════════════════════════════════════════════════════════ -- INTERNAL HELPERS -- ═══════════════════════════════════════════════════════════════════════════════
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>character</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\smartdisease\sv_plugin.lua</p>
+        </div>
+
+        <div class="function">
+            <div class="function-header">
+                <div class="function-name">SyncDiseasesToClient</div>
+                <div class="function-meta">
+                    <span class="badge shared">shared</span>
+                    <span class="badge">function</span>
+                </div>
+            </div>
+
+            <div class="function-description">
+                Sync disease state to the owning client. -- @param character table Helix character object
+            </div>
+
+            <div class="params-section">
+                <label>Parameters: <code>character</code></label>
+
+            </div>
+
+            <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">From: plugins\smartdisease\sv_plugin.lua</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Generated on 2026-03-10 20:48:19 | Skeleton
+    </footer>
+</div>
+</body>
+</html>

@@ -257,10 +257,120 @@ ix.bacta.RegisterEffectType("tail_synaptic_rebound", {
 })
 
 -- ═══════════════════════════════════════════════════════════════════════════════
+-- CUSTOM PLAYER EFFECTS TYPES (registered via player_effects plugin)
+-- Deferred until all plugins are loaded so ix.playerEffects is available.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+hook.Add("InitializedPlugins", "ixBactaCustomEffectTypes", function()
+    local PE   = ix.playerEffects
+    local MULT = PE.MOD_MULT
+    local ADD  = PE.MOD_ADD
+
+    PE.RegisterEffectType("combat.focus", {
+        name      = "Combat Focus",
+        baseValue = 1,
+        min       = 0,
+        modTypes  = {MULT, ADD},
+    })
+
+    PE.RegisterEffectType("visual.nausea", {
+        name      = "Nausea",
+        baseValue = 0,
+        min       = 0,
+        max       = 2,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+
+    PE.RegisterEffectType("visual.tremor", {
+        name      = "Tremor",
+        baseValue = 0,
+        min       = 0,
+        max       = 5,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+
+    PE.RegisterEffectType("visual.vignette", {
+        name      = "Vignette",
+        baseValue = 0,
+        min       = 0,
+        max       = 1,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+
+    PE.RegisterEffectType("visual.bloom", {
+        name      = "Bloom",
+        baseValue = 0,
+        min       = 0,
+        max       = 2,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+
+    PE.RegisterEffectType("visual.desaturate", {
+        name      = "Desaturation",
+        baseValue = 0,
+        min       = 0,
+        max       = 1,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+
+    PE.RegisterEffectType("visual.screen_flicker", {
+        name      = "Screen Flicker",
+        baseValue = 0,
+        min       = 0,
+        max       = 10,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+
+    PE.RegisterEffectType("visual.water_warp", {
+        name      = "Visual Distortion",
+        baseValue = 0,
+        min       = 0,
+        max       = 1,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+
+    PE.RegisterEffectType("visual.sharpen", {
+        name      = "Sharpened Vision",
+        baseValue = 0,
+        min       = 0,
+        max       = 2,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+
+    PE.RegisterEffectType("audio.heartbeat", {
+        name      = "Heartbeat",
+        baseValue = 0,
+        min       = 0,
+        max       = 1,
+        calcOrder = "add_first",
+        modTypes  = {ADD},
+    })
+end)
+
+-- ═══════════════════════════════════════════════════════════════════════════════
 -- SERVER-SIDE EFFECT APPLICATION
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 if (SERVER) then
+
+    -- Resolved lazily: player_effects may not be loaded yet (medicalsys < player_effects alphabetically).
+    -- The upvalues are populated by InitializedPlugins before any apply function can be called.
+    local PE, MULT, ADD
+
+    hook.Add("InitializedPlugins", "ixBactaEffectsInit", function()
+        PE   = ix.playerEffects
+        MULT = PE.MOD_MULT
+        ADD  = PE.MOD_ADD
+    end)
+
     --- Apply a complete effect profile to a player.
     -- @param client Entity The target player
     -- @param profile table The output profile {effects, stability, item_type, uses}
@@ -277,12 +387,12 @@ if (SERVER) then
     end
 
     --- Apply a temporary character variable with automatic expiry.
-    -- Stacks additively with existing values and cleans up after duration.
+    -- Used for display-only variables that have no mechanical effect.
     -- @param client Entity Target player
     -- @param key string Character variable key
     -- @param value number Value to add
     -- @param duration number Duration in seconds
-    function ix.bacta.ApplyTempVar(client, key, value, duration)
+    function ix.bacta.ApplyTempDisplay(client, key, value, duration)
         local char = client:GetCharacter()
         if (!char) then return end
 
@@ -290,21 +400,13 @@ if (SERVER) then
         local current = char:GetVar(key, 0)
         char:SetVar(key, current + value)
 
-        if (key == "bactaSpeedBuff" or key == "bactaFatigue") then
-            ix.bacta.UpdateSpeedModifier(client)
-        end
-
         local timerID = "ixBacta_" .. key .. "_" .. client:EntIndex() .. "_" .. CurTime()
         timer.Create(timerID, duration, 1, function()
             if (IsValid(client) and client:GetCharacter() and client:GetCharacter():GetID() == charID) then
                 local cur = client:GetCharacter():GetVar(key, 0)
                 local newVal = cur - value
-                if math.abs(newVal) < 0.001 then newVal = 0 end -- floating point precision fix
+                if math.abs(newVal) < 0.001 then newVal = 0 end
                 client:GetCharacter():SetVar(key, math.max(0, newVal))
-
-                if (key == "bactaSpeedBuff" or key == "bactaFatigue") then
-                    ix.bacta.UpdateSpeedModifier(client)
-                end
             end
         end)
     end
@@ -330,15 +432,33 @@ if (SERVER) then
 
     ix.bacta.effectTypes["regen_hp"].apply = function(client, eff)
         local tickRate = eff.tick_rate or 5
-        local ticks = math.floor((eff.duration or 0) / tickRate)
         local mag = math.floor(eff.magnitude)
-        local timerID = "ixBacta_regen_" .. client:EntIndex() .. "_" .. CurTime()
+        local rate = mag / tickRate
+        local dur = eff.duration or 0
 
-        timer.Create(timerID, tickRate, ticks, function()
-            if (IsValid(client) and client:Alive()) then
-                client:SetHealth(math.Clamp(client:Health() + mag, 0, client:GetMaxHealth()))
-            end
-        end)
+        client:AddEffect("health.regen_rate", "bactaRegen", ADD, rate, {
+            duration        = dur,
+            priority        = 5,
+            layer           = "buff",
+            refreshBehavior = "extend",
+            metadata        = {source = "bacta"},
+        })
+
+        -- Soft green color tint while regenerating
+        client:AddEffect("visual.color_tint", "bactaRegenTint", PE.MOD_SET, Color(80, 255, 120, 30), {
+            duration = dur,
+            priority = 2,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
+
+        -- Subtle bloom glow — healing warmth
+        client:AddEffect("visual.bloom", "bactaRegenBloom", ADD, 0.2, {
+            duration = dur,
+            priority = 2,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
 
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -362,17 +482,81 @@ if (SERVER) then
     end
 
     ix.bacta.effectTypes["buff_speed"].apply = function(client, eff)
-        ix.bacta.ApplyTempVar(client, "bactaSpeedBuff", eff.magnitude, eff.duration or 10)
+        local dur = eff.duration or 10
+
+        client:AddEffect("speed.run", "bactaSpeedBuff", MULT, 1.0 + eff.magnitude, {
+            duration        = dur,
+            priority        = 5,
+            layer           = "buff",
+            refreshBehavior = "extend",
+            metadata        = {source = "bacta"},
+        })
+        client:AddEffect("speed.walk", "bactaSpeedBuff", MULT, 1.0 + eff.magnitude, {
+            duration        = dur,
+            priority        = 5,
+            layer           = "buff",
+            refreshBehavior = "extend",
+        })
+
+        -- Cool blue-white tint — adrenaline rush clarity
+        client:AddEffect("visual.color_tint", "bactaSpeedTint", PE.MOD_SET, Color(160, 210, 255, 25), {
+            duration = dur,
+            priority = 3,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
+
+        -- Slight sharpened perception
+        client:AddEffect("visual.sharpen", "bactaSpeedSharpen", ADD, 0.3, {
+            duration = dur,
+            priority = 2,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
+
+        -- Adrenaline injection sound
+        client:EmitSound("items/medshot4.wav", 60, 110, 0.4)
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["buff_armor"].apply = function(client, eff)
-        ix.bacta.ApplyTempVar(client, "bactaArmorBuff", eff.magnitude, eff.duration or 10)
+        client:AddEffect("armor.base", "bactaArmorBuff", ADD, eff.magnitude, {
+            duration        = eff.duration or 10,
+            priority        = 5,
+            layer           = "buff",
+            refreshBehavior = "highest",
+            metadata        = {source = "bacta"},
+        })
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["buff_focus"].apply = function(client, eff)
-        ix.bacta.ApplyTempVar(client, "bactaFocusBuff", eff.magnitude, eff.duration or 10)
+        local dur = eff.duration or 10
+
+        client:AddEffect("combat.focus", "bactaFocusBuff", MULT, 1.0 + eff.magnitude, {
+            duration        = dur,
+            priority        = 5,
+            layer           = "buff",
+            refreshBehavior = "extend",
+            metadata        = {source = "bacta"},
+        })
+
+        -- Heightened clarity — sharpen vision and slight desaturate for crisp look
+        client:AddEffect("visual.sharpen", "bactaFocusSharpen", ADD, 0.5, {
+            duration = dur,
+            priority = 3,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
+        client:AddEffect("visual.desaturate", "bactaFocusDesat", ADD, 0.08, {
+            duration = dur,
+            priority = 1,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
@@ -387,47 +571,227 @@ if (SERVER) then
     end
 
     ix.bacta.effectTypes["suppress_pain"].apply = function(client, eff)
-        ix.bacta.ApplyTempVar(client, "bactaPainSuppress", eff.magnitude, eff.duration or 10)
+        local reduction = math.Clamp(eff.magnitude, 0, 0.75)
+        local dur = eff.duration or 10
+
+        client:AddEffect("damage.taken", "bactaPainSuppress", MULT, 1.0 - reduction, {
+            duration        = dur,
+            priority        = 5,
+            layer           = "buff",
+            refreshBehavior = "extend",
+            metadata        = {source = "bacta"},
+        })
+
+        -- Numbing effect — slight desaturation and vignette (tunnel focus)
+        client:AddEffect("visual.desaturate", "bactaPainDesat", ADD, 0.12 * reduction, {
+            duration = dur,
+            priority = 2,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
+        client:AddEffect("visual.vignette", "bactaPainVignette", ADD, 0.08 * reduction, {
+            duration = dur,
+            priority = 2,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
+
+        -- Muffled audio — pain suppression dulls hearing
+        client:AddEffect("audio.muffled", "bactaPainMuffle", MULT, math.max(0.7, 1.0 - reduction * 0.4), {
+            duration = dur,
+            priority = 3,
+            layer    = "buff",
+            refreshBehavior = "extend",
+        })
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["side_nausea"].apply = function(client, eff)
-        ix.bacta.ApplyTempVar(client, "bactaNausea", eff.magnitude, eff.duration or 10)
+        local dur = eff.duration or 10
+        local mag = eff.magnitude or 0.1
+
+        client:AddEffect("visual.nausea", "bactaNausea", ADD, mag, {
+            duration        = dur,
+            priority        = 3,
+            layer           = "debuff",
+            refreshBehavior = "extend",
+            metadata        = {source = "bacta"},
+        })
+
+        -- Sickly green color tint
+        client:AddEffect("visual.color_tint", "bactaNauseaTint", PE.MOD_SET, Color(140, 200, 100, 50), {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Motion blur — world is swimming
+        client:AddEffect("visual.blur", "bactaNauseaBlur", ADD, math.Clamp(mag * 0.4, 0.05, 0.4), {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Wavy distortion
+        client:AddEffect("visual.water_warp", "bactaNauseaWarp", ADD, math.Clamp(mag * 0.3, 0.05, 0.3), {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Nausea gag/groan sounds
+        local nauseaSounds = {
+            "vo/npc/male01/pain04.wav",
+            "vo/npc/male01/pain05.wav",
+            "vo/npc/male01/pain06.wav",
+        }
+        client:EmitSound(nauseaSounds[math.random(#nauseaSounds)], 55, 90, 0.35)
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["side_tremor"].apply = function(client, eff)
         local severity = math.Clamp(math.floor(eff.magnitude), 1, 5)
         local dur = eff.duration or 10
-        local timerID = "ixBacta_tremor_" .. client:EntIndex() .. "_" .. CurTime()
 
-        ix.bacta.ApplyTempVar(client, "bactaTremor", severity, dur)
+        client:AddEffect("visual.tremor", "bactaTremor", ADD, severity, {
+            duration        = dur,
+            priority        = 3,
+            layer           = "debuff",
+            refreshBehavior = "extend",
+            metadata        = {source = "bacta", severity = severity},
+            onTick = function(ply, remaining)
+                if (ply:Alive()) then
+                    util.ScreenShake(ply:GetPos(), severity * 2, severity * 3, 0.5, 100)
+                    -- Occasional pain grunt during tremors
+                    if (math.random() < 0.15) then
+                        local painSounds = {
+                            "vo/npc/male01/pain01.wav",
+                            "vo/npc/male01/pain02.wav",
+                            "vo/npc/male01/pain03.wav",
+                        }
+                        ply:EmitSound(painSounds[math.random(#painSounds)], 55, math.random(95, 110), 0.3)
+                    end
+                end
+            end,
+        })
 
-        timer.Create(timerID, 2, math.floor(dur / 2), function()
-            if (IsValid(client) and client:Alive()) then
-                util.ScreenShake(client:GetPos(), severity * 2, severity * 3, 0.5, 100)
-            end
-        end)
+        -- Visual blur proportional to severity
+        client:AddEffect("visual.blur", "bactaTremorBlur", ADD, severity * 0.06, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Screen flicker at high severity
+        if (severity >= 3) then
+            client:AddEffect("visual.screen_flicker", "bactaTremorFlicker", ADD, severity * 0.4, {
+                duration = dur,
+                priority = 3,
+                layer    = "debuff",
+                refreshBehavior = "extend",
+            })
+        end
+
+        -- Initial pain sound on application
+        client:EmitSound("vo/npc/male01/pain07.wav", 60, 100, 0.35)
 
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["side_fatigue"].apply = function(client, eff)
-        ix.bacta.ApplyTempVar(client, "bactaFatigue", eff.magnitude, eff.duration or 10)
+        local dur = eff.duration or 10
+        local mag = eff.magnitude or 0.05
+
+        client:AddEffect("speed.run", "bactaFatigue", MULT, 1.0 - mag, {
+            duration        = dur,
+            priority        = 5,
+            layer           = "debuff",
+            refreshBehavior = "stack_duration",
+            metadata        = {source = "bacta"},
+        })
+        client:AddEffect("speed.walk", "bactaFatigue", MULT, 1.0 - mag, {
+            duration        = dur,
+            priority        = 5,
+            layer           = "debuff",
+            refreshBehavior = "stack_duration",
+        })
+
+        -- World drains of colour — exhaustion desaturation
+        client:AddEffect("visual.desaturate", "bactaFatigueDesat", ADD, math.Clamp(mag * 2.5, 0.08, 0.35), {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Dark vignette — tunnel vision from exhaustion
+        client:AddEffect("visual.vignette", "bactaFatigueVignette", ADD, math.Clamp(mag * 1.5, 0.05, 0.2), {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Heavy breathing sound
+        client:EmitSound("npc/zombie/zombie_voice_idle1.wav", 50, 140, 0.25)
+
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["side_cardiac"].apply = function(client, eff)
         local tickRate = eff.tick_rate or 5
-        local ticks = math.floor((eff.duration or 0) / tickRate)
         local mag = math.floor(eff.magnitude)
-        local timerID = "ixBacta_cardiac_" .. client:EntIndex() .. "_" .. CurTime()
+        local rate = -(mag / tickRate)
+        local dur = eff.duration or 0
 
-        timer.Create(timerID, tickRate, ticks, function()
-            if (IsValid(client) and client:Alive()) then
-                client:SetHealth(math.max(1, client:Health() - mag))
-            end
-        end)
+        client:AddEffect("health.regen_rate", "bactaCardiac", ADD, rate, {
+            duration        = dur,
+            priority        = 3,
+            layer           = "debuff",
+            refreshBehavior = "stack_duration",
+            metadata        = {source = "bacta"},
+        })
+
+        -- Pulsing red vignette — cardiovascular strain
+        client:AddEffect("visual.vignette", "bactaCardiacVignette", ADD, 0.15, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Red pain tint
+        client:AddEffect("visual.color_tint", "bactaCardiacTint", PE.MOD_SET, Color(255, 80, 80, 40), {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Pounding heartbeat
+        client:AddEffect("audio.heartbeat", "bactaCardiacBeat", ADD, 0.6, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Screen flicker — cardiac distress
+        client:AddEffect("visual.screen_flicker", "bactaCardiacFlicker", ADD, 1.5, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Initial cardiac distress sound
+        client:EmitSound("ambient/machines/machine1_hit1.wav", 55, 80, 0.4)
 
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -437,35 +801,69 @@ if (SERVER) then
     ix.bacta.effectTypes["tail_metabolic_crash"].apply = function(client, eff)
         local dur = eff.duration or 12
 
-        -- Speed -20% via runspeed plugin if available
-        if (client.UpdateRunSpeedModifier and client.SpeedModifiers) then
-            client:UpdateRunSpeedModifier("bactaTailCrash", ix.plugin.list.runspeed.ModifierTypes.MULT, 0.80) -- MULT type
-            client:UpdateWalkSpeedModifier("bactaTailCrash", ix.plugin.list.runspeed.ModifierTypes.MULT, 0.80)
+        -- Speed -20%
+        client:AddEffect("speed.run", "bactaTailCrash", MULT, 0.80, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            metadata = {source = "bacta_tail"},
+        })
+        client:AddEffect("speed.walk", "bactaTailCrash", MULT, 0.80, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+        })
 
-            timer.Create("ixBacta_tailCrash_speed_" .. client:EntIndex(), dur, 1, function()
-                if (IsValid(client) and client.RemoveRunSpeedModifier and client.SpeedModifiers) then
-                    if client.SpeedModifiers.run and client.SpeedModifiers.run["bactaTailCrash"] then
-                        client:RemoveRunSpeedModifier("bactaTailCrash")
-                    end
-                    if client.SpeedModifiers.walk and client.SpeedModifiers.walk["bactaTailCrash"] then
-                        client:RemoveWalkSpeedModifier("bactaTailCrash")
-                    end
-                end
-            end)
-        else
-            -- Fallback: use character variable
-            ix.bacta.ApplyTempVar(client, "bactaFatigue", 0.20, dur)
-        end
+        -- Compounded fatigue: additional -15% speed
+        client:AddEffect("speed.run", "bactaTailCrashFatigue", MULT, 0.85, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+            metadata = {source = "bacta_tail"},
+        })
+        client:AddEffect("speed.walk", "bactaTailCrashFatigue", MULT, 0.85, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+        })
 
-        -- Fatigue multiplier: amplify existing fatigue by x1.5
-        local char = client:GetCharacter()
-        if (char) then
-            local currentFatigue = char:GetVar("bactaFatigue", 0)
-            if (currentFatigue > 0) then
-                local extraFatigue = currentFatigue * 0.5
-                ix.bacta.ApplyTempVar(client, "bactaFatigue", extraFatigue, dur)
+        -- Heavy desaturation — the world drains of life
+        client:AddEffect("visual.desaturate", "bactaTailCrashDesat", ADD, 0.35, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Deep vignette — collapsing tunnel vision
+        client:AddEffect("visual.vignette", "bactaTailCrashVignette", ADD, 0.2, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Slight blur — metabolic exhaustion
+        client:AddEffect("visual.blur", "bactaTailCrashBlur", ADD, 0.15, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Laboured breathing sounds recurring during crash
+        client:EmitSound("npc/zombie/zombie_voice_idle3.wav", 50, 130, 0.3)
+        local timerID = "ixBacta_crashBreath_" .. client:EntIndex() .. "_" .. CurTime()
+        local ticks = math.floor(dur / 4)
+        timer.Create(timerID, 4, ticks, function()
+            if (IsValid(client) and client:Alive()) then
+                local breathSounds = {
+                    "npc/zombie/zombie_voice_idle1.wav",
+                    "npc/zombie/zombie_voice_idle3.wav",
+                }
+                client:EmitSound(breathSounds[math.random(#breathSounds)], 50, math.random(125, 140), 0.25)
             end
-        end
+        end)
 
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -474,23 +872,105 @@ if (SERVER) then
         local dur = eff.duration or 8
 
         -- Focus -30%
-        ix.bacta.ApplyTempVar(client, "bactaFocusBuff", -0.30, dur)
+        client:AddEffect("combat.focus", "bactaTailNeural", MULT, 0.70, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_tail"},
+        })
 
         -- Mild nausea
-        ix.bacta.ApplyTempVar(client, "bactaNausea", 0.15, dur)
+        client:AddEffect("visual.nausea", "bactaTailNeural", ADD, 0.15, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+        })
+
+        -- Screen flicker — synaptic interference
+        client:AddEffect("visual.screen_flicker", "bactaTailNeuralFlicker", ADD, 2.5, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Harsh sharpening — overstimulated neural pathways
+        client:AddEffect("visual.sharpen", "bactaTailNeuralSharpen", ADD, 0.8, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Static-like color distortion (grey/white wash)
+        client:AddEffect("visual.color_tint", "bactaTailNeuralTint", PE.MOD_SET, Color(200, 200, 180, 35), {
+            duration = dur,
+            priority = 6,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Tinnitus sound — high-pitched ringing from neural noise
+        client:EmitSound("ambient/machines/machine1_hit2.wav", 50, 200, 0.25)
+        -- Recurring static sounds
+        local timerID = "ixBacta_neuralStatic_" .. client:EntIndex() .. "_" .. CurTime()
+        local ticks = math.floor(dur / 3)
+        timer.Create(timerID, 3, ticks, function()
+            if (IsValid(client) and client:Alive()) then
+                client:EmitSound("ambient/machines/machine1_hit2.wav", 45, math.random(180, 220), 0.2)
+            end
+        end)
 
         ix.bacta.NotifyEffect(client, eff)
     end
 
     ix.bacta.effectTypes["tail_vascular_spike"].apply = function(client, eff)
         local dur = eff.duration or 6
-        local tickRate = 2
-        local ticks = math.floor(dur / tickRate)
-        local timerID = "ixBacta_tailVascular_" .. client:EntIndex() .. "_" .. CurTime()
+        local rate = -(3 / 2) -- -3 HP per 2s = -1.5 HP/s
 
-        timer.Create(timerID, tickRate, ticks, function()
+        client:AddEffect("health.regen_rate", "bactaTailVascular", ADD, rate, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_tail"},
+        })
+
+        -- Intense red tint — blood rushing, vascular distress
+        client:AddEffect("visual.color_tint", "bactaTailVascularTint", PE.MOD_SET, Color(255, 50, 40, 55), {
+            duration = dur,
+            priority = 7,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Deep vignette — blood pressure spike
+        client:AddEffect("visual.vignette", "bactaTailVascularVignette", ADD, 0.25, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Pounding heartbeat
+        client:AddEffect("audio.heartbeat", "bactaTailVascularBeat", ADD, 0.8, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Periodic pain groans during vascular spike
+        client:EmitSound("vo/npc/male01/pain07.wav", 60, 95, 0.4)
+        local timerID = "ixBacta_vascularPain_" .. client:EntIndex() .. "_" .. CurTime()
+        local ticks = math.floor(dur / 2)
+        timer.Create(timerID, 2, ticks, function()
             if (IsValid(client) and client:Alive()) then
-                client:SetHealth(math.max(1, client:Health() - 3))
+                local painSounds = {
+                    "vo/npc/male01/pain07.wav",
+                    "vo/npc/male01/pain08.wav",
+                    "vo/npc/male01/pain09.wav",
+                }
+                client:EmitSound(painSounds[math.random(#painSounds)], 55, math.random(90, 105), 0.35)
             end
         end)
 
@@ -501,33 +981,60 @@ if (SERVER) then
         local dur = eff.duration or 10
 
         -- Tremor (severity 2)
-        ix.bacta.ApplyTempVar(client, "bactaTremor", 2, dur)
-
-        local tremTimerID = "ixBacta_tailTremor_" .. client:EntIndex() .. "_" .. CurTime()
-        timer.Create(tremTimerID, 2, math.floor(dur / 2), function()
-            if (IsValid(client) and client:Alive()) then
-                util.ScreenShake(client:GetPos(), 4, 6, 0.5, 100)
-            end
-        end)
-
-        -- Speed -10% via runspeed plugin
-        if (client.UpdateRunSpeedModifier and client.SpeedModifiers) then
-            client:UpdateRunSpeedModifier("bactaTailAdrenal", ix.plugin.list.runspeed.ModifierTypes.MULT, 0.90)
-            client:UpdateWalkSpeedModifier("bactaTailAdrenal", ix.plugin.list.runspeed.ModifierTypes.MULT, 0.90)
-
-            timer.Create("ixBacta_tailAdrenal_speed_" .. client:EntIndex(), dur, 1, function()
-                if (IsValid(client) and client.RemoveRunSpeedModifier and client.SpeedModifiers) then
-                    if client.SpeedModifiers.run and client.SpeedModifiers.run["bactaTailAdrenal"] then
-                        client:RemoveRunSpeedModifier("bactaTailAdrenal")
-                    end
-                    if client.SpeedModifiers.walk and client.SpeedModifiers.walk["bactaTailAdrenal"] then
-                        client:RemoveWalkSpeedModifier("bactaTailAdrenal")
+        client:AddEffect("visual.tremor", "bactaTailAdrenal", ADD, 2, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_tail"},
+            onTick = function(ply, remaining)
+                if (ply:Alive()) then
+                    util.ScreenShake(ply:GetPos(), 4, 6, 0.5, 100)
+                    if (math.random() < 0.12) then
+                        ply:EmitSound("vo/npc/male01/pain0" .. math.random(1, 3) .. ".wav", 50, math.random(100, 115), 0.25)
                     end
                 end
-            end)
-        else
-            ix.bacta.ApplyTempVar(client, "bactaFatigue", 0.10, dur)
-        end
+            end,
+        })
+
+        -- Speed -10%
+        client:AddEffect("speed.run", "bactaTailAdrenal", MULT, 0.90, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            metadata = {source = "bacta_tail"},
+        })
+        client:AddEffect("speed.walk", "bactaTailAdrenal", MULT, 0.90, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+        })
+
+        -- Hot amber/orange tint — adrenal overload
+        client:AddEffect("visual.color_tint", "bactaTailAdrenalTint", PE.MOD_SET, Color(255, 175, 60, 40), {
+            duration = dur,
+            priority = 6,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Bloom — overstimulated senses
+        client:AddEffect("visual.bloom", "bactaTailAdrenalBloom", ADD, 0.5, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Slight blur from shaking
+        client:AddEffect("visual.blur", "bactaTailAdrenalBlur", ADD, 0.1, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Adrenaline crash groan
+        client:EmitSound("vo/npc/male01/pain08.wav", 60, 90, 0.4)
 
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -545,8 +1052,44 @@ if (SERVER) then
                     local toxin = char:GetVar("toxin_level", 0)
                     char:SetVar("toxin_level", math.min(toxin + 0.5, 10))
                 end
+                -- Periodic nausea sounds as liver strains
+                if (math.random() < 0.4) then
+                    client:EmitSound("vo/npc/male01/pain04.wav", 45, math.random(85, 100), 0.2)
+                end
             end
         end)
+
+        -- Sickly yellow-green tint — liver toxicity
+        client:AddEffect("visual.color_tint", "bactaTailHepaticTint", PE.MOD_SET, Color(180, 200, 80, 35), {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Mild nausea warp — toxin buildup makes the world swim
+        client:AddEffect("visual.water_warp", "bactaTailHepaticWarp", ADD, 0.12, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Mild bloom — feverish glow from toxin load
+        client:AddEffect("visual.bloom", "bactaTailHepaticBloom", ADD, 0.25, {
+            duration = dur,
+            priority = 2,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Mild nausea visual
+        client:AddEffect("visual.nausea", "bactaTailHepatic", ADD, 0.1, {
+            duration = dur,
+            priority = 2,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
 
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -555,10 +1098,54 @@ if (SERVER) then
         local dur = eff.duration or 8
 
         -- Focus -20%
-        ix.bacta.ApplyTempVar(client, "bactaFocusBuff", -0.20, dur)
+        client:AddEffect("combat.focus", "bactaTailSynaptic", MULT, 0.80, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+            metadata = {source = "bacta_tail"},
+        })
 
-        -- Visual distortion: stronger nausea-like wobble
-        ix.bacta.ApplyTempVar(client, "bactaNausea", 0.25, dur)
+        -- Strong visual distortion — neural overshoot
+        client:AddEffect("visual.water_warp", "bactaTailSynapticWarp", ADD, 0.25, {
+            duration = dur,
+            priority = 5,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Bloom — overloaded visual cortex
+        client:AddEffect("visual.bloom", "bactaTailSynapticBloom", ADD, 0.6, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Purple-tinged distortion — synaptic overfire
+        client:AddEffect("visual.color_tint", "bactaTailSynapticTint", PE.MOD_SET, Color(180, 130, 220, 40), {
+            duration = dur,
+            priority = 6,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Heavy blur — can't focus your eyes
+        client:AddEffect("visual.blur", "bactaTailSynapticBlur", ADD, 0.3, {
+            duration = dur,
+            priority = 4,
+            layer    = "debuff",
+            refreshBehavior = "extend",
+        })
+
+        -- Nausea component
+        client:AddEffect("visual.nausea", "bactaTailSynaptic", ADD, 0.25, {
+            duration = dur,
+            priority = 3,
+            layer    = "debuff",
+        })
+
+        -- Disorientation sound
+        client:EmitSound("ambient/machines/machine1_hit2.wav", 50, 160, 0.2)
 
         ix.bacta.NotifyEffect(client, eff)
     end
@@ -591,110 +1178,7 @@ if (SERVER) then
     end
 end
 
--- ═══════════════════════════════════════════════════════════════════════════════
--- SHARED HOOKS — Movement Speed Integration
--- Integrates with the runspeed plugin when available, falls back to SetupMove.
--- Speed buffs (buff_speed) and fatigue (side_fatigue) use proper modifiers.
--- ═══════════════════════════════════════════════════════════════════════════════
 
-if (SERVER) then
-    --- Update a player's bacta speed modifier via the runspeed plugin.
-    -- Called after ApplyTempVar changes bactaSpeedBuff or bactaFatigue.
-    -- @param client Entity Target player
-    function ix.bacta.UpdateSpeedModifier(client)
-        if (!IsValid(client) or !client:IsPlayer()) then return end
-
-        local char = client:GetCharacter()
-        if (!char) then return end
-
-        local speedBuff = char:GetVar("bactaSpeedBuff", 0)
-        local fatigue   = char:GetVar("bactaFatigue", 0)
-        local mult      = 1.0 + speedBuff - fatigue
-
-        if (math.abs(mult - 1.0) < 0.001) then
-            -- No modifier needed, remove if exists
-            if (client.RemoveRunSpeedModifier and client.SpeedModifiers) then
-                if client.SpeedModifiers.run and client.SpeedModifiers.run["bactaSpeed"] then
-                    client:RemoveRunSpeedModifier("bactaSpeed")
-                end
-                if client.SpeedModifiers.walk and client.SpeedModifiers.walk["bactaSpeed"] then
-                    client:RemoveWalkSpeedModifier("bactaSpeed")
-                end
-            end
-            return
-        end
-
-        mult = math.max(0.3, mult)
-
-        if (client.UpdateRunSpeedModifier and client.SpeedModifiers) then
-            -- Use runspeed plugin's modifier system (ModifierType MULT = 1)
-            client:UpdateRunSpeedModifier("bactaSpeed", ix.plugin.list.runspeed.ModifierTypes.MULT, mult)
-            client:UpdateWalkSpeedModifier("bactaSpeed", ix.plugin.list.runspeed.ModifierTypes.MULT, mult)
-        end
-    end
-
-    -- Watch for character variable changes to update speed modifiers
-    hook.Add("CharacterVarChanged", "ixBactaSpeedSync", function(char, key, oldVal, newVal)
-        if (key == "bactaSpeedBuff" or key == "bactaFatigue") then
-            local client = char:GetPlayer()
-            if (IsValid(client)) then
-                ix.bacta.UpdateSpeedModifier(client)
-            end
-        end
-    end)
-
-    -- Re-apply speed modifiers on spawn/loadout since runspeed plugin resets them
-    hook.Add("PlayerLoadout", "ixBactaSpeedSyncLoadout", function(client)
-        timer.Simple(0.1, function()
-            if (IsValid(client)) then
-                ix.bacta.UpdateSpeedModifier(client)
-            end
-        end)
-    end)
-end
-
--- Fallback SetupMove for prediction when runspeed plugin is not available
-hook.Add("SetupMove", "ixBactaSpeedMods", function(ply, mv)
-    -- Skip if runspeed plugin is handling this
-    if (ix.plugin.list.runspeed) then return end
-
-    local char = ply:GetCharacter()
-    if (!char) then return end
-
-    local speedBuff = char:GetVar("bactaSpeedBuff", 0)
-    local fatigue   = char:GetVar("bactaFatigue", 0)
-    local mult      = 1.0 + speedBuff - fatigue
-
-    if (mult != 1.0) then
-        mv:SetMaxClientSpeed(mv:GetMaxClientSpeed() * math.max(0.3, mult))
-        mv:SetMaxSpeed(mv:GetMaxSpeed() * math.max(0.3, mult))
-    end
-end)
-
--- ═══════════════════════════════════════════════════════════════════════════════
--- SERVER HOOKS — Damage Modification
--- ═══════════════════════════════════════════════════════════════════════════════
-
-if (SERVER) then
-    hook.Add("EntityTakeDamage", "ixBactaDamageModifiers", function(target, dmgInfo)
-        if (!target:IsPlayer()) then return end
-
-        local char = target:GetCharacter()
-        if (!char) then return end
-
-        -- Pain suppression: percentage damage reduction
-        local suppress = char:GetVar("bactaPainSuppress", 0)
-        if (suppress > 0) then
-            dmgInfo:ScaleDamage(1.0 - math.Clamp(suppress, 0, 0.75))
-        end
-
-        -- Armor buff: flat damage reduction
-        local armor = char:GetVar("bactaArmorBuff", 0)
-        if (armor > 0) then
-            dmgInfo:SubtractDamage(armor)
-        end
-    end)
-end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- CLIENT EFFECTS — Visual Feedback
@@ -749,20 +1233,17 @@ if (CLIENT) then
         return result
     end
 
-    -- Nausea visual: subtle view angle wobble (also covers tail_neural_static, tail_synaptic_rebound)
+    -- Nausea visual: subtle view angle wobble (reads from player_effects registry)
     hook.Add("CalcView", "ixBactaNauseaView", function(ply, pos, angles, fov)
-        local char = ply:GetCharacter()
-        if (!char) then return end
+        local nausea = ply:GetEffectValue("visual.nausea")
+        if (not nausea or nausea <= 0) then return end
 
-        local nausea = char:GetVar("bactaNausea", 0)
-        if (nausea > 0) then
-            local time = CurTime()
-            local wobble = nausea * 3
+        local time = CurTime()
+        local wobble = nausea * 3
 
-            angles.roll = angles.roll + math.sin(time * 2.5) * wobble
-            angles.pitch = angles.pitch + math.cos(time * 1.8) * wobble * 0.4
+        angles.roll = angles.roll + math.sin(time * 2.5) * wobble
+        angles.pitch = angles.pitch + math.cos(time * 1.8) * wobble * 0.4
 
-            return {origin = pos, angles = angles, fov = fov}
-        end
+        return {origin = pos, angles = angles, fov = fov}
     end)
 end

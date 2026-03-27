@@ -89,6 +89,12 @@ function PANEL:Init()
         self.loadoutPanel:SetVisible(false)
     end
 
+    self.missionPanel = self.content:Add("ixUSMSMissionPanel")
+    if IsValid(self.missionPanel) then
+        self.missionPanel:Dock(FILL)
+        self.missionPanel:SetVisible(false)
+    end
+
     self.intelPanel = self.content:Add("ixUSMSIntelPanel")
     if IsValid(self.intelPanel) then
         self.intelPanel:Dock(FILL)
@@ -105,7 +111,7 @@ function PANEL:Init()
 end
 
 function PANEL:CreateTabButtons()
-    local tabs = {"roster", "squads", "loadout", "logs", "intel", "info"}
+    local tabs = {"roster", "squads", "loadout", "missions", "logs", "intel", "info"}
     self.tabButtons = {}
 
     for i, tabName in ipairs(tabs) do
@@ -143,12 +149,15 @@ function PANEL:SetActiveTab(tabName)
     if IsValid(self.rosterPanel) then self.rosterPanel:SetVisible(tabName == "roster") end
     if IsValid(self.squadPanel) then self.squadPanel:SetVisible(tabName == "squads") end
     if IsValid(self.loadoutPanel) then self.loadoutPanel:SetVisible(tabName == "loadout") end
+    if IsValid(self.missionPanel) then self.missionPanel:SetVisible(tabName == "missions") end
     if IsValid(self.logPanel) then self.logPanel:SetVisible(tabName == "logs") end
     if IsValid(self.intelPanel) then self.intelPanel:SetVisible(tabName == "intel") end
     if IsValid(self.helpPanel) then self.helpPanel:SetVisible(tabName == "info") end
 
     if (tabName == "logs") then
         ix.usms.Request("log_request", {limit = 100})
+    elseif (tabName == "missions") then
+        ix.usms.Request("mission_request", {})
     end
 end
 
