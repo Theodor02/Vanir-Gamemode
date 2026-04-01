@@ -5,6 +5,7 @@ FACTION.color = Color(0, 115, 8)
 FACTION.models = {
     "models/krieg/galacticempire/army/trooper/playermodel_male_01.mdl",
 }
+FACTION.headChange = true 
 
 
 FACTION_ARMY = FACTION.index

@@ -22,90 +22,6 @@ local function ApplyToChildren(panel, callback)
 	end
 end
 
-local function AddMainMenuStyledButton(parent, label, style, onClick)
-	local button = parent:Add("DButton")
-	button:SetText(string.upper(label or ""))
-	button:SetFont("ixImpMenuButton")
-	button:SetContentAlignment(5)
-	button:SetTextColor(THEME.textMuted)
-	button:SetTall(Scale(50))
-	button.__ixImpNavStyle = style or "default"
-
-	button.DoClick = function(this)
-		if (this:GetDisabled()) then
-			surface.PlaySound(ix.ui.SOUND_ERROR)
-			return
-		end
-
-		surface.PlaySound(ix.ui.SOUND_CLICK)
-
-		if (isfunction(onClick)) then
-			onClick(this)
-		end
-	end
-
-	button.Paint = function(this, w, h)
-		local isDanger = this.__ixImpNavStyle == "danger"
-		local idleText = isDanger and Color(THEME.danger.r, THEME.danger.g, THEME.danger.b, 220) or THEME.textMuted
-		local hoverText = isDanger and THEME.danger or THEME.accent
-		local hoverBg = isDanger
-			and Color(THEME.danger.r, THEME.danger.g, THEME.danger.b, 15)
-			or Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 15)
-		local idleLine = isDanger
-			and Color(THEME.danger.r, THEME.danger.g, THEME.danger.b, 25)
-			or Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 15)
-
-		if (this:GetDisabled()) then
-			this:SetTextColor(Color(100, 100, 100, 100))
-		elseif (this:IsHovered()) then
-			this:SetTextColor(hoverText)
-
-			surface.SetDrawColor(hoverText)
-			surface.DrawRect(0, 0, Scale(2), h)
-			surface.DrawRect(w - Scale(2), 0, Scale(2), h)
-
-			surface.SetDrawColor(hoverBg)
-			surface.DrawRect(0, 0, w, h)
-		else
-			this:SetTextColor(idleText)
-			surface.SetDrawColor(idleLine)
-			surface.DrawLine(0, h - 1, w, h - 1)
-		end
-	end
-
-	return button
-end
-
-local function AddCornerFooter(subpanel, proceedLabel, onReturn, onProceed)
-	local footer = subpanel:Add("Panel")
-	footer:Dock(BOTTOM)
-	footer:SetTall(Scale(52))
-	footer:DockMargin(Scale(16), Scale(10), Scale(16), Scale(16))
-	footer.Paint = function() end
-
-	local returnButton = AddMainMenuStyledButton(footer, "RETURN", "default", onReturn)
-	returnButton:Dock(LEFT)
-
-	local proceedButton = AddMainMenuStyledButton(footer, proceedLabel or "PROCEED", "default", onProceed)
-	proceedButton:Dock(RIGHT)
-
-	footer.PerformLayout = function(this, w, h)
-		local gap = Scale(12)
-		local halfGap = math.floor(gap * 0.5)
-		local buttonW = math.max(Scale(120), math.floor((w - gap) * 0.5))
-
-		returnButton:SetWide(buttonW)
-		returnButton:SetTall(h)
-		returnButton:DockMargin(0, 0, halfGap, 0)
-
-		proceedButton:SetWide(buttonW)
-		proceedButton:SetTall(h)
-		proceedButton:DockMargin(halfGap, 0, 0, 0)
-	end
-
-	return footer, returnButton, proceedButton
-end
-
 local function ApplyCharMenuStatic(panel)
 	if (!IsValid(panel)) then
 		return
@@ -113,33 +29,17 @@ local function ApplyCharMenuStatic(panel)
 
 	panel.__ixImpFramePadding = Scale(46)
 	panel.Paint = function(this, width, height)
-		-- Keep this panel transparent so Helix/default fullscreen backdrops are not reintroduced.
+		surface.SetDrawColor(THEME.background)
+		surface.DrawRect(0, 0, width, height)
 
 		local framePad = this.__ixImpFramePadding or Scale(46)
-		local suffixAlpha = 150
-		local notchLength = Scale(32)
+		
+		-- No harsh framing, just subtle visual indicators
+		surface.SetDrawColor(Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 10))
+		surface.DrawLine(framePad, framePad, width - framePad, framePad)
+		surface.DrawLine(framePad, height - framePad, width - framePad, height - framePad)
 
-		-- Same top metadata framing style as main menu.
 		draw.SimpleText("IMPERIAL ARCHIVES", "ixImpMenuLabel", framePad, framePad - Scale(16), THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		draw.SimpleText("NODE // 07", "ixImpMenuLabel", framePad, framePad, THEME.accent, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-
-		-- Top-right USR metadata (per Section 1.6)
-		local rightText = "GUEST"
-		local ply = LocalPlayer()
-		if (ply.GetCharacter and ply:GetCharacter()) then
-			rightText = string.upper(ply:GetCharacter():GetName())
-		end
-		draw.SimpleText("USR // " .. rightText, "ixImpMenuLabel", width - framePad, framePad, THEME.accent, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
-
-		-- Same corner decorations as main menu.
-		surface.SetDrawColor(THEME.accentSoft)
-		surface.DrawLine(framePad, height - framePad, framePad + notchLength, height - framePad)
-		surface.DrawLine(framePad, height - framePad, framePad, height - framePad - notchLength)
-		draw.SimpleText("SYSTEM ACTIVE", "ixImpMenuAurebesh", framePad + notchLength + Scale(8), height - framePad + Scale(2), Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, suffixAlpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-
-		surface.DrawLine(width - framePad, height - framePad, width - framePad - notchLength, height - framePad)
-		surface.DrawLine(width - framePad, height - framePad, width - framePad, height - framePad - notchLength)
-		draw.SimpleText("AUTH LVL 3", "ixImpMenuAurebesh", width - framePad - notchLength - Scale(8), height - framePad + Scale(2), Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, suffixAlpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 	end
 
 	local factionModelPanel = panel.factionModel and panel.factionModel:GetParent()
@@ -156,17 +56,9 @@ local function ApplyCharMenuStatic(panel)
         attributesModelPanel:DockMargin(0, 0, 0, 0) 
     end
 
-	for _, sp in ipairs({factionModelPanel, descriptionModelPanel, attributesModelPanel}) do
-		if (IsValid(sp)) then
-			sp:DockPadding(0, 0, 0, 0)
-			sp.Paint = function(_, w, h)
-				local sepColor = THEME.sep or Color(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 45)
-				surface.SetDrawColor(sepColor)
-				surface.DrawRect(0, 0, w, 1)
-				surface.DrawRect(0, h - 1, w, 1)
-			end
-		end
-	end
+	ix.ui.ApplyScreeningPanel(factionModelPanel, "ENLISTMENT SCREENING")
+	ix.ui.ApplyScreeningPanel(descriptionModelPanel, "BIOGRAPHIC REVIEW")
+	ix.ui.ApplyScreeningPanel(attributesModelPanel, "APTITUDE SCREENING")
 
 	-- If factionButtonsPanel is inside a container that already has ApplyDataPanel (our new layout), don't apply it again
     -- We detect this by checking if it's a ScrollPanel
@@ -175,7 +67,6 @@ local function ApplyCharMenuStatic(panel)
     end
 
 	ix.ui.ApplyDataPanel(panel.descriptionPanel, "PERSONNEL RECORD")
-
 	ix.ui.ApplyDataPanel(panel.attributesPanel, "APTITUDE MATRIX")
 
 	local sideMargin = Scale(16)
@@ -236,7 +127,7 @@ local function ApplyCharMenuDynamic(panel)
 			if (upper:find("PROCEED") or upper:find("CONFIRM") or upper:find("FINISH") or upper:find("AUTHORIZE")) then
 				style = "accent"
 			elseif (upper:find("RETURN") or upper:find("BACK")) then
-				style = "default"
+				style = "danger"
 			end
 
 			ix.ui.ApplyButtonSounds(child)
@@ -313,7 +204,8 @@ function PANEL:Init()
 	self:DockPadding(sidePadding, padding * 2, sidePadding, padding * 2)
 	
 	local halfWidth = (contentWidth * 0.5) - padding
-	local modelFOV = (ScrW() > ScrH() * 1.8) and 80 or 78
+	local halfHeight = parent:GetTall() * 0.5 - (padding * 2)
+	local modelFOV = (ScrW() > ScrH() * 1.8) and 120 or 78
 
 	self:ResetPayload(true)
 
@@ -330,108 +222,79 @@ function PANEL:Init()
 		end
 	end
 
-	AddCornerFooter(self.factionPanel, "PROCEED",
-		function()
-			self.progress:DecrementProgress()
-
-			self:SetActiveSubpanel("faction", 0)
-			self:SlideDown()
-
-			parent.mainPanel:Undim()
-		end,
-		function()
-			self.progress:IncrementProgress()
-
-			self:Populate()
-			self:SetActiveSubpanel("description")
-		end
-	)
-
-	-- Wrapper for the whole right side of faction panel (expanded per Section 2.3 fix #1)
+	-- Wrapper for the whole right side of faction panel
 	local factionRight = self.factionPanel:Add("Panel")
 	factionRight:Dock(RIGHT)
-	factionRight:SetWide(contentWidth * 0.38)
+	factionRight:SetSize(halfWidth * 0.6, halfHeight)
+	
+	-- Button footer panel for faction (Outside the bioscan)
+	local factionFooter = factionRight:Add("Panel")
+	factionFooter:SetTall(Scale(64))
+	factionFooter:Dock(BOTTOM)
+	factionFooter:DockMargin(Scale(16), Scale(4), Scale(16), Scale(16))
+	factionFooter.Paint = function() end
 
-	-- The Bioscan/Visual Panel
+	local proceed = factionFooter:Add("ixImpButton")
+	proceed:SetLabel("PROCEED")
+	proceed:SetStyle("accent")
+	proceed:Dock(RIGHT)
+	proceed:DockMargin(Scale(4), 0, 0, 0)
+	proceed:SetWide(halfWidth * 0.6 * 0.48) -- ~Half of the panel width
+	proceed.DoClick = function()
+		self.progress:IncrementProgress()
+
+		self:Populate()
+		self:SetActiveSubpanel("description")
+	end
+
+	local factionBack = factionFooter:Add("ixImpButton")
+	factionBack:SetLabel("RETURN")
+	factionBack:SetStyle("danger")
+	factionBack:Dock(LEFT)
+	factionBack:DockMargin(0, 0, Scale(4), 0)
+	factionBack:SetWide(halfWidth * 0.6 * 0.48)
+	factionBack.DoClick = function()
+		self.progress:DecrementProgress()
+
+		self:SetActiveSubpanel("faction", 0)
+		self:SlideDown()
+
+		parent.mainPanel:Undim()
+	end
+
+	-- The Bioscan/Visual Panel (Above buttons)
 	local modelList = factionRight:Add("Panel")
 	modelList:Dock(FILL)
 
-	-- Scan overlay for right panel (per Section 2.3 fix #7 and Section 1.8)
-	local baseModelListPaint = modelList.Paint
-	modelList.__ixScanOverlay = true
-	local origModelListPaint = modelList.Paint
-	modelList.PostPaint = function(this, w, h)
-		local scanColor = Color(201, 168, 76, 76)
-		local bracketColor = Color(201, 168, 76, 51)
-		local centerX = w * 0.5
-		local modelTop = Scale(40)
-		local modelBot = h - Scale(30)
-
-		-- Aurebesh screening text lines
-		draw.SimpleText("ENLISTMENT SCAN ACTIVE", "ixImpMenuAurebesh", centerX, modelTop - Scale(12), Color(255, 255, 255, 56), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-		draw.SimpleText("BIOMETRIC VERIFICATION", "ixImpMenuAurebesh", centerX, modelTop - Scale(4), Color(255, 255, 255, 36), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-
-		-- Scan lines
-		surface.SetDrawColor(scanColor)
-		surface.DrawRect(Scale(20), modelTop, w - Scale(40), 2)
-		surface.DrawRect(Scale(20), modelBot, w - Scale(40), 2)
-
-		-- Height brackets
-		surface.SetDrawColor(bracketColor)
-		surface.DrawRect(Scale(16), modelTop, 1, modelBot - modelTop)
-		surface.DrawRect(w - Scale(16), modelTop, 1, modelBot - modelTop)
-
-		-- Scan line stack at bottom
-		local stackY = modelBot + Scale(8)
-		local opacities = {102, 64, 38, 25}
-		for i, alpha in ipairs(opacities) do
-			local lineW = w - Scale(20) * 2 - (i - 1) * Scale(16)
-			local lineX = centerX - lineW * 0.5
-			surface.SetDrawColor(Color(201, 168, 76, alpha))
-			surface.DrawRect(lineX, stackY + (i - 1) * Scale(6), lineW, 2)
-		end
-	end
-
 	self.factionModel = modelList:Add("ixModelPanel")
 	self.factionModel:Dock(FILL)
-	self.factionModel:DockMargin(Scale(12), Scale(12), Scale(12), Scale(12))
 	self.factionModel:SetModel("models/error.mdl")
 	self.factionModel:SetFOV(modelFOV - 35)
 	self.factionModel.PaintModel = self.factionModel.Paint
 
-	-- Left side wrapper: single scrollable column with list + info adjacent (per Section 2.3 fix #2)
+	-- Left side wrapper for faction list + info
 	local factionLeft = self.factionPanel:Add("Panel")
 	factionLeft:Dock(FILL)
-	factionLeft:DockMargin(0, 0, Scale(16), 0)
-
-	-- Sub-container for Faction List (Top Box)
-	local factionListContainer = factionLeft:Add("Panel")
-	factionListContainer:Dock(FILL)
-	factionListContainer:DockMargin(0, 0, 0, 0)
+    
+    -- Sub-container for Faction List (Top Box)
+    local factionListContainer = factionLeft:Add("Panel")
+    factionListContainer:Dock(FILL)
+    -- Add margins to simulate spacing between boxes
+    factionListContainer:DockMargin(Scale(16), Scale(16), Scale(16), Scale(16))
 	ix.ui.ApplyDataPanel(factionListContainer, "ENLISTMENT OPTIONS")
-
-	-- Faction count label (per Section 2.3 fix #5)
-	self.factionCountLabel = factionListContainer:Add("DLabel")
-	self.factionCountLabel:Dock(TOP)
-	self.factionCountLabel:SetTall(Scale(14))
-	self.factionCountLabel:DockMargin(Scale(8), Scale(30), Scale(8), Scale(4))
-	self.factionCountLabel:SetFont("ixImpMenuDiag")
-	self.factionCountLabel:SetTextColor(THEME.textMuted)
-	self.factionCountLabel:SetText("0 FACTIONS AVAILABLE")
-	self.factionCountLabel:SetContentAlignment(4)
 
 	self.factionButtonsPanel = factionListContainer:Add("DScrollPanel")
 	self.factionButtonsPanel:Dock(FILL)
-	self.factionButtonsPanel:DockMargin(Scale(8), Scale(4), Scale(8), Scale(8))
-	self.factionButtonsPanel.Paint = function() end
+	self.factionButtonsPanel:DockMargin(0, Scale(4), 0, 0)
+    self.factionButtonsPanel.Paint = function() end
+    
+    ix.ui.ApplyScrollbarStyle(self.factionButtonsPanel)
 
-	ix.ui.ApplyScrollbarStyle(self.factionButtonsPanel)
-
-	-- Faction Info Panel — sits directly BELOW list (per Section 2.3 fix #2: no gap)
+	-- Faction Info Panel (Bottom Box)
 	self.factionInfoPanel = factionLeft:Add("Panel")
 	self.factionInfoPanel:Dock(BOTTOM)
-	self.factionInfoPanel:SetTall(Scale(180))
-	self.factionInfoPanel:DockMargin(0, 0, 0, 0)
+	self.factionInfoPanel:SetTall(Scale(140))
+	self.factionInfoPanel:DockMargin(0, Scale(8), 0, 0)
     
     -- Use standard header style + custom content
 	self.factionInfoPanel.Paint = function(this, w, h)
@@ -454,11 +317,7 @@ function PANEL:Init()
 		surface.DrawRect(0, 0, barW, barH)
 		
 		ix.ui.DrawSpacedText(headerText, headerFont, barPadX, barPadY, THEME.background, titleSpacing, TEXT_ALIGN_LEFT)
-
-		-- Aurebesh suffix on title bar (per Section 1.4)
-		local aurebeshCol = Color(13, 14, 16, 115)
-		draw.SimpleText("FAC-INTEL", "ixImpMenuAurebesh", barW - Scale(8), barH * 0.5, aurebeshCol, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-
+        
         -- Custom Content
         if (!self.payload.faction) then return end
         local factionIdx = self.payload.faction
@@ -504,123 +363,134 @@ function PANEL:Init()
 	self.description = self:AddSubpanel("description")
 	self.description:SetTitle("chooseDescription")
 
-	AddCornerFooter(self.description, "PROCEED",
-		function()
-			self.progress:DecrementProgress()
+	-- Left side wrapper for description (Model + Return)
+	local descriptionLeft = self.description:Add("Panel")
+	descriptionLeft:Dock(LEFT)
+	descriptionLeft:SetSize(halfWidth * 0.6, halfHeight)
 
-			if (#self.factionButtons == 1) then
-				self.progress:DecrementProgress()
-				self:SetActiveSubpanel("faction", 0)
-				self:SlideDown()
-				parent.mainPanel:Undim()
-			else
-				self:SetActiveSubpanel("faction")
-			end
-		end,
-		function()
-			if (self:VerifyProgression("description")) then
-				if (#self.attributesPanel:GetChildren() < 2) then
-					self:SendPayload()
-					return
-				end
+	-- Button footer panel for description (Outside bioscan)
+	local descriptionFooter = descriptionLeft:Add("Panel")
+	descriptionFooter:SetTall(Scale(64))
+	descriptionFooter:Dock(BOTTOM)
+	descriptionFooter:DockMargin(Scale(16), Scale(4), Scale(16), Scale(16))
+	descriptionFooter.Paint = function() end
 
-				self.progress:IncrementProgress()
-				self:SetActiveSubpanel("attributes")
-			end
+	local descriptionBack = descriptionFooter:Add("ixImpButton")
+	descriptionBack:SetLabel("RETURN")
+	descriptionBack:SetStyle("danger")
+	descriptionBack:Dock(FILL)
+	descriptionBack.DoClick = function()
+		self.progress:DecrementProgress()
+
+		if (#self.factionButtons == 1) then
+			factionBack:DoClick()
+		else
+			self:SetActiveSubpanel("faction")
 		end
-	)
+	end
 
-	-- Model side wrapper for description (Right side)
-	local descriptionRight = self.description:Add("Panel")
-	descriptionRight:Dock(RIGHT)
-	descriptionRight:SetWide(contentWidth * 0.38)
-
-	-- Bioscan visual panel (top portion)
-	local descriptionModelList = descriptionRight:Add("Panel")
+	-- Bioscan visual panel
+	local descriptionModelList = descriptionLeft:Add("Panel")
 	descriptionModelList:Dock(FILL)
+	-- Pass this to static applier later via self.descriptionModel:GetParent()
 
 	self.descriptionModel = descriptionModelList:Add("ixModelPanel")
 	self.descriptionModel:Dock(FILL)
-	self.descriptionModel:DockMargin(Scale(12), Scale(12), Scale(12), Scale(12))
 	self.descriptionModel:SetModel(self.factionModel:GetModel())
 	self.descriptionModel:SetFOV(modelFOV - 35)
 	self.descriptionModel.PaintModel = self.descriptionModel.Paint
 
-	-- Inputs side wrapper for description (Left side)
-	local descriptionLeft = self.description:Add("Panel")
-	descriptionLeft:Dock(FILL)
-	descriptionLeft:DockMargin(0, 0, Scale(16), 0)
+	-- Right side wrapper for description (Inputs + Proceed)
+	local descriptionRight = self.description:Add("Panel")
+	descriptionRight:SetWide(halfWidth + padding * 2)
+	descriptionRight:Dock(RIGHT)
 
-	-- Data Panel (Inputs) — dynamic fields from ix.char.vars populate here
-	self.descriptionPanel = descriptionLeft:Add("Panel")
-	self.descriptionPanel:Dock(FILL)
+	-- Button footer panel for description PROCEED (Outside Data Panel)
+	local descriptionFooterPanel = descriptionRight:Add("Panel")
+	descriptionFooterPanel:SetTall(Scale(64))
+	descriptionFooterPanel:Dock(BOTTOM)
+	descriptionFooterPanel:DockMargin(Scale(16), Scale(4), Scale(16), Scale(16))
+	descriptionFooterPanel.Paint = function() end
 
+	local descriptionProceed = descriptionFooterPanel:Add("ixImpButton")
+	descriptionProceed:SetLabel("PROCEED")
+	descriptionProceed:SetStyle("accent")
+	descriptionProceed:Dock(FILL)
+	descriptionProceed.DoClick = function()
+		if (self:VerifyProgression("description")) then
+			-- there are no panels on the attributes section other than the create button, so we can just create the character
+			if (#self.attributesPanel:GetChildren() < 2) then
+				self:SendPayload()
+				return
+			end
+
+			self.progress:IncrementProgress()
+			self:SetActiveSubpanel("attributes")
+		end
+	end
+
+	-- Data Panel (Inputs)
+	self.descriptionPanel = descriptionRight:Add("Panel")
+	self.descriptionPanel:Dock(FILL) 
+    -- We need to ApplyDataPanel to this specifically
 
 	-- attributes subpanel
 	self.attributes = self:AddSubpanel("attributes")
 	self.attributes:SetTitle("chooseSkills")
 
-	AddCornerFooter(self.attributes, "PROCEED",
-		function()
-			self.progress:DecrementProgress()
-			self:SetActiveSubpanel("description")
-		end,
-		function()
-			self:SendPayload()
-		end
-	)
+	-- Left side wrapper for attributes
+	local attributesLeft = self.attributes:Add("Panel")
+	attributesLeft:Dock(LEFT)
+	attributesLeft:SetSize(halfWidth * 0.6, halfHeight)
 
-	-- Model side wrapper for attributes
-	local attributesRight = self.attributes:Add("Panel")
-	attributesRight:Dock(RIGHT)
-	attributesRight:SetWide(contentWidth * 0.38)
+	-- Button footer panel for attributes
+	local attributesFooter = attributesLeft:Add("Panel")
+	attributesFooter:SetTall(Scale(64))
+	attributesFooter:Dock(BOTTOM)
+	attributesFooter:DockMargin(Scale(16), Scale(4), Scale(16), Scale(16))
+	attributesFooter.Paint = function() end
+
+	local attributesBack = attributesFooter:Add("ixImpButton")
+	attributesBack:SetLabel("RETURN")
+	attributesBack:SetStyle("danger")
+	attributesBack:Dock(FILL)
+	attributesBack.DoClick = function()
+		self.progress:DecrementProgress()
+		self:SetActiveSubpanel("description")
+	end
 
 	-- Bioscan visual panel
-	local attributesModelList = attributesRight:Add("Panel")
+	local attributesModelList = attributesLeft:Add("Panel")
 	attributesModelList:Dock(FILL)
-
-	-- Scan overlay for aptitude right panel
-	attributesModelList.PostPaint = function(this, w, h)
-		local scanColor = Color(201, 168, 76, 76)
-		local bracketColor = Color(201, 168, 76, 51)
-		local centerX = w * 0.5
-		local modelTop = Scale(40)
-		local modelBot = h - Scale(30)
-
-		draw.SimpleText("APTITUDE SCAN ACTIVE", "ixImpMenuAurebesh", centerX, modelTop - Scale(12), Color(255, 255, 255, 56), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-		draw.SimpleText("METRIC ANALYSIS", "ixImpMenuAurebesh", centerX, modelTop - Scale(4), Color(255, 255, 255, 36), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-
-		surface.SetDrawColor(scanColor)
-		surface.DrawRect(Scale(20), modelTop, w - Scale(40), 2)
-		surface.DrawRect(Scale(20), modelBot, w - Scale(40), 2)
-
-		surface.SetDrawColor(bracketColor)
-		surface.DrawRect(Scale(16), modelTop, 1, modelBot - modelTop)
-		surface.DrawRect(w - Scale(16), modelTop, 1, modelBot - modelTop)
-
-		local stackY = modelBot + Scale(8)
-		local opacities = {102, 64, 38, 25}
-		for i, alpha in ipairs(opacities) do
-			local lineW = w - Scale(20) * 2 - (i - 1) * Scale(16)
-			local lineX = centerX - lineW * 0.5
-			surface.SetDrawColor(Color(201, 168, 76, alpha))
-			surface.DrawRect(lineX, stackY + (i - 1) * Scale(6), lineW, 2)
-		end
-	end
 
 	self.attributesModel = attributesModelList:Add("ixModelPanel")
 	self.attributesModel:Dock(FILL)
-	self.attributesModel:DockMargin(Scale(12), Scale(12), Scale(12), Scale(12))
 	self.attributesModel:SetModel(self.factionModel:GetModel())
 	self.attributesModel:SetFOV(modelFOV - 35)
 	self.attributesModel.PaintModel = self.attributesModel.Paint
 
-	-- Inputs side wrapper for attributes
-	local attributesLeft = self.attributes:Add("Panel")
-	attributesLeft:Dock(FILL)
+	-- Right side wrapper for attributes
+	local attributesRight = self.attributes:Add("Panel")
+	attributesRight:SetWide(halfWidth + padding * 2)
+	attributesRight:Dock(RIGHT)
+
+	-- Button footer panel for attributes FINISH
+	local attributesFooterPanel = attributesRight:Add("Panel")
+	attributesFooterPanel:SetTall(Scale(64))
+	attributesFooterPanel:Dock(BOTTOM)
+	attributesFooterPanel:DockMargin(Scale(16), Scale(4), Scale(16), Scale(16))
+	attributesFooterPanel.Paint = function() end
+
+	local create = attributesFooterPanel:Add("ixImpButton")
+	create:SetLabel("FINISH")
+	create:SetStyle("accent")
+	create:Dock(FILL)
+	create.DoClick = function()
+		self:SendPayload()
+	end
 
 	-- Aptitude Matrix panel
-	self.attributesPanel = attributesLeft:Add("Panel")
+	self.attributesPanel = attributesRight:Add("Panel")
 	self.attributesPanel:Dock(FILL)
 
 
@@ -809,29 +679,16 @@ function PANEL:Populate()
 		local bSelected = false
 		local firstButton
 
-		local factionCount = 0
 		for _, v in SortedPairs(ix.faction.teams) do
 			if (ix.faction.HasWhitelist(v.index)) then
-				factionCount = factionCount + 1
 				local button = self.factionButtonsPanel:Add("ixImpButton")
 				button:SetLabel(L(v.name):utf8upper())
+				-- button:SizeToContents()
+				-- button:SetButtonList(self.factionButtons)
 				button:Dock(TOP)
 				button:DockMargin(0, 0, 0, Scale(4))
-				button:SetTall(Scale(48)) -- Taller to fit metadata line
+				button:SetTall(Scale(40))
 				button.faction = v.index
-
-				-- Faction metadata sub-label (per Section 2.3 fix #4)
-				local roleDesc = v.description and string.sub(v.description, 1, 40) or "IMPERIAL DIVISION"
-				button.__ixSubLabel = string.upper(roleDesc)
-				button.labelYOffset = -Scale(5) -- Shift main label up to make room for sub-label
-
-				-- Override Paint to draw sub-label
-				local basePaint = button.Paint
-				button.Paint = function(this, w, h)
-					basePaint(this, w, h)
-					-- Sub-label: troop descriptor in 8px --text-muted below name
-					draw.SimpleText(this.__ixSubLabel or "", "ixImpMenuDiag", Scale(16), h * 0.5 + Scale(6), Color(255, 255, 255, 56), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-				end
 				button.DoClick = function(panel)
 					-- Manual exclusive selection
 					for _, b in ipairs(self.factionButtons) do
@@ -867,11 +724,6 @@ function PANEL:Populate()
 
 		if (!bSelected and IsValid(firstButton)) then
 			firstButton:DoClick(firstButton)
-		end
-
-		-- Update faction count label (per Section 2.3 fix #5)
-		if (IsValid(self.factionCountLabel)) then
-			self.factionCountLabel:SetText(factionCount .. " FACTIONS AVAILABLE")
 		end
 	end
 
@@ -1068,8 +920,8 @@ function PANEL:VerifyProgression(name)
 end
 
 function PANEL:Paint(width, height)
-	-- Intentionally blank: disable Helix/default fullscreen background fill.
-	return
+	derma.SkinFunc("PaintCharacterCreateBackground", self, width, height)
+	BaseClass.Paint(self, width, height)
 end
 
 vgui.Register("ixCharMenuNew", PANEL, "ixCharMenuPanel")

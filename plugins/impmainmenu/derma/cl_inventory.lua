@@ -704,7 +704,9 @@ vgui.Register("ixInventory", PANEL, "DFrame")
 
 local MODEL_ANGLE = Angle(0, 90, 0)
 
-hook.Add("CreateMenuButtons", "ixInventory", function(tabs)
+-- Tab registration moved to vgui/cl_unified_panel.lua (unified panel)
+--[[ LEGACY TAB — replaced by ixUnifiedCharPanel
+hook.Add("CreateMenuButtons", "ixInventory_DISABLED", function(tabs)
 	if (hook.Run("CanPlayerViewInventory") == false) then
 		return
 	end
@@ -1009,6 +1011,7 @@ hook.Add("CreateMenuButtons", "ixInventory", function(tabs)
 		end
 	}
 end)
+--]] -- END LEGACY TAB
 
 hook.Add("PostRenderVGUI", "ixInvHelper", function()
 	local pnl = ix.gui.inv1

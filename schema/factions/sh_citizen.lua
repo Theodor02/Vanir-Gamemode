@@ -6,6 +6,7 @@ FACTION.name = "Citizen"
 FACTION.description = "An oppressed group of people forced to wear ridiculous blue jumpsuits."
 FACTION.isDefault = false
 FACTION.color = Color(100, 60, 60)
+FACTION.headChange = true
 
 -- You should define a global variable for this faction's index for easy access wherever you need. FACTION.index is
 -- automatically set, so you can simply assign the value.

@@ -8,6 +8,7 @@ FACTION.color = Color(20, 120, 185)
 FACTION.pay = 10 -- How much money every member of the faction gets paid at regular intervals.
 FACTION.weapons = {"weapon_pistol"} -- Weapons that every member of the faction should start with.
 FACTION.isGloballyRecognized = true -- Makes it so that everyone knows the name of the characters in this faction.
+FACTION.headChange = true
 
 -- Note that FACTION.models is optional. If it is not defined, it will use all the standard HL2 citizen models.
 FACTION.models = {

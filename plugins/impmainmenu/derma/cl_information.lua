@@ -236,9 +236,4 @@ end
 
 vgui.Register("ixCharInfo", PANEL, "EditablePanel")
 
-hook.Add("CreateMenuButtons", "ixCharInfo", function(tabs)
-	tabs["you"] = function(container)
-		local panel = container:Add("ixCharInfo")
-		panel:Dock(FILL)
-	end
-end)
+-- Tab registration moved to vgui/cl_unified_panel.lua (unified panel)

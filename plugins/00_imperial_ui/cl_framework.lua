@@ -267,30 +267,42 @@ function ix.ui.DrawScreeningPanel(panel, width, height, headerText)
 	local THEME = ix.ui.THEME
 	local Scale = ix.ui.Scale
 	local now = CurTime()
-	local innerPad = Scale(10)
 	local footerHeight = panel.__ixImpFooterHeight or 0
 	local drawH = height - footerHeight
-	local headerH = Scale(24)
 
-	local innerX = innerPad - Scale(2)
-	local innerY = headerH + innerPad
+	-- Design System: No full-frame bounding box.
+	-- Background remains dark/desaturated but not a harsh black box.
+	surface.SetDrawColor(Color(0, 0, 0, 80))
+	surface.DrawRect(0, 0, width, drawH)
+
+	-- Design System: Selective, high-contrast title bar
+	local titleSpacing = Scale(2)
+	local headerFont = "ixImpMenuSubtitle"
+	
+	if (headerText) then
+		local textW, textH = ix.ui.GetSpacedTextSize(headerText, headerFont, titleSpacing)
+		local barPadX = Scale(12)
+		local barPadY = Scale(4)
+		local barW = textW + (barPadX * 2)
+		local barH = textH + (barPadY * 2)
+		
+		local barX = 0
+		local barY = 0
+		
+		surface.SetDrawColor(THEME.accent)
+		surface.DrawRect(barX, barY, barW, barH)
+		
+		ix.ui.DrawSpacedText(headerText, headerFont, barX + barPadX, barY + barPadY, THEME.background, titleSpacing, TEXT_ALIGN_LEFT)
+		
+		-- Small Aurebesh suffix outside the bar
+		draw.SimpleText("BIOSCAN", "ixImpMenuAurebesh", barX + barW + Scale(6), barY + barH * 0.5 - 1, Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+	end
+
+	local innerPad = Scale(10)
+	local innerX = innerPad
+	local innerY = Scale(30) + innerPad
 	local innerW = width - innerPad * 2
 	local innerH = drawH - innerY - Scale(46)
-
-	-- Background
-	surface.SetDrawColor(Color(0, 0, 0, 255))
-	surface.DrawRect(0, 0, width, height)
-
-	-- Header bar
-	surface.SetDrawColor(THEME.frameSoft)
-	surface.DrawRect(0, 0, width, headerH)
-
-	-- Frame outline
-	surface.DrawOutlinedRect(0, 0, width, drawH)
-
-	-- Header text
-	draw.SimpleText(headerText, "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-	draw.SimpleText("BIOSCAN", "ixImpMenuAurebesh", width - Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 
 	-- Moving scan line
 	local scanY = innerY + (now * 40 % innerH)
@@ -299,8 +311,8 @@ function ix.ui.DrawScreeningPanel(panel, width, height, headerText)
 		surface.DrawRect(innerX, scanY, innerW, Scale(2))
 	end
 
-	-- Horizontal grid lines
-	surface.SetDrawColor(Color(255, 255, 255, 6))
+	-- Horizontal grid lines (subtle)
+	surface.SetDrawColor(Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 10))
 	for i = 0, 6 do
 		local y = innerY + (i / 6) * innerH
 		surface.DrawLine(innerX, y, innerX + innerW, y)
@@ -336,7 +348,7 @@ function ix.ui.DrawScreeningPanel(panel, width, height, headerText)
 					textToDraw = string.sub(lines[i], 1, charsForThisLine)
 				end
 				draw.SimpleText(textToDraw, "ixImpMenuAurebesh", innerX, lineY,
-					Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, cycleAlpha),
+					Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, cycleAlpha * 0.5),
 					TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			end
 
@@ -350,15 +362,15 @@ function ix.ui.DrawScreeningPanel(panel, width, height, headerText)
 	for i = 1, 3 do
 		local phase = now * (0.7 + i * 0.4)
 		local fill = 0.35 + (math.sin(phase) + 1) * 0.3
-		local barH = Scale(6)
+		local barH = Scale(2)
 
 		if (barY + barH > drawH) then break end
 
-		surface.SetDrawColor(Color(255, 255, 255, 10))
+		surface.SetDrawColor(Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 20))
 		surface.DrawRect(innerX, barY, innerW, barH)
 		surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 120))
 		surface.DrawRect(innerX, barY, innerW * fill, barH)
-		barY = barY - Scale(10)
+		barY = barY - Scale(8)
 	end
 end
 
@@ -369,17 +381,31 @@ end
 function ix.ui.DrawDataPanel(width, height, headerText)
 	local THEME = ix.ui.THEME
 	local Scale = ix.ui.Scale
-	local headerH = Scale(24)
 
-	surface.SetDrawColor(Color(0, 0, 0, 200))
-	surface.DrawRect(0, 0, width, height)
+	-- Design System: No full-frame bounding box. Background remains dark/desaturated.
+	-- We'll allow the parent's background to show through, or draw a very subtle tint.
 
-	surface.SetDrawColor(THEME.frameSoft)
-	surface.DrawRect(0, 0, width, headerH)
-	surface.DrawOutlinedRect(0, 0, width, height)
-
+	-- Design System: Selective, high-contrast title bar
 	if (headerText) then
-		draw.SimpleText(headerText, "ixImpMenuButton", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+		local titleSpacing = Scale(2)
+		local headerFont = "ixImpMenuSubtitle"
+		local textW, textH = ix.ui.GetSpacedTextSize(headerText, headerFont, titleSpacing)
+		
+		local barPadX = Scale(12)
+		local barPadY = Scale(4)
+		local barW = textW + (barPadX * 2)
+		local barH = textH + (barPadY * 2)
+		
+		local barX = 0
+		local barY = 0
+		
+		surface.SetDrawColor(THEME.accent)
+		surface.DrawRect(barX, barY, barW, barH)
+		
+		ix.ui.DrawSpacedText(headerText, headerFont, barX + barPadX, barY + barPadY, THEME.background, titleSpacing, TEXT_ALIGN_LEFT)
+		
+		-- Small Aurebesh suffix outside the bar
+		draw.SimpleText("DATA", "ixImpMenuAurebesh", barX + barW + Scale(6), barY + barH * 0.5 - 1, Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 	end
 end
 
@@ -394,6 +420,7 @@ function ix.ui.ApplyScreeningPanel(panel, headerText)
 	if (!IsValid(panel)) then return end
 
 	panel.__ixImpHasScreening = true
+	panel:DockPadding(0, ix.ui.Scale(28), 0, 0)
 	panel.Paint = function(this, width, height)
 		ix.ui.DrawScreeningPanel(this, width, height, headerText)
 	end
@@ -462,10 +489,23 @@ function ix.ui.ApplyTextEntryStyle(entry)
 	end
 
 	entry.Paint = function(this, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 255))
-		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(THEME.frameSoft)
-		surface.DrawOutlinedRect(0, 0, width, height)
+		-- VANIR spec: --bg-secondary background with 1px --sep border
+		if (this:HasFocus()) then
+			-- Focus state: gold bottom border, subtle gold bg tint
+			surface.SetDrawColor(Color(201, 168, 76, 13)) -- rgba(201,168,76,0.05)
+			surface.DrawRect(0, 0, width, height)
+			surface.SetDrawColor(Color(255, 255, 255, 15)) -- --sep border
+			surface.DrawOutlinedRect(0, 0, width, height)
+			surface.SetDrawColor(Color(201, 168, 76, 255)) -- --gold bottom border
+			surface.DrawRect(0, height - 1, width, 1)
+		else
+			-- Idle state: --bg-secondary with --sep border
+			surface.SetDrawColor(Color(17, 19, 22, 255)) -- --bg-secondary
+			surface.DrawRect(0, 0, width, height)
+			surface.SetDrawColor(Color(255, 255, 255, 15)) -- --sep border
+			surface.DrawOutlinedRect(0, 0, width, height)
+		end
+
 		this:DrawTextEntryText(this:GetTextColor(), this:GetHighlightColor(), this:GetCursorColor())
 	end
 end
@@ -528,21 +568,29 @@ function ix.ui.ApplyCategoryPanelStyle(panel)
 	local Scale = ix.ui.Scale
 
 	panel.Paint = function(this, width, height)
-		surface.SetDrawColor(Color(0, 0, 0, 255))
+		-- VANIR-style: dark bg with thin separators, no heavy borders
+		surface.SetDrawColor(Color(17, 19, 22, 255)) -- --bg-secondary
 		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(THEME.frameSoft)
+		surface.SetDrawColor(Color(255, 255, 255, 15)) -- --sep
 		surface.DrawOutlinedRect(0, 0, width, height)
 
 		local title = this.GetText and this:GetText() or ""
 		if (title ~= "") then
-			draw.SimpleText(title:utf8upper(), "ixImpMenuLabel", Scale(10), Scale(8), THEME.accent, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-			surface.SetDrawColor(Color(255, 255, 255, 12))
-			surface.DrawLine(Scale(8), Scale(24), width - Scale(8), Scale(24))
+			-- Gold title-bar strip for category headers
+			local titleText = title:utf8upper()
+			surface.SetFont("ixImpMenuDiag")
+			local tw, th = surface.GetTextSize(titleText)
+			local barH = th + Scale(8)
+			surface.SetDrawColor(Color(201, 168, 76, 255)) -- --gold
+			surface.DrawRect(0, 0, width, barH)
+			draw.SimpleText(titleText, "ixImpMenuDiag", Scale(10), barH * 0.5, Color(13, 14, 16, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 		end
 	end
 end
 
 --- Style an ixAttributeBar with the Imperial look.
+-- VANIR spec layout: ATTR NAME (left) ████████░░░░░░ (bar center) 87 (right value)
+-- Row height: 22px, 2px separator between rows
 -- @param panel Panel  An ixAttributeBar
 function ix.ui.ApplyAttributeBarStyle(panel)
 	if (!IsValid(panel)) then return end
@@ -552,28 +600,54 @@ function ix.ui.ApplyAttributeBarStyle(panel)
 
 	panel:SetTall(Scale(22))
 
+	-- Store attribute name for custom paint
+	local attrName = ""
 	if (IsValid(panel.label)) then
-		panel.label:SetFont("ixImpMenuDiag")
-		panel.label:SetTextColor(THEME.textMuted)
-		panel.label:SetContentAlignment(5)
+		attrName = panel.label:GetText() or ""
+		-- Hide the default label — we'll draw it ourselves in panel Paint
+		panel.label:SetVisible(false)
+	end
+
+	-- Override the main panel Paint to draw the full VANIR layout
+	panel.Paint = function(this, w, h)
+		local labelW = Scale(80)
+		local valueW = Scale(40)
+		local barX = labelW
+		local barW = w - labelW - valueW
+
+		-- Left-aligned attribute name (8px --text-muted, 80px wide column)
+		draw.SimpleText(string.upper(attrName), "ixImpMenuDiag", 0, h * 0.5, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+
+		-- Center bar
+		local barH = 4
+		local barY = math.floor((h - barH) / 2)
+
+		-- Unfilled track (--sep)
+		surface.SetDrawColor(Color(255, 255, 255, 15))
+		surface.DrawRect(barX, barY, barW, barH)
+
+		-- Filled portion (--gold #C9A84C)
+		local max = math.max(this.max or 1, 1)
+		local value = (this.deltaValue or 0) / max
+		local fillW = math.max(0, barW * value)
+
+		if (fillW > 0) then
+			surface.SetDrawColor(Color(201, 168, 76, 255))
+			surface.DrawRect(barX, barY, fillW, barH)
+		end
+
+		-- Right-aligned numeric value (9px --text-primary)
+		local numValue = math.floor((this.deltaValue or 0))
+		draw.SimpleText(tostring(numValue), "ixImpMenuButton", w, h * 0.5, THEME.text, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+
+		-- 2px separator at bottom
+		surface.SetDrawColor(Color(255, 255, 255, 15))
+		surface.DrawLine(0, h - 1, w, h - 1)
 	end
 
 	if (IsValid(panel.bar)) then
-		panel.bar.Paint = function(this, w, h)
-			surface.SetDrawColor(Color(0, 0, 0, 255))
-			surface.DrawRect(0, 0, w, h)
-			surface.SetDrawColor(THEME.frameSoft)
-			surface.DrawOutlinedRect(0, 0, w, h)
-
-			local max = math.max(panel.max or 1, 1)
-			local value = (panel.deltaValue or 0) / max
-			local fillW = math.max(0, (w - 4) * value)
-
-			if (fillW > 0) then
-				surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 180))
-				surface.DrawRect(2, 2, fillW, h - 4)
-			end
-		end
+		-- Hide the default bar rendering — we draw it ourselves in panel Paint
+		panel.bar.Paint = function() end
 	end
 
 	if (panel.GetColor and panel:GetColor() ~= THEME.accent) then
@@ -626,11 +700,16 @@ end
 function ix.ui.ApplyButtonSounds(button)
 	if (!IsValid(button)) then return end
 
+	-- ixImpButton already handles sounds natively; skip to avoid overriding its methods
+	if (button:GetClassName() == "ixImpButton") then return end
+
 	function button:OnCursorEntered()
 		if (self:GetDisabled()) then return end
 
-		local color = self:GetTextColor()
-		self:SetTextColorInternal(Color(math.max(color.r - 25, 0), math.max(color.g - 25, 0), math.max(color.b - 25, 0)))
+		local color = self.GetTextColor and self:GetTextColor()
+		if (color and self.SetTextColorInternal) then
+			self:SetTextColorInternal(Color(math.max(color.r - 25, 0), math.max(color.g - 25, 0), math.max(color.b - 25, 0)))
+		end
 		self:CreateAnimation(0.15, {target = {currentBackgroundAlpha = self.backgroundAlpha}})
 		surface.PlaySound(ix.ui.SOUND_HOVER)
 	end
@@ -674,14 +753,15 @@ function ix.ui.ApplyImpButtonStyle(button, style)
 	button:SetPaintBackground(false)
 	button:SetContentAlignment(5)
 	button:SetTextInset(0, 0)
+	button.PaintOver = function() end
 
 	function button:GetImpColors()
 		if (self.__ixImpStyle == "accent") then
-			return THEME.accent, THEME.accent, Color(25, 20, 10, 220), THEME.accent
+			return THEME.accent, THEME.accent, Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 15), THEME.accent
 		elseif (self.__ixImpStyle == "danger") then
-			return THEME.danger, THEME.danger, Color(35, 10, 10, 220), THEME.danger
+			return THEME.danger, THEME.danger, Color(THEME.danger.r, THEME.danger.g, THEME.danger.b, 15), THEME.danger
 		end
-		return THEME.text, THEME.accentSoft, THEME.buttonBgHover, THEME.text
+		return THEME.textMuted, THEME.accentSoft, Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 15), THEME.accent
 	end
 
 	function button:Paint(width, height)
@@ -689,35 +769,34 @@ function ix.ui.ApplyImpButtonStyle(button, style)
 		local selected = self.GetSelected and self:GetSelected() or false
 		local hovered = self:IsHovered() or self:IsDown() or selected
 		local labelColor, borderColor, hoverBg, hoverLabel = self:GetImpColors()
-		local bg = THEME.buttonBg
-		local glow = math.Round(12 + (math.sin(CurTime() * 2 + self.__ixImpPulseOffset) + 1) * 9)
-
+		
 		if (selected and self.__ixImpStyle == "default") then
 			labelColor = THEME.accent
 			borderColor = THEME.accent
 		end
 
-		if (hovered) then
-			borderColor = Color(borderColor.r, borderColor.g, borderColor.b, math.min(255, borderColor.a + 40))
-			bg = hoverBg
-			labelColor = hoverLabel
-		end
-
 		if (disabled) then
-			borderColor = Color(borderColor.r, borderColor.g, borderColor.b, 60)
-			bg = Color(bg.r, bg.g, bg.b, 60)
-			labelColor = Color(labelColor.r, labelColor.g, labelColor.b, 60)
+			labelColor = Color(100, 100, 100, 100)
+		elseif (hovered) then
+			labelColor = hoverLabel
+			
+			-- Very subtle background highlight
+			surface.SetDrawColor(hoverBg)
+			surface.DrawRect(0, 0, width, height)
+			
+			-- Clean side brackets for hover instead of full box (mimicking main menu)
+			surface.SetDrawColor(borderColor)
+			surface.DrawRect(0, 0, ix.ui.Scale(2), height)
+			surface.DrawRect(width - ix.ui.Scale(2), 0, ix.ui.Scale(2), height)
 		else
-			borderColor = Color(borderColor.r, borderColor.g, borderColor.b, math.min(255, borderColor.a + glow))
+			-- Idle state minimal bottom line
+			surface.SetDrawColor(Color(borderColor.r, borderColor.g, borderColor.b, 30))
+			surface.DrawLine(0, height - 1, width, height - 1)
 		end
-
-		surface.SetDrawColor(bg)
-		surface.DrawRect(0, 0, width, height)
-		surface.SetDrawColor(borderColor)
-		surface.DrawOutlinedRect(0, 0, width, height)
-		surface.DrawOutlinedRect(1, 1, width - 2, height - 2)
 
 		draw.SimpleText(self:GetText(), "ixImpMenuButton", width * 0.5, height * 0.5, labelColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			
+		return true -- Prevent default paint if overriding
 	end
 
 	function button:OnCursorEntered()
@@ -821,16 +900,28 @@ function ix.ui.ApplyAttributeButtonStyle(button, symbol)
 
 	button.__ixImpSymbol = symbol
 	button.__ixImpHover = false
-	button:SetImage("")
+	-- Clear the default icon without passing an empty string (which crashes on nil material)
+	if (button.Image and IsValid(button.Image)) then button.Image:SetVisible(false) end
 	button:SetSize(Scale(18), Scale(18))
+
+	-- VANIR spec: minus/sub = muted red dot (min threshold), plus/add = gold dot (bonus)
+	local isSub = (symbol == "-")
+	local dotColor = isSub and Color(201, 64, 64, 178) or Color(201, 168, 76, 178)
+	local dotColorHover = isSub and Color(201, 64, 64, 255) or Color(201, 168, 76, 255)
+
+	-- VANIR spec: MIN label below sub button, BONUS label below add button
+	local labelText = isSub and "MIN" or "BONUS"
+	local labelColor = Color(255, 255, 255, 56) -- --text-muted equivalent
 
 	button.Paint = function(this, w, h)
 		local hovered = this.__ixImpHover
 		surface.SetDrawColor(hovered and THEME.buttonBgHover or THEME.buttonBg)
 		surface.DrawRect(0, 0, w, h)
-		surface.SetDrawColor(hovered and THEME.accent or THEME.accentSoft)
+		surface.SetDrawColor(hovered and dotColorHover or dotColor)
 		surface.DrawOutlinedRect(0, 0, w, h)
-		draw.SimpleText(this.__ixImpSymbol, "ixImpMenuDiag", w * 0.5, h * 0.5, hovered and THEME.accent or THEME.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(this.__ixImpSymbol, "ixImpMenuDiag", w * 0.5, h * 0.5, hovered and dotColorHover or THEME.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		-- MIN/BONUS label below dot (6px --text-muted)
+		draw.SimpleText(labelText, "ixImpMenuDiag", w * 0.5, h + Scale(2), labelColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 	end
 
 	button.OnCursorEntered = function(this)
@@ -1196,19 +1287,19 @@ function BUTTON:SetStyle(style)
 		self.labelColor = THEME.accent
 		self.borderColor = THEME.accent
 		self.hoverBorderColor = THEME.accent
-		self.hoverBackgroundColor = Color(25, 20, 10, 220)
+		self.hoverBackgroundColor = Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 20)
 		self.hoverLabelColor = THEME.accent
 	elseif (self.style == "danger") then
 		self.labelColor = THEME.danger
 		self.borderColor = THEME.danger
 		self.hoverBorderColor = THEME.danger
-		self.hoverBackgroundColor = Color(35, 10, 10, 220)
+		self.hoverBackgroundColor = Color(THEME.danger.r, THEME.danger.g, THEME.danger.b, 20)
 		self.hoverLabelColor = THEME.danger
 	else
-		self.labelColor = THEME.text
+		self.labelColor = THEME.textMuted
 		self.borderColor = THEME.accentSoft
-		self.hoverBorderColor = THEME.accent
-		self.hoverBackgroundColor = THEME.buttonBgHover
+		self.hoverBorderColor = THEME.accentSoft
+		self.hoverBackgroundColor = Color(THEME.accentSoft.r, THEME.accentSoft.g, THEME.accentSoft.b, 10)
 		self.hoverLabelColor = THEME.text
 	end
 end
@@ -1216,11 +1307,10 @@ end
 function BUTTON:Paint(width, height)
 	local disabled = self:GetDisabled()
 	local hovered = self:IsHovered() or self:IsDown()
-	local pulse = (math.sin(CurTime() * 2 + self.pulseOffset) + 1) * 0.5
 	local border = hovered and self.hoverBorderColor or self.borderColor
-	local bg = hovered and self.hoverBackgroundColor or self.backgroundColor
+	local bg = hovered and self.hoverBackgroundColor or Color(0, 0, 0, 0)
 	local textColor = hovered and self.hoverLabelColor or self.labelColor
-	local glow = hovered and 40 or math.Round(12 + pulse * 18)
+	local alphaMult = disabled and 0.4 or 1
 
 	if (disabled) then
 		border = Color(border.r, border.g, border.b, self.disabledAlpha)
@@ -1228,14 +1318,42 @@ function BUTTON:Paint(width, height)
 		textColor = Color(textColor.r, textColor.g, textColor.b, self.disabledAlpha)
 	end
 
-	surface.SetDrawColor(bg)
-	surface.DrawRect(0, 0, width, height)
+	-- Transparent or subtle hover background
+	if (hovered and not disabled) then
+		surface.SetDrawColor(bg)
+		surface.DrawRect(0, 0, width, height)
 
-	surface.SetDrawColor(Color(border.r, border.g, border.b, math.min(255, border.a + glow)))
-	surface.DrawOutlinedRect(0, 0, width, height)
-	surface.DrawOutlinedRect(1, 1, width - 2, height - 2)
+		-- Minimalist Hover Brackets
+		surface.SetDrawColor(Color(border.r, border.g, border.b, 150))
+		local bracketW = ix.ui.Scale(8)
+		local bracketH = ix.ui.Scale(8)
+		
+		-- Top Left
+		surface.DrawLine(0, 0, bracketW, 0)
+		surface.DrawLine(0, 0, 0, bracketH)
+		-- Top Right
+		surface.DrawLine(width - bracketW, 0, width, 0)
+		surface.DrawLine(width - 1, 0, width - 1, bracketH)
+		-- Bottom Left
+		surface.DrawLine(0, height - 1, bracketW, height - 1)
+		surface.DrawLine(0, height - bracketH, 0, height - 1)
+		-- Bottom Right
+		surface.DrawLine(width - bracketW, height - 1, width, height - 1)
+		surface.DrawLine(width - 1, height - bracketH, width - 1, height - 1)
+	else
+		-- Faint background/bottom line for non-hovered to show interactability
+		surface.SetDrawColor(Color(255, 255, 255, disabled and 2 or 5))
+		surface.DrawRect(0, 0, width, height)
+		
+		surface.SetDrawColor(Color(border.r, border.g, border.b, disabled and 10 or 30))
+		surface.DrawLine(0, height - 1, width, height - 1)
+	end
 
-	draw.SimpleText(self.label, "ixImpMenuButton", width * 0.5, height * 0.5, textColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	-- VANIR spec: list items must be left-aligned with padding
+	local labelAlign = self.labelAlign or TEXT_ALIGN_LEFT
+	local labelX = (labelAlign == TEXT_ALIGN_LEFT) and ix.ui.Scale(16) or width * 0.5
+	local labelY = height * 0.5 + (self.labelYOffset or 0)
+	draw.SimpleText(self.label, "ixImpMenuButton", labelX, labelY, Color(textColor.r, textColor.g, textColor.b, textColor.a * alphaMult), labelAlign, TEXT_ALIGN_CENTER)
 end
 
 function BUTTON:OnCursorEntered()
