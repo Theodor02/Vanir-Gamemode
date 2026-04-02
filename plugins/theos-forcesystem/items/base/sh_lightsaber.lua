@@ -504,13 +504,13 @@ ITEM.functions.combine = {
         -- Snapshot the attachment before we destroy it
         item:InstallAttachment(slotID, other)
 
-        -- Delete the attachment item from the inventory (and database)
-        local char = client:GetCharacter()
-        if char then
-            local inv = char:GetInventory()
-            if inv then
-                inv:Remove(otherID)
-            end
+        -- Delete the attachment item from the inventory (and database).
+        -- Use the inventory the item actually lives in (could be a bag), not
+        -- always the main inventory, otherwise ixInventoryRemove is sent with
+        -- the wrong invID and the icon ghost-lingers in the bag panel.
+        local itemInv = ix.item.inventories[other.invID]
+        if itemInv then
+            itemInv:Remove(otherID)
         end
 
         -- If the saber is currently equipped, re-sync to pick up the new crystal
@@ -556,6 +556,23 @@ function ITEM:GenerateRemovalFunctions()
                 local inv = char:GetInventory()
                 if not inv then return false end
 
+                -- Peek at the blueprint without removing it yet so we can
+                -- check that there is room in the inventory first.  Removing
+                -- the attachment and then failing to add the item would
+                -- permanently destroy the component.
+                local peekAttachments = item:GetData("attachmentMeta", {})
+                local peekBlueprint = peekAttachments[slotID]
+                if not peekBlueprint then return false end
+
+                local template = ix.item.list[peekBlueprint.uniqueID]
+                local w = template and template.width  or 1
+                local h = template and template.height or 1
+                local emptyX = inv:FindEmptySlot(w, h)
+                if not emptyX then
+                    client:NotifyLocalized("inventoryFull")
+                    return false
+                end
+
                 -- Pull the blueprint and clear the slot
                 local blueprint = item:RemoveAttachment(slotID)
                 if not blueprint then return false end
@@ -565,7 +582,16 @@ function ITEM:GenerateRemovalFunctions()
                 itemData.installedIn = nil
 
                 -- Create a brand-new item from the blueprint in the player's inventory
-                inv:Add(blueprint.uniqueID, 1, itemData)
+                local addX = inv:Add(blueprint.uniqueID, 1, itemData)
+                if not addX then
+                    -- Unexpected failure — restore the blueprint so the item
+                    -- is not silently destroyed.
+                    local restoreAttachments = item:GetData("attachmentMeta", {})
+                    restoreAttachments[slotID] = blueprint
+                    item:SetData("attachmentMeta", restoreAttachments)
+                    client:NotifyLocalized("inventoryFull")
+                    return false
+                end
 
                 -- Re-sync if equipped
                 local equip = item:GetData("equip")

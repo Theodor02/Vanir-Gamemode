@@ -976,7 +976,7 @@ function ix.ui.CreateDataRow(parent, label, value, index)
 	v:Dock(FILL)
 	v:DockMargin(Scale(4), 0, Scale(8), 0)
 	v:SetTextColor(THEME.text)
-	v:SetContentAlignment(4)
+	v:SetContentAlignment(6)
 
 	return box
 end

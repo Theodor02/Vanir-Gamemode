@@ -1,165 +1,77 @@
 --- Imperial Diegetic HUD - Client Plugin
 -- Draws all HUD elements: compass, vitals, weapon, mission status, comms, squad, damage indicators.
--- Uses transparent overlays with minimal borders per the Imperial design spec.
+-- Visual language: VANIR design system — title bars, corner notches, open negative space,
+-- ix.ui.THEME tokens shared with ImpMainMenu.
 
 local PLUGIN = PLUGIN
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- THEME & CONFIG
+-- THEME TOKENS (shared with ImpMainMenu via ix.ui)
 -- ═══════════════════════════════════════════════════════════════════════════════
 
-local THEME = {
-	background = Color(0, 0, 0, 165),
-	backgroundStrong = Color(0, 0, 0, 175),
-	text = Color(240, 240, 240, 255),
-	textMuted = Color(200, 200, 200, 220),
-	textDark = Color(183, 183, 183),
-	amber = Color(228, 175, 42, 255),
-	amberDim = Color(194, 144, 21, 225),
-	gold = Color(201, 158, 63, 255),
-	cyan = Color(84, 168, 255, 255),
-	cyanDim = Color(84, 168, 255, 195),
-	green = Color(70, 185, 100, 255),
-	greenDim = Color(70, 185, 100, 195),
-	yellow = Color(255, 222, 40, 255),
-	red = Color(255, 55, 55, 255),
-	redDim = Color(230, 30, 70, 215),
-	danger = Color(155, 10, 10, 255),
-	borderGray = Color(130, 130, 130, 220),
-	borderAmber = Color(194, 144, 21, 245),
-	borderRed = Color(200, 60, 60, 245),
-	borderCyan = Color(84, 168, 255, 245),
-	borderGreen = Color(70, 160, 80, 230)
-}
+-- ix.ui.THEME is populated by 00_imperial_ui which loads before this plugin.
+local THEME = ix.ui.THEME
+
+-- One-off HUD semantic colors (not accent — used sparingly at reduced opacity).
+local HUD_COMMS_COLOR  = Color(84,  168, 255, 200)
+local HUD_SQUAD_COLOR  = Color(70,  185, 100, 180)
+local HUD_DANGER_COLOR = Color(215, 40,  40,  220)
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SCALING & FONTS
+-- SCALING
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 local function Scale(value)
 	return math.max(1, math.Round(value * (ScrH() / 900)))
 end
 
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- FONTS — 5 typefaces (Orbitron / Roboto / Aurebesh only)
+-- ═══════════════════════════════════════════════════════════════════════════════
+
 local function CreateFonts()
-	-- Serif header font (Imperial formality) - matches impmainmenu
-	surface.CreateFont("ixHUDSerif", {
-		font = "Times New Roman",
-		size = Scale(14),
-		weight = 600,
-		extended = true,
+	-- Title bar labels and gold-strip headers.
+	surface.CreateFont("ixHUDTitle", {
+		font      = "Orbitron Medium",
+		size      = Scale(11),
+		weight    = 600,
+		extended  = true,
 		antialias = true
 	})
 
-	-- Used for priority/objective titles and active transmission speaker names.
-	surface.CreateFont("ixHUDSerifLarge", {
-		font = "Orbitron Medium",
-		size = Scale(38),
-		weight = 600,
-		extended = true,
+	-- Technical readouts: compass cardinals, DEFCON row, weapon name, fire mode.
+	surface.CreateFont("ixHUDData", {
+		font      = "Orbitron Light",
+		size      = Scale(11),
+		weight    = 500,
+		extended  = true,
 		antialias = true
 	})
 
-	-- Monospace technical font (military readouts)
-	-- Used for compass labels, waypoint lines, vitals labels, and weapon name/firemode text.
-	surface.CreateFont("ixHUDMono", {
-		font = "Orbitron Medium",
-		size = Scale(11),
-		weight = 500,
-		extended = true,
+	-- Large display: compass bearing, ammo clip count, character name wordmark.
+	surface.CreateFont("ixHUDDataLarge", {
+		font      = "Orbitron Bold",
+		size      = Scale(32),
+		weight    = 700,
+		extended  = true,
 		antialias = true
 	})
 
-	-- Used for section headers and status lines (mission/comms headers, squad status, warnings).
-	surface.CreateFont("ixHUDMonoSmall", {
-		font = "Roboto",
-		size = Scale(10),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-
-	-- Used for vitals percent and ammo reserve/slash.
-	surface.CreateFont("ixHUDMonoLarge", {
-		font = "Roboto Condensed",
-		size = Scale(22),
-		weight = 600,
-		extended = true,
-		antialias = true
-	})
-
-	-- Used for the current clip count in the weapon panel.
-	surface.CreateFont("ixHUDMonoHuge", {
-		font = "OCR-A",
-		size = Scale(44),
-		weight = 700,
-		extended = true,
-		antialias = true
-	})
-
-	-- Compass bearing font
-	-- Used for the large compass bearing number.
-	surface.CreateFont("ixHUDBearing", {
-		font = "OCR-A",
-		size = Scale(36),
-		weight = 700,
-		extended = true,
-		antialias = true
-	})
-
-	-- General label font - matches impmainmenu
-	-- Currently unused; reserved for future medium label text.
+	-- Secondary descriptive labels: objective text, member names, channel labels.
 	surface.CreateFont("ixHUDLabel", {
-		font = "Roboto",
-		size = Scale(12),
-		weight = 500,
-		extended = true,
+		font      = "Roboto",
+		size      = Scale(10),
+		weight    = 400,
+		extended  = true,
 		antialias = true
 	})
 
-	-- Used for objective descriptions, channel names, squad member names, and small prompts.
-	surface.CreateFont("ixHUDLabelSmall", {
-		font = "Roboto",
-		size = Scale(10),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-
-	-- Aurebesh decorative font - matches impmainmenu
-	-- Currently unused; reserved for larger Aurebesh accents.
+	-- Diegetic metadata only — embedded in corners and adjacent to title bars.
 	surface.CreateFont("ixHUDAurebesh", {
-		font = "Aurebesh",
-		size = Scale(10),
-		weight = 400,
-		extended = true,
-		antialias = true
-	})
-
-	-- Used for small Aurebesh accents across compass/comms/squad/vitals/weapon.
-	surface.CreateFont("ixHUDAurebeshSmall", {
-		font = "Aurebesh",
-		size = Scale(8),
-		weight = 400,
-		extended = true,
-		antialias = true
-	})
-
-	-- Player name font (serif, formal)
-	-- Used for the player name in the vitals block.
-	surface.CreateFont("ixHUDName", {
-		font = "OCR-A",
-		size = Scale(22),
-		weight = 500,
-		extended = true,
-		antialias = true
-	})
-
-	-- Used for the class/faction line under the player name.
-	surface.CreateFont("ixHUDRank", {
-		font = "OCR-A",
-		size = Scale(14),
-		weight = 400,
-		extended = true,
+		font      = "Aurebesh",
+		size      = Scale(8),
+		weight    = 400,
+		extended  = true,
 		antialias = true
 	})
 end
@@ -174,88 +86,53 @@ end)
 -- RNDX LIBRARY REFERENCE (GPU-accelerated rounded rectangles)
 -- ═══════════════════════════════════════════════════════════════════════════════
 
-local RNDX -- resolved after schema libs load
-
-hook.Add("InitPostEntity", "ixDiegeticHUDResolveRNDX", function()
-	RNDX = ix.RNDX
-end)
-
-timer.Simple(0, function()
-	RNDX = ix.RNDX
-end)
+-- cl_rndx.lua is loaded synchronously before this plugin, so ix.RNDX is
+-- already set by the time this file executes.
+local RNDX = ix.RNDX
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- DRAWING UTILITIES
 -- ═══════════════════════════════════════════════════════════════════════════════
 
--- Pre-allocated shadow colors to avoid per-frame garbage
+-- Pre-allocated shadow colors (avoid per-frame garbage).
 local shadowColorOuter = Color(0, 0, 0, 180)
 local shadowColorInner = Color(0, 0, 0, 230)
 
---- Draw text with double-layered shadow for readability over any background.
+--- Double-layered shadow text for readability over any background.
 local function DrawShadowText(text, font, x, y, color, alignX, alignY)
 	alignX = alignX or TEXT_ALIGN_LEFT
 	alignY = alignY or TEXT_ALIGN_TOP
 
-	-- Outer soft shadow (wider offset for glow-like backdrop)
 	shadowColorOuter.a = math.min(180, color.a)
 	draw.SimpleText(text, font, x + 2, y + 2, shadowColorOuter, alignX, alignY)
 
-	-- Inner crisp shadow
 	shadowColorInner.a = math.min(230, color.a)
 	draw.SimpleText(text, font, x + 1, y + 1, shadowColorInner, alignX, alignY)
 
 	draw.SimpleText(text, font, x, y, color, alignX, alignY)
 end
 
--- Pre-allocated colors for panel/bar drawing
-local panelBgColor = Color(0, 0, 0, 185)
-local barBgColor = Color(0, 0, 0, 185)
-local barOutlineColor = Color(70, 70, 70, 140)
+-- Pre-allocated bar colors.
+local barBgColor      = Color(0, 0, 0, 100) -- reduced from 185 — let world show through
+local barOutlineColor = Color(70, 70, 70, 80)
+local barColorGood    = Color(191, 148, 53, 255)  -- THEME.accent equivalent
+local barColorWarn    = Color(210, 190, 30, 255)
+local barColorCrit    = Color(215, 40,  40, 255)
 
---- Draw a bordered panel with transparent background and colored left border.
---- Uses RNDX for GPU-accelerated rounded corners when available.
-local function DrawPanel(x, y, w, h, borderColor, bgAlpha)
-	bgAlpha = bgAlpha or 185
-	local cornerR = Scale(4)
-	local borderW = Scale(4)
-
-	if (RNDX) then
-		-- Rounded background
-		panelBgColor.a = bgAlpha
-		RNDX.Draw(cornerR, x, y, w, h, panelBgColor)
-
-		-- Left border accent (rounded only on left corners)
-		RNDX.Draw(cornerR, x, y, borderW, h, borderColor, RNDX.NO_TR + RNDX.NO_BR)
-	else
-		-- Fallback: flat rectangles
-		surface.SetDrawColor(0, 0, 0, bgAlpha)
-		surface.DrawRect(x, y, w, h)
-
-		surface.SetDrawColor(borderColor)
-		surface.DrawRect(x, y, borderW, h)
-	end
-end
-
---- Draw a horizontal bar (health, stamina, overheat, etc.)
---- Uses RNDX for rounded pill-shaped bars when available.
+--- Horizontal bar (health, stamina, overheat, squad member).
 local function DrawBar(x, y, w, h, fraction, barColor)
 	fraction = math.Clamp(fraction, 0, 1)
 	local cornerR = math.max(1, math.floor(h * 0.4))
 
 	if (RNDX) then
-		-- Rounded background
-		barBgColor.a = 185
 		RNDX.Draw(cornerR, x, y, w, h, barBgColor)
 
-		-- Rounded fill
 		if (fraction > 0) then
 			local fillW = math.max(h, w * fraction)
 			RNDX.Draw(cornerR, x, y, fillW, h, barColor)
 		end
 	else
-		-- Fallback: flat rectangles
-		surface.SetDrawColor(0, 0, 0, 185)
+		surface.SetDrawColor(barBgColor)
 		surface.DrawRect(x, y, w, h)
 
 		surface.SetDrawColor(barOutlineColor)
@@ -268,88 +145,120 @@ local function DrawBar(x, y, w, h, fraction, barColor)
 	end
 end
 
---- Get color for a health-like value (gold > yellow > red).
+--- Gold title bar strip — inverted: accent background, black text, Aurebesh right.
+-- Mirrors "OPERATIVE STATUS" bar in cl_unified_panel.lua.
+-- @param x, y, w  Position and width (height is always Scale(16))
+-- @param label    Left-aligned label text (drawn in ixHUDTitle, black on gold)
+-- @param aurebesh Optional Aurebesh suffix, right-aligned at reduced opacity
+-- @return number  The bar height (Scale(16)) for layout chaining
+local function DrawTitleBar(x, y, w, label, aurebesh)
+	local h = Scale(16)
+	local accent = THEME.accent
+
+	surface.SetDrawColor(accent.r, accent.g, accent.b, 210)
+	surface.DrawRect(x, y, w, h)
+
+	draw.SimpleText(label, "ixHUDTitle", x + Scale(6), h * 0.5 + y, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+
+	if (aurebesh) then
+		draw.SimpleText(aurebesh, "ixHUDAurebesh", x + w - Scale(6), h * 0.5 + y, Color(0, 0, 0, 140), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+	end
+
+	return h
+end
+
+--- Single corner notch anchor. x, y is the exact corner point; dir is "TL"/"TR"/"BL"/"BR".
+-- The two strokes are offset so they never share a pixel — no alpha doubling at the join.
+local function DrawNotch(x, y, dir)
+	local notch = Scale(10)
+	local thick = Scale(2)
+	local accent = THEME.accent
+
+	surface.SetDrawColor(accent.r, accent.g, accent.b, 90)
+
+	if (dir == "TL") then
+		surface.DrawRect(x,          y,           notch, thick)           -- horizontal
+		surface.DrawRect(x,          y + thick,   thick, notch - thick)   -- vertical, below horiz
+	elseif (dir == "TR") then
+		surface.DrawRect(x - notch,  y,           notch, thick)           -- horizontal
+		surface.DrawRect(x - thick,  y + thick,   thick, notch - thick)   -- vertical, below horiz
+	elseif (dir == "BL") then
+		surface.DrawRect(x,          y - thick,   notch, thick)           -- horizontal
+		surface.DrawRect(x,          y - notch,   thick, notch - thick)   -- vertical, above horiz
+	elseif (dir == "BR") then
+		surface.DrawRect(x - notch,  y - thick,   notch, thick)           -- horizontal
+		surface.DrawRect(x - thick,  y - notch,   thick, notch - thick)   -- vertical, above horiz
+	end
+end
+
+--- 1px implied separator line (accent at very low alpha).
+-- Used between data rows to imply grouping without boxing.
+local function DrawImpliedSeparator(x, y, w)
+	local accent = THEME.accent
+	surface.SetDrawColor(accent.r, accent.g, accent.b, 30)
+	surface.DrawRect(x, y, w, Scale(1))
+end
+
+--- Health/vital threshold color.
 local function GetVitalColor(fraction)
-	if (fraction > 0.6) then
-		return THEME.gold
-	elseif (fraction > 0.3) then
-		return THEME.yellow
-	else
-		return THEME.red
-	end
+	if (fraction > 0.6) then return THEME.accent end
+	if (fraction > 0.3) then return THEME.warning end
+	return HUD_DANGER_COLOR
 end
 
---- Get bar gradient color for a value.
--- Pre-allocated to avoid per-frame Color() garbage.
-local barColorGood = Color(194, 144, 21, 255)
-local barColorWarn = Color(210, 190, 30, 255)
-local barColorCrit = Color(215, 40, 40, 255)
-
+--- Bar fill color.
 local function GetBarColor(fraction)
-	if (fraction > 0.6) then
-		return barColorGood
-	elseif (fraction > 0.3) then
-		return barColorWarn
-	else
-		return barColorCrit
-	end
+	if (fraction > 0.6) then return barColorGood end
+	if (fraction > 0.3) then return barColorWarn end
+	return barColorCrit
 end
 
---- Get overheat color (gold < yellow < red).
-local heatColorLow = Color(194, 144, 21, 255)
-local heatColorMid = Color(210, 190, 30, 255)
-local heatColorHigh = Color(215, 40, 40, 255)
+--- Overheat bar color (inverted — gold low, red high).
+local heatColorLow  = Color(191, 148, 53,  255)
+local heatColorMid  = Color(210, 190, 30,  255)
+local heatColorHigh = Color(215, 40,  40,  255)
 
 local function GetHeatColor(fraction)
-	if (fraction < 0.5) then
-		return heatColorLow
-	elseif (fraction < 0.8) then
-		return heatColorMid
-	else
-		return heatColorHigh
-	end
+	if (fraction < 0.5) then return heatColorLow  end
+	if (fraction < 0.8) then return heatColorMid  end
+	return heatColorHigh
 end
 
---- Get a directional arrow for a bearing relative to compass.
+--- Directional arrow for bearing relative to compass heading.
 local BEARING_ARROWS = {"↑", "↗", "→", "↘", "↓", "↙", "←", "↖"}
 
 local function GetBearingArrow(targetBearing, compassBearing)
-	local diff = ((targetBearing - compassBearing + 180 + 360) % 360) - 180
+	local diff  = ((targetBearing - compassBearing + 180 + 360) % 360) - 180
 	local index = math.floor(((diff + 360 + 22.5) % 360) / 45) + 1
-
-	index = math.Clamp(index, 1, 8)
-
-	return BEARING_ARROWS[index]
+	return BEARING_ARROWS[math.Clamp(index, 1, 8)]
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- CLIENT STATE
 -- ═══════════════════════════════════════════════════════════════════════════════
 
-local waypoints = {}
-local squadData = {members = {}, designation = ""}
-local bogusSquadMembers = {}
+local waypoints          = {}
+local squadData          = {members = {}, designation = ""}
+local bogusSquadMembers  = {}
 local activeTransmission = nil
 local forcedTransmission = {
-	speaker = "LOCAL",
-	channel = "OPEN MIC",
-	freq = "0000.0",
+	speaker   = "LOCAL",
+	channel   = "OPEN MIC",
+	freq      = "0000.0",
 	encrypted = true
 }
 local transmissionEndTime = 0
-local damageDirection = nil
-local damageEndTime = 0
-local vignetteAlpha = 0
+local damageDirection     = nil
+local damageEndTime       = 0
+local vignetteAlpha       = 0
 
--- Comms channels the player has connected to (client-side state for now)
 local connectedChannels = {}
 
--- Available channels definition (will be configurable via API later)
 local availableChannels = {
-	{id = "cmd", name = "COMMAND NET", freq = "8858.0", encrypted = true},
-	{id = "sqd", name = "SQUAD COMMS", freq = "4521.5", encrypted = true},
-	{id = "log", name = "LOGISTICS", freq = "7799.2", encrypted = false},
-	{id = "emg", name = "EMERGENCY", freq = "3366.8", encrypted = true}
+	{id = "cmd", name = "COMMAND NET",  freq = "8858.0", encrypted = true},
+	{id = "sqd", name = "SQUAD COMMS",  freq = "4521.5", encrypted = true},
+	{id = "log", name = "LOGISTICS",    freq = "7799.2", encrypted = false},
+	{id = "emg", name = "EMERGENCY",    freq = "3366.8", encrypted = true}
 }
 
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -357,104 +266,81 @@ local availableChannels = {
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 net.Receive("ixDiegeticWaypoint", function()
-	local id = net.ReadString()
-	local label = net.ReadString()
-	local pos = net.ReadVector()
+	local id     = net.ReadString()
+	local label  = net.ReadString()
+	local pos    = net.ReadVector()
 	local wpType = net.ReadString()
 
-	waypoints[id] = {
-		label = label,
-		pos = pos,
-		type = wpType
-	}
+	waypoints[id] = {label = label, pos = pos, type = wpType}
 end)
 
 net.Receive("ixDiegeticWaypointClear", function()
-	local id = net.ReadString()
-
-	waypoints[id] = nil
+	waypoints[net.ReadString()] = nil
 end)
 
 net.Receive("ixDiegeticSquadSync", function()
-	local id = net.ReadString()
+	local id          = net.ReadString()
 	local designation = net.ReadString()
-	local count = net.ReadUInt(8)
-	local members = {}
+	local count       = net.ReadUInt(8)
+	local members     = {}
 
 	for i = 1, count do
 		table.insert(members, {
-			steamID = net.ReadString(),
-			name = net.ReadString(),
-			health = net.ReadUInt(8),
+			steamID   = net.ReadString(),
+			name      = net.ReadString(),
+			health    = net.ReadUInt(8),
 			maxHealth = net.ReadUInt(8),
-			pos = net.ReadVector(),
-			alive = net.ReadBool()
+			pos       = net.ReadVector(),
+			alive     = net.ReadBool()
 		})
 	end
 
 	squadData.designation = designation
-	squadData.members = members
+	squadData.members     = members
 end)
 
 net.Receive("ixDiegeticSquadBogus", function()
 	local id = net.ReadString()
-	local name = net.ReadString()
-	local health = net.ReadUInt(8)
-	local maxHealth = net.ReadUInt(8)
-	local pos = net.ReadVector()
-	local alive = net.ReadBool()
 
 	bogusSquadMembers[id] = {
-		steamID = "bogus_" .. id,
-		name = name,
-		health = health,
-		maxHealth = maxHealth,
-		pos = pos,
-		alive = alive
+		steamID   = "bogus_" .. id,
+		name      = net.ReadString(),
+		health    = net.ReadUInt(8),
+		maxHealth = net.ReadUInt(8),
+		pos       = net.ReadVector(),
+		alive     = net.ReadBool()
 	}
 end)
 
 net.Receive("ixDiegeticCommsTransmission", function()
-	local speaker = net.ReadString()
-	local channel = net.ReadString()
-	local freq = net.ReadString()
+	local speaker   = net.ReadString()
+	local channel   = net.ReadString()
+	local freq      = net.ReadString()
 	local encrypted = net.ReadBool()
-	local duration = net.ReadFloat()
+	local duration  = net.ReadFloat()
 
-	activeTransmission = {
-		speaker = speaker,
-		channel = channel,
-		freq = freq,
-		encrypted = encrypted
-	}
-
+	activeTransmission = {speaker = speaker, channel = channel, freq = freq, encrypted = encrypted}
 	transmissionEndTime = CurTime() + duration
 
-	-- Auto-add channel to connected channels when we receive a transmission on it
 	if (!table.HasValue(connectedChannels, channel)) then
-		if (#connectedChannels >= 2) then
-			table.remove(connectedChannels, 1)
-		end
-
+		if (#connectedChannels >= 2) then table.remove(connectedChannels, 1) end
 		table.insert(connectedChannels, channel)
 	end
 end)
 
 net.Receive("ixDiegeticDamageDir", function()
 	local attackerPos = net.ReadVector()
-	local ply = LocalPlayer()
+	local ply         = LocalPlayer()
 
 	if (!IsValid(ply)) then return end
 
-	-- Calculate direction relative to player facing
-	local plyPos = ply:GetPos()
-	local plyAng = ply:EyeAngles()
+	local plyPos    = ply:GetPos()
+	local plyAng    = ply:EyeAngles()
 	local toAttacker = (attackerPos - plyPos):GetNormalized()
-	local forward = plyAng:Forward()
-	local right = plyAng:Right()
-
-	local dot = forward:Dot(toAttacker)
-	local cross = right:Dot(toAttacker)
+	local forward   = plyAng:Forward()
+	local right     = plyAng:Right()
+	local dot       = forward:Dot(toAttacker)
+	local cross     = right:Dot(toAttacker)
 
 	if (math.abs(dot) > math.abs(cross)) then
 		damageDirection = dot > 0 and "top" or "bottom"
@@ -469,48 +355,30 @@ end)
 -- CLIENT-SIDE COMMS CHANNEL MANAGEMENT
 -- ═══════════════════════════════════════════════════════════════════════════════
 
---- Connect to a comms channel by name (client-side).
--- @string channelName Channel name to connect to
 function ix.diegeticHUD.ConnectChannel(channelName)
 	if (table.HasValue(connectedChannels, channelName)) then return end
-
-	-- Max 2 channels
-	if (#connectedChannels >= 2) then
-		table.remove(connectedChannels, 1)
-	end
-
+	if (#connectedChannels >= 2) then table.remove(connectedChannels, 1) end
 	table.insert(connectedChannels, channelName)
 end
 
---- Disconnect from a comms channel.
--- @string channelName Channel name to disconnect from
 function ix.diegeticHUD.DisconnectChannel(channelName)
 	for i, name in ipairs(connectedChannels) do
-		if (name == channelName) then
-			table.remove(connectedChannels, i)
-			break
-		end
+		if (name == channelName) then table.remove(connectedChannels, i) break end
 	end
 end
 
---- Disconnect from all comms channels.
 function ix.diegeticHUD.DisconnectAllChannels()
 	connectedChannels = {}
 end
 
---- Get current connected channels.
--- @treturn table Array of channel name strings
 function ix.diegeticHUD.GetConnectedChannels()
 	return connectedChannels
 end
 
---- Get available channel definitions.
--- @treturn table Array of channel definition tables
 function ix.diegeticHUD.GetAvailableChannels()
 	return availableChannels
 end
 
--- Client-side testing concommands
 concommand.Add("ix_hud_connect", function(ply, cmd, args)
 	if (!args[1]) then
 		print("[HUD] Available channels:")
@@ -520,11 +388,8 @@ concommand.Add("ix_hud_connect", function(ply, cmd, args)
 		end
 		return
 	end
-
-	local name = table.concat(args, " ")
-
-	ix.diegeticHUD.ConnectChannel(name)
-	print("[HUD] Connected to: " .. name)
+	ix.diegeticHUD.ConnectChannel(table.concat(args, " "))
+	print("[HUD] Connected to: " .. table.concat(args, " "))
 end)
 
 concommand.Add("ix_hud_disconnect", function(ply, cmd, args)
@@ -533,11 +398,8 @@ concommand.Add("ix_hud_disconnect", function(ply, cmd, args)
 		print("[HUD] Disconnected from all channels.")
 		return
 	end
-
-	local name = table.concat(args, " ")
-
-	ix.diegeticHUD.DisconnectChannel(name)
-	print("[HUD] Disconnected from: " .. name)
+	ix.diegeticHUD.DisconnectChannel(table.concat(args, " "))
+	print("[HUD] Disconnected from: " .. table.concat(args, " "))
 end)
 
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -545,69 +407,77 @@ end)
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 local hiddenElements = {
-	["CHudHealth"] = true,
-	["CHudBattery"] = true,
-	["CHudAmmo"] = true,
-	["CHudSecondaryAmmo"] = true,
-	["CHudDamageIndicator"] = true,
-	["CHudHistoryResource"] = true,
-	["CHudPoisonDamageIndicator"] = true,
-	["CHudSquadStatus"] = true,
-	["CHUDQuickInfo"] = true
+	["CHudHealth"]                 = true,
+	["CHudBattery"]                = true,
+	["CHudAmmo"]                   = true,
+	["CHudSecondaryAmmo"]          = true,
+	["CHudDamageIndicator"]        = true,
+	["CHudHistoryResource"]        = true,
+	["CHudPoisonDamageIndicator"]  = true,
+	["CHudSquadStatus"]            = true,
+	["CHUDQuickInfo"]              = true
 }
 
 function PLUGIN:HUDShouldDraw(element)
-	if (hiddenElements[element]) then
-		return false
-	end
+	if (hiddenElements[element]) then return false end
 end
 
--- Suppress Helix's built-in ammo display (blurred boxes at bottom-right)
 function PLUGIN:CanDrawAmmoHUD()
 	return false
 end
 
--- Suppress Helix's built-in health/armor bars (top-left info bars)
 function PLUGIN:ShouldHideBars()
 	return true
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- HUD PAINT - MAIN ENTRY
+-- LSCS INTEGRATION — suppress original HUD circles/arcs wholesale.
+-- Proximity target indicators inside SWEP:DrawHUD are NOT gated by this hook
+-- so they survive untouched. We redraw everything else in DrawLightsaber below.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+hook.Add("LSCS:HUDShouldDraw", "ixDiegeticLSCS", function()
+	return false
+end)
+
+-- Pre-allocated colors for the lightsaber panel (avoid per-frame allocations).
+local lscsForceColor  = Color(84,  168, 255, 255)  -- comms blue — Force
+local lscsBpGood      = Color(191, 148, 53,  255)  -- gold  — block healthy
+local lscsBpWarn      = Color(210, 190, 30,  255)  -- warm gold — block low
+local lscsBpCrit      = Color(215, 40,  40,  255)  -- red   — block critical
+
+local function GetBPColor(fraction)
+	if (fraction > 0.6) then return lscsBpGood end
+	if (fraction > 0.25) then return lscsBpWarn end
+	return lscsBpCrit
+end
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- HUD PAINT — MAIN ENTRY
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 function PLUGIN:HUDPaint()
 	local ply = LocalPlayer()
 
 	if (!IsValid(ply) or !ply:Alive()) then return end
-	if (IsValid(ix.gui.menu)) then return end -- hide HUD when tab menu is open
+	if (IsValid(ix.gui.menu)) then return end
 
 	local scrW, scrH = ScrW(), ScrH()
-	local pad = Scale(16)
+	local pad        = Scale(16)
 
-	-- Clear old transmission
 	if (activeTransmission and CurTime() > transmissionEndTime) then
 		activeTransmission = nil
 	end
 
-	-- Clear old damage flash
 	if (damageDirection and CurTime() > damageEndTime) then
 		damageDirection = nil
 	end
 
-	-- Track health for vignette
-	local health = ply:Health()
-	local maxHealth = ply:GetMaxHealth()
-	local healthFrac = math.Clamp(health / math.max(maxHealth, 1), 0, 1)
+	local health      = ply:Health()
+	local maxHealth   = ply:GetMaxHealth()
+	local healthFrac  = math.Clamp(health / math.max(maxHealth, 1), 0, 1)
 
-	-- Smooth vignette
-	local targetVignette = (1 - healthFrac) * 0.4
-
-	vignetteAlpha = Lerp(FrameTime() * 3, vignetteAlpha, targetVignette)
-
-	-- ═══════════════════════════════════════════════════════════════════════
-	-- DRAW ALL HUD SECTIONS
-	-- ═══════════════════════════════════════════════════════════════════════
+	vignetteAlpha = Lerp(FrameTime() * 3, vignetteAlpha, (1 - healthFrac) * 0.4)
 
 	self:DrawDamageIndicator(scrW, scrH)
 	self:DrawCriticalHealthBorder(scrW, scrH, healthFrac)
@@ -617,6 +487,7 @@ function PLUGIN:HUDPaint()
 	self:DrawSquad(scrW, scrH, ply, pad)
 	self:DrawVitals(scrW, scrH, ply, pad, healthFrac)
 	self:DrawWeapon(scrW, scrH, ply, pad)
+	self:DrawLightsaber(scrW, scrH, ply, pad)
 	self:DrawVignette(scrW, scrH)
 end
 
@@ -624,39 +495,25 @@ end
 -- DAMAGE DIRECTION INDICATOR
 -- ═══════════════════════════════════════════════════════════════════════════════
 
--- Pre-allocated gradient colors (reused each frame to avoid GC pressure)
-local gradDamageColor = Color(155, 10, 10, 100)
-local gradTransparent = Color(0, 0, 0, 0)
-local gradVignetteColor = Color(0, 0, 0, 80)
+local gradDamageColor   = Color(155, 10, 10, 100)
+local gradTransparent   = Color(0,   0,  0,  0)
+local gradVignetteColor = Color(0,   0,  0,  80)
 
 function PLUGIN:DrawDamageIndicator(scrW, scrH)
 	if (!damageDirection) then return end
 
-	local alpha = math.Clamp((damageEndTime - CurTime()) / 0.3, 0, 1) * 120
-	local h = Scale(120)
-
+	local alpha       = math.Clamp((damageEndTime - CurTime()) / 0.3, 0, 1) * 120
+	local h           = Scale(120)
 	gradDamageColor.a = alpha
 
 	if (damageDirection == "top") then
-		draw.LinearGradient(0, 0, scrW, h, {
-			{offset = 0, color = gradDamageColor},
-			{offset = 1, color = gradTransparent}
-		}, true)
+		draw.LinearGradient(0, 0, scrW, h, {{offset = 0, color = gradDamageColor}, {offset = 1, color = gradTransparent}}, true)
 	elseif (damageDirection == "bottom") then
-		draw.LinearGradient(0, scrH - h, scrW, h, {
-			{offset = 0, color = gradTransparent},
-			{offset = 1, color = gradDamageColor}
-		}, true)
+		draw.LinearGradient(0, scrH - h, scrW, h, {{offset = 0, color = gradTransparent}, {offset = 1, color = gradDamageColor}}, true)
 	elseif (damageDirection == "left") then
-		draw.LinearGradient(0, 0, h, scrH, {
-			{offset = 0, color = gradDamageColor},
-			{offset = 1, color = gradTransparent}
-		}, false)
+		draw.LinearGradient(0, 0, h, scrH, {{offset = 0, color = gradDamageColor}, {offset = 1, color = gradTransparent}}, false)
 	elseif (damageDirection == "right") then
-		draw.LinearGradient(scrW - h, 0, h, scrH, {
-			{offset = 0, color = gradTransparent},
-			{offset = 1, color = gradDamageColor}
-		}, false)
+		draw.LinearGradient(scrW - h, 0, h, scrH, {{offset = 0, color = gradTransparent}, {offset = 1, color = gradDamageColor}}, false)
 	end
 end
 
@@ -667,11 +524,12 @@ end
 function PLUGIN:DrawCriticalHealthBorder(scrW, scrH, healthFrac)
 	if (healthFrac >= 0.2) then return end
 
-	local pulse = math.sin(CurTime() * 3) * 0.5 + 0.5
-	local alpha = math.Clamp(pulse * 80, 20, 80)
+	-- 1.5 Hz pulse, max alpha 60 (subtle)
+	local pulse  = math.sin(CurTime() * 1.5) * 0.5 + 0.5
+	local alpha  = math.Clamp(pulse * 60, 12, 60)
 	local borderW = Scale(2)
 
-	surface.SetDrawColor(139, 0, 0, alpha)
+	surface.SetDrawColor(HUD_DANGER_COLOR.r, HUD_DANGER_COLOR.g, HUD_DANGER_COLOR.b, alpha)
 	surface.DrawRect(0, 0, scrW, borderW)
 	surface.DrawRect(0, scrH - borderW, scrW, borderW)
 	surface.DrawRect(0, 0, borderW, scrH)
@@ -685,744 +543,544 @@ end
 function PLUGIN:DrawVignette(scrW, scrH)
 	if (vignetteAlpha <= 0.01) then return end
 
-	local alpha = math.Clamp(vignetteAlpha * 255, 0, 100)
-	local size = scrH * 0.4
+	local alpha             = math.Clamp(vignetteAlpha * 255, 0, 100)
+	local size              = scrH * 0.4
+	gradVignetteColor.a     = alpha
 
-	gradVignetteColor.a = alpha
-
-	-- Corner vignettes
-	draw.LinearGradient(0, 0, size, size, {
-		{offset = 0, color = gradVignetteColor},
-		{offset = 1, color = gradTransparent}
-	}, false)
-
-	draw.LinearGradient(scrW - size, 0, size, size, {
-		{offset = 0, color = gradTransparent},
-		{offset = 1, color = gradVignetteColor}
-	}, false)
+	draw.LinearGradient(0, 0, size, size, {{offset = 0, color = gradVignetteColor}, {offset = 1, color = gradTransparent}}, false)
+	draw.LinearGradient(scrW - size, 0, size, size, {{offset = 0, color = gradTransparent}, {offset = 1, color = gradVignetteColor}}, false)
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- COMPASS & NAVIGATION (Top Center)
+-- COMPASS & NAVIGATION — Top Center
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 function PLUGIN:DrawCompass(scrW, scrH, ply)
-	local ang = ply:EyeAngles()
-	local yaw = ang.y % 360
-
+	local ang     = ply:EyeAngles()
+	local yaw     = ang.y % 360
 	if (yaw < 0) then yaw = yaw + 360 end
 
-	-- Convert Source engine yaw (0=+X, CCW) to compass bearing (0=N/+Y, CW)
+	-- Source engine yaw → compass bearing (0 = North)
 	local bearing = math.floor((-yaw + 90 + 360) % 360)
-	local cx = scrW * 0.5
-	local topY = Scale(16)
+	local cx      = scrW * 0.5
+	local topY    = Scale(16)
 
-	-- Subtle backdrop behind compass for readability on bright backgrounds
-	local backdropW = Scale(180)
-	local backdropH = Scale(42)
+	-- Corner notches define compass extent without a background panel.
+	local extentW = Scale(200)
+	local extentH = Scale(60)
+	DrawNotch(cx - extentW * 0.5, topY - Scale(4), "TL")
+	DrawNotch(cx + extentW * 0.5, topY - Scale(4), "TR")
 
-	-- if (RNDX) then
-	-- 	RNDX.Draw(Scale(6), cx - backdropW * 0.5, topY - Scale(4), backdropW, backdropH, Color(0, 0, 0, 120))
-	-- else
-	-- 	surface.SetDrawColor(0, 0, 0, 100)
-	-- 	surface.DrawRect(cx - backdropW * 0.5, topY - Scale(4), backdropW, backdropH)
-	-- end
+	-- Aurebesh "navigat" — diegetic metadata, directly above bearing.
+	local accent = THEME.accent
+	DrawShadowText("navigat", "ixHUDAurebesh", cx, topY - Scale(3), Color(accent.r, accent.g, accent.b, 55), TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 
-	-- Bearing display
+	-- Large bearing number (Orbitron replaces OCR-A).
 	local brgStr = string.format("%03d", bearing)
+	DrawShadowText(brgStr .. "°", "ixHUDDataLarge", cx, topY, THEME.accent, TEXT_ALIGN_CENTER)
 
-	DrawShadowText("BRG", "ixHUDMono", cx - Scale(60), topY + Scale(8), THEME.textDark, TEXT_ALIGN_LEFT)
-	DrawShadowText(brgStr .. "°", "ixHUDBearing", cx, topY, THEME.amber, TEXT_ALIGN_CENTER)
+	-- "BRG" secondary label — demoted to ixHUDLabel.
+	DrawShadowText("BRG", "ixHUDLabel", cx - Scale(60), topY + Scale(12), THEME.textMuted, TEXT_ALIGN_LEFT)
 
-	-- Cardinal directions
-	local cardX = cx + Scale(55)
-	local cardY = topY + Scale(10)
+	-- Cardinal direction pills — ixHUDData, active = accent, idle = textMuted.
 	local cardinals = {
 		{label = "N", min = 315, max = 360, min2 = 0, max2 = 45},
-		{label = "E", min = 45, max = 135},
+		{label = "E", min = 45,  max = 135},
 		{label = "S", min = 135, max = 225},
 		{label = "W", min = 225, max = 315}
 	}
-
-	local spacing = Scale(14)
+	local spacing = Scale(24)
+	local totalW  = spacing * 3
+	local cardX   = cx - (totalW * 0.5)
+	local cardY   = topY + Scale(34)
 
 	for i, card in ipairs(cardinals) do
 		local active = false
-
 		if (card.min2) then
 			active = (bearing >= card.min and bearing < card.max) or (bearing >= card.min2 and bearing < card.max2)
 		else
 			active = (bearing >= card.min and bearing < card.max)
 		end
-
-		local col = active and THEME.amber or THEME.textDark
-
-		DrawShadowText(card.label, "ixHUDMono", cardX + (i - 1) * spacing, cardY, col)
+		DrawShadowText(card.label, "ixHUDData", cardX + (i - 1) * spacing, cardY, active and THEME.accent or THEME.textMuted, TEXT_ALIGN_CENTER)
 	end
 
-	-- Aurebesh decorative label beneath bearing
-	DrawShadowText("navigat", "ixHUDAurebeshSmall", cx, topY - Scale(5), Color(THEME.amber.r, THEME.amber.g, THEME.amber.b, 70), TEXT_ALIGN_CENTER)
-
-	-- Waypoint data below compass
-	local wpY = topY + Scale(44)
+	-- Waypoint rows below compass.
+	local wpY    = topY + extentH + Scale(4)
 	local wpCount = 0
 
 	for id, wp in pairs(waypoints) do
-		local dist = math.floor(ply:GetPos():Distance(wp.pos) / 52.49) -- Convert Hammer units to meters
-		local wpAngle = math.deg(math.atan2(wp.pos.y - ply:GetPos().y, wp.pos.x - ply:GetPos().x))
+		local dist     = math.floor(ply:GetPos():Distance(wp.pos) / 52.49)
+		local wpAngle  = math.deg(math.atan2(wp.pos.y - ply:GetPos().y, wp.pos.x - ply:GetPos().x))
 		local wpBearing = (-wpAngle + 90 + 360) % 360
+		local arrow    = GetBearingArrow(wpBearing, bearing)
+		local isT      = wp.type == "THR"
+		local labelCol = isT and HUD_DANGER_COLOR or THEME.accent
 
-		local arrow = GetBearingArrow(wpBearing, bearing)
-		local isT = wp.type == "THR"
-		local prefix = isT and "THR:" or "TGT:"
-		local col = isT and THEME.red or THEME.amber
-		local prefixCol = THEME.textDark
+		-- Prefix in textMuted, label+data in labelCol.
+		local prefix = isT and "THR" or "TGT"
+		DrawShadowText(prefix .. ":", "ixHUDLabel", cx - Scale(90), wpY, THEME.textMuted)
+		DrawShadowText(string.format("%s  //  %dM %s", wp.label, dist, arrow), "ixHUDData", cx - Scale(60), wpY, labelCol)
 
-		local text = string.format("%s  %s  //  %dM %s", prefix, wp.label, dist, arrow)
-
-		DrawShadowText(text, "ixHUDMono", cx, wpY - Scale(8), col, TEXT_ALIGN_CENTER)
-
-		wpY = wpY + Scale(14)
+		wpY     = wpY + Scale(14)
 		wpCount = wpCount + 1
-
 		if (wpCount >= 3) then break end
 	end
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- MISSION STATUS (Top Left) - DEFCON / Objective / Priority Orders
+-- MISSION STATUS — Top Left
+-- Open layout: title bar strips, implied separators, no outer box.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 function PLUGIN:DrawMissionStatus(scrW, scrH, ply, pad)
-	local x = pad
-	local y = pad
-	local panelW = Scale(280)
-	local lineH = Scale(14)
-	local borderW = Scale(4)
+	local x       = pad
+	local y       = pad
+	local panelW  = Scale(270)
+	local lineH   = Scale(14)
 	local innerPad = Scale(8)
 
-	local hasPriority = ix.diegeticHUD.HasPriorityOrder()
+	local hasPriority  = ix.diegeticHUD.HasPriorityOrder()
 	local hasObjective = ix.diegeticHUD.HasObjective(ply)
-	local defcon = ix.diegeticHUD.GetDEFCON()
-	local defconData = ix.diegeticHUD.DEFCON_DATA[defcon]
+	local defcon       = ix.diegeticHUD.GetDEFCON()
+	local defconData   = ix.diegeticHUD.DEFCON_DATA[defcon]
 
-	-- PRIORITY ORDER (highest priority - red border)
+	-- ── PRIORITY TRANSMISSION ────────────────────────────────────────────────
 	if (hasPriority) then
 		local pText, pIssuer, pDesc = ix.diegeticHUD.GetPriorityOrder()
-		local h = Scale(70)
 
-		DrawPanel(x, y, panelW, h, THEME.borderRed, 210)
+		-- Gold title bar (section authority).
+		local barH = DrawTitleBar(x, y, panelW, "PRIORITY TRANSMISSION", "transmis")
+		y = y + barH
 
-		local innerX = x + borderW + innerPad
-		local innerY = y + innerPad
+		-- 2px danger left-edge bar for urgency — runs height of content rows only.
+		local contentStartY = y
+		local innerX = x + Scale(10)
 
-		DrawShadowText("PRIORITY TRANSMISSION", "ixHUDMonoSmall", innerX, innerY, THEME.red)
-		-- Aurebesh accent: right-aligned in panel
-		DrawShadowText("transmis", "ixHUDAurebeshSmall", x + panelW - innerPad, innerY + Scale(1), Color(THEME.red.r, THEME.red.g, THEME.red.b, 65), TEXT_ALIGN_RIGHT)
+		y = y + Scale(6)
+		DrawShadowText(pText, "ixHUDData", innerX, y, THEME.text)
 
-		innerY = innerY + lineH + Scale(1)
+		y = y + lineH + Scale(2)
+		DrawShadowText(pDesc, "ixHUDLabel", innerX, y, THEME.textMuted)
 
-		DrawShadowText(pText, "ixHUDSerif", innerX, innerY, Color(255, 200, 200, 245))
+		y = y + lineH
+		DrawShadowText(pIssuer, "ixHUDLabel", innerX, y, THEME.textMuted)
 
-		innerY = innerY + Scale(16)
+		y = y + lineH
 
-		DrawShadowText(pDesc, "ixHUDLabelSmall", innerX, innerY, THEME.textMuted)
+		-- 2px danger left-edge bar (1.5 Hz pulse, ±30 on base 180).
+		local pulse = math.abs(math.sin(CurTime() * 1.5))
+		surface.SetDrawColor(HUD_DANGER_COLOR.r, HUD_DANGER_COLOR.g, HUD_DANGER_COLOR.b, math.Round(150 + pulse * 70))
+		surface.DrawRect(x, contentStartY, Scale(2), y - contentStartY)
 
-		innerY = innerY + lineH
-
-		DrawShadowText(pIssuer, "ixHUDMonoSmall", innerX, innerY, THEME.textDark)
-
-		y = y + h + Scale(6)
+		DrawImpliedSeparator(x, y + Scale(2), panelW)
+		y = y + Scale(8)
 	end
 
-	-- CURRENT OBJECTIVE (amber border)
+	-- ── CURRENT OBJECTIVE ────────────────────────────────────────────────────
 	if (hasObjective) then
 		local oTitle, oDesc = ix.diegeticHUD.GetObjective(ply)
-		local h = Scale(50)
 
-		DrawPanel(x, y, panelW, h, THEME.borderAmber, 195)
+		local barH   = DrawTitleBar(x, y, panelW, "CURRENT OBJECTIVE", "mission")
+		y = y + barH
 
-		local innerX = x + borderW + innerPad
-		local innerY = y + innerPad
+		local innerX = x + Scale(10)
 
-		DrawShadowText("CURRENT OBJECTIVE", "ixHUDMonoSmall", innerX, innerY, THEME.amber)
-		-- Aurebesh accent: right-aligned in panel
-		DrawShadowText("mission", "ixHUDAurebeshSmall", x + panelW - innerPad, innerY + Scale(1), Color(THEME.amber.r, THEME.amber.g, THEME.amber.b, 60), TEXT_ALIGN_RIGHT)
+		y = y + Scale(6)
+		DrawShadowText(oTitle, "ixHUDData", innerX, y, THEME.text)
 
-		innerY = innerY + lineH - Scale(4)
+		y = y + lineH + Scale(2)
+		DrawShadowText(oDesc, "ixHUDLabel", innerX, y, THEME.textMuted)
 
-		DrawShadowText(oTitle, "ixHUDSerif", innerX, innerY, THEME.text)
-
-		innerY = innerY + Scale(16)
-
-		DrawShadowText(oDesc, "ixHUDLabelSmall", innerX, innerY, THEME.textMuted)
-
-		y = y + h + Scale(6)
+		y = y + lineH
+		DrawImpliedSeparator(x, y + Scale(2), panelW)
+		y = y + Scale(8)
 	end
 
-	-- DEFCON STATUS (always visible, dims when other elements active)
-	local defconH = Scale(42)
-	local defconAlpha = (hasPriority or hasObjective) and 0.5 or 1.0
+	-- ── DEFCON STATUS — plain row, no title bar (lowest hierarchy) ────────────
+	-- Reduce alpha when higher-priority items are shown (matches v2 behaviour).
+	local defconAlpha  = (hasPriority or hasObjective) and 0.45 or 1.0
+	local defconText   = THEME.textMuted
+	local defconAccent = THEME.accent
 
-	DrawPanel(x, y, panelW, defconH, THEME.borderGray, math.floor(170 * defconAlpha))
+	-- Inline: "DEFSTAT  2 — ELEVATED  WEAPONS HOT"
+	local levelStr = tostring(defcon)
+	local labelStr = defconData and ("DEFSTAT  " .. levelStr .. "  —  " .. (defconData.threat or "")) or "DEFSTAT  " .. levelStr
+	-- DrawShadowText(labelStr, "ixHUDData", x + Scale(4), y, ColorAlpha(defconAccent, math.floor(200 * defconAlpha)))
+	if not defconData then
+		-- No data for this DEFCON level — draw in muted accent with no description.
+		DrawShadowText(labelStr, "ixHUDData", x + Scale(4), y, ColorAlpha(defconAccent, math.floor(200 * defconAlpha)))
+	else
+		if not (hasPriority or hasObjective) then
+			-- Data exists for this DEFCON level — draw title bar with Aurebesh and description below.
+			local barH = DrawTitleBar(x + Scale(4), y, panelW, labelStr, "defcon")
+			y = y + barH + Scale(4)
+		else
+			DrawShadowText(labelStr, "ixHUDData", x + Scale(4), y, ColorAlpha(defconAccent, math.floor(200 * defconAlpha)))
+			y = y + lineH
+		end
 
-	local innerX = x + borderW + innerPad
-	local innerY = y + Scale(4)
-
-	-- Large DEFCON number
-	local numCol = ColorAlpha(THEME.amber, math.floor(255 * defconAlpha))
-
-	DrawShadowText(tostring(defcon), "ixHUDSerifLarge", innerX + Scale(2), innerY - Scale(2), numCol)
-
-	-- DEFCON label and description
-	local labelX = innerX + Scale(36)
-	local labelCol = ColorAlpha(THEME.amber, math.floor(220 * defconAlpha))
-	local descCol = ColorAlpha(THEME.text, math.floor(200 * defconAlpha))
-
-	DrawShadowText("DEFSTAT " .. (defconData and defconData.threat or "UNKNOWN") .. " - " .. (defconData and defconData.label or ""), "ixHUDMonoSmall", labelX, innerY + Scale(2), labelCol)
-	DrawShadowText(defconData and defconData.desc or "", "ixHUDLabelSmall", labelX, innerY + lineH + Scale(4), descCol)
-
-	-- Aurebesh "defense" decoration: right-aligned in panel
-	DrawShadowText("defense", "ixHUDAurebeshSmall", x + panelW - innerPad, innerY + Scale(1), Color(THEME.amber.r, THEME.amber.g, THEME.amber.b, math.floor(55 * defconAlpha)), TEXT_ALIGN_RIGHT)
+		DrawShadowText(defconData and defconData.desc or "", "ixHUDLabel", x + Scale(4), y, ColorAlpha(defconText, math.floor(200 * defconAlpha)))
+	end
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- COMMUNICATIONS PANEL (Top Right)
+-- COMMUNICATIONS PANEL — Top Right
+-- Title bar, no portrait, no background panel, 1.5 Hz pulse.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 function PLUGIN:DrawComms(scrW, scrH, pad)
-	-- Only show when player conceptually has radio equipment
-	-- For now, always show - future radio plugin can control via hasRadio NetVar
 	local hasRadio = LocalPlayer():GetNetVar("ixHasRadio", true)
-
 	if (!hasRadio) then return end
 
-	local panelW = Scale(200)
-	local x = scrW - pad - panelW
-	local y = pad
-	local borderW = Scale(4)
-	local innerPad = Scale(8)
-	local lineH = Scale(14)
+	local panelW       = Scale(200)
+	local x            = scrW - pad - panelW
+	local y            = pad
+	local lineH        = Scale(14)
+	local innerX       = x + Scale(6)
 	local forceVoiceBox = LocalPlayer():GetNetVar("ixForceVoiceBox", false)
-	local txData = activeTransmission
+	local txData       = activeTransmission
 
 	if (!txData and forceVoiceBox) then
-		local ply = LocalPlayer()
+		local ply  = LocalPlayer()
 		local char = ply.GetCharacter and ply:GetCharacter()
-
 		forcedTransmission.speaker = (char and char:GetName()) or ply:Nick() or "LOCAL"
 		txData = forcedTransmission
 	end
 
-	-- Active Transmission panel (appears above channels when someone is talking)
+	-- ── ACTIVE TRANSMISSION BLOCK ─────────────────────────────────────────────
 	if (txData) then
-		local txH = Scale(62)
+		-- Aurebesh in title bar brightens on transmission (1.5 Hz, subtle)
+		-- achieved by overriding the standard DrawTitleBar aurebesh alpha.
+		local pulse  = math.abs(math.sin(CurTime() * 1.5))
+		local h      = DrawTitleBar(x, y, panelW, "COMMS NETWORK", "comlink")
+		-- Override: re-draw Aurebesh brighter when active.
+		draw.SimpleText("comlink", "ixHUDAurebesh", x + panelW - Scale(6), h * 0.5 + y - h, Color(0, 0, 0, math.Round(160 + pulse * 80)), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+		y = y + h
 
-		-- Pulsing border
-		local pulse = math.sin(CurTime() * 4) * 0.3 + 0.7
-		local txBorderCol = ColorAlpha(THEME.cyan, math.floor(255 * pulse))
+		local contentStartY = y
+		y = y + Scale(6)
 
-		DrawPanel(x, y, panelW, txH, txBorderCol, 215)
+		-- Speaker name + channel (no portrait box).
+		DrawShadowText(txData.speaker, "ixHUDData", innerX, y, THEME.text)
+		y = y + lineH + Scale(1)
+		DrawShadowText(txData.channel .. "  ·  " .. txData.freq .. " MHZ", "ixHUDLabel", innerX, y, ColorAlpha(HUD_COMMS_COLOR, 180))
+		y = y + lineH
 
-		local innerX = x + borderW + innerPad
-		local innerY = y + innerPad
-
-		DrawShadowText("ACTIVE TRANSMISSION", "ixHUDMonoSmall", innerX, innerY, THEME.cyan)
-
-		-- Pulsing indicator dot (right-aligned in panel)
-		local dotAlpha = math.floor(255 * pulse)
-
-		surface.SetDrawColor(THEME.cyan.r, THEME.cyan.g, THEME.cyan.b, dotAlpha)
-		surface.DrawRect(x + panelW - innerPad - Scale(6), innerY + Scale(2), Scale(6), Scale(6))
-
-		innerY = innerY + lineH - Scale(3)
-
-		-- Speaker portrait placeholder
-		local portraitSize = Scale(28)
-
-		if (RNDX) then
-			RNDX.Draw(Scale(3), innerX, innerY, portraitSize, portraitSize, Color(20, 20, 20, 200))
-			RNDX.DrawOutlined(Scale(3), innerX, innerY, portraitSize, portraitSize, Color(THEME.cyan.r, THEME.cyan.g, THEME.cyan.b, 120), 1)
-		else
-			surface.SetDrawColor(20, 20, 20, 200)
-			surface.DrawRect(innerX, innerY, portraitSize, portraitSize)
-			surface.SetDrawColor(THEME.cyan.r, THEME.cyan.g, THEME.cyan.b, 120)
-			surface.DrawOutlinedRect(innerX, innerY, portraitSize, portraitSize)
-		end
-
-		-- Aurebesh in portrait (centered)
-		DrawShadowText("id", "ixHUDAurebeshSmall", innerX + math.floor(portraitSize * 0.5), innerY + math.floor(portraitSize * 0.5), ColorAlpha(THEME.cyan, 140), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-
-		-- Speaker info
-		local speakerX = innerX + portraitSize + Scale(8)
-
-		DrawShadowText(txData.speaker, "ixHUDSerif", speakerX, innerY + Scale(2), THEME.text)
-		DrawShadowText(txData.channel, "ixHUDMonoSmall", speakerX, innerY + Scale(16), THEME.cyan)
-
-		innerY = innerY + portraitSize + Scale(4)
-
-		-- Encryption + frequency
 		local encText = txData.encrypted and "ENCRYPTED" or "UNSECURE"
+		DrawShadowText(encText, "ixHUDLabel", innerX, y, THEME.textMuted)
+		y = y + lineH
 
-		DrawShadowText(encText .. " // " .. txData.freq .. " MHZ", "ixHUDMonoSmall", innerX, innerY, THEME.textDark)
+		-- 2px comms left-edge bar, gently pulsing.
+		surface.SetDrawColor(HUD_COMMS_COLOR.r, HUD_COMMS_COLOR.g, HUD_COMMS_COLOR.b, math.Round(150 + pulse * 50))
+		surface.DrawRect(x, contentStartY, Scale(2), y - contentStartY)
 
-		y = y + txH + Scale(4)
+		if (#connectedChannels > 0) then
+			DrawImpliedSeparator(x, y + Scale(2), panelW)
+			y = y + Scale(8)
+		end
+	else
+		-- No active transmission — draw title bar only once.
+		local h = DrawTitleBar(x, y, panelW, "COMMS NETWORK", "comlink")
+		y = y + h + Scale(6)
 	end
 
-	-- Connected Channels panel
+	-- ── CONNECTED CHANNELS LIST ───────────────────────────────────────────────
 	if (#connectedChannels > 0) then
-		local channelH = Scale(20) + #connectedChannels * Scale(28)
-
-		DrawPanel(x, y, panelW, channelH, THEME.borderCyan, 185)
-
-		local innerX = x + borderW + innerPad
-		local innerY = y + innerPad
-
-		-- Header
-		DrawShadowText("COMMS", "ixHUDMonoSmall", innerX, innerY, THEME.cyan)
-		-- DrawShadowText(#connectedChannels, "ixHUDMonoSmall", x + panelW - innerPad, innerY, THEME.cyanDim, TEXT_ALIGN_RIGHT)
-
-		-- Aurebesh accent: right-aligned beneath counter
-		DrawShadowText("comlink", "ixHUDAurebeshSmall", x + panelW - innerPad, innerY, Color(THEME.cyan.r, THEME.cyan.g, THEME.cyan.b, 55), TEXT_ALIGN_RIGHT)
-
-		innerY = innerY + lineH - Scale(2)
-
-		-- Channel entries
 		for _, channelName in ipairs(connectedChannels) do
 			local channelData = nil
-
 			for _, ch in ipairs(availableChannels) do
-				if (ch.name == channelName) then
-					channelData = ch
-					break
-				end
+				if (ch.name == channelName) then channelData = ch break end
 			end
 
 			local isActive = activeTransmission and activeTransmission.channel == channelName
-			local nameCol = isActive and THEME.cyan or THEME.text
+			local nameCol  = isActive and ColorAlpha(HUD_COMMS_COLOR, 220) or THEME.text
 
-			-- Active indicator dot
+			-- Active channel: 2px left indent bar.
 			if (isActive) then
-				local dotPulse = math.sin(CurTime() * 4) * 0.3 + 0.7
-
-				surface.SetDrawColor(THEME.cyan.r, THEME.cyan.g, THEME.cyan.b, math.floor(255 * dotPulse))
-				surface.DrawRect(innerX, innerY + Scale(3), Scale(5), Scale(5))
+				local pulse = math.abs(math.sin(CurTime() * 1.5))
+				surface.SetDrawColor(HUD_COMMS_COLOR.r, HUD_COMMS_COLOR.g, HUD_COMMS_COLOR.b, math.Round(120 + pulse * 60))
+				surface.DrawRect(x, y, Scale(2), lineH * 2)
 			end
 
-			local textX = isActive and (innerX + Scale(8)) or innerX
-
-			DrawShadowText(channelName, "ixHUDLabelSmall", textX, innerY, nameCol)
+			local textX = isActive and (innerX + Scale(6)) or innerX
+			DrawShadowText(channelName, "ixHUDLabel", textX, y, nameCol)
 
 			if (channelData and channelData.encrypted) then
-				DrawShadowText("ENC", "ixHUDMonoSmall", x + panelW - innerPad - Scale(18), innerY, THEME.cyanDim)
+				DrawShadowText("ENC", "ixHUDLabel", x + panelW - Scale(4), y, ColorAlpha(HUD_COMMS_COLOR, 100), TEXT_ALIGN_RIGHT)
 			end
 
-			innerY = innerY + lineH
+			y = y + lineH
 
 			if (channelData) then
-				DrawShadowText(channelData.freq .. " MHZ", "ixHUDMonoSmall", textX + Scale(8), innerY, THEME.textDark)
+				DrawShadowText(channelData.freq .. " MHZ", "ixHUDLabel", textX + Scale(6), y, THEME.textMuted)
 			end
 
-			innerY = innerY + lineH
+			y = y + lineH
+			DrawImpliedSeparator(x, y, panelW)
+			y = y + Scale(4)
 		end
-	else
-		-- No channels connected prompt
-		local h = Scale(42)
-
-		DrawPanel(x, y, panelW, h, THEME.borderGray, 175)
-
-		local innerX = x + borderW + innerPad
-		local innerY = y + innerPad
-
-		DrawShadowText("COMMS", "ixHUDMonoSmall", innerX, innerY, THEME.textDark)
-		DrawShadowText("comlink", "ixHUDAurebeshSmall", x + panelW - innerPad, innerY + Scale(1), Color(140, 140, 140, 45), TEXT_ALIGN_RIGHT)
-
-		innerY = innerY + lineH + Scale(2)
-
-		DrawShadowText("No active channels", "ixHUDLabelSmall", innerX, innerY, THEME.textDark)
+	elseif (!txData) then
+		-- No channels, no transmission — minimal idle state.
+		DrawShadowText("NO ACTIVE CHANNELS", "ixHUDLabel", innerX, y, THEME.textMuted)
 	end
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- SQUAD / FIRETEAM PANEL (Left Mid)
+-- SQUAD / FIRETEAM PANEL — Left Mid
+-- Title bar, pip status indicator, no rank badge box.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 function PLUGIN:DrawSquad(scrW, scrH, ply, pad)
 	if (!ix.diegeticHUD.IsInSquad(ply)) then return end
 
-	local x = pad
-	local y = scrH * 0.33
-	local panelW = Scale(220)
-	local borderW = Scale(4)
-	local innerPad = Scale(8)
-	local lineH = Scale(14)
+	local x        = pad
+	local y        = scrH * 0.33
+	local panelW   = Scale(200)
+	local lineH    = Scale(14)
 
 	local members = {}
-
-	for _, member in ipairs(squadData.members) do
-		table.insert(members, member)
-	end
-
-	for _, member in pairs(bogusSquadMembers) do
-		table.insert(members, member)
-	end
-
+	for _, m in ipairs(squadData.members) do table.insert(members, m) end
+	for _, m in pairs(bogusSquadMembers)  do table.insert(members, m) end
 	if (#members == 0) then return end
-	local memberH = Scale(40)
-	local totalH = Scale(28) + #members * memberH - Scale(38)
 
-	DrawPanel(x, y, panelW, totalH, THEME.borderGreen, 185)
+	-- Title bar — gold strip, Aurebesh "squad" at right.
+	local barH = DrawTitleBar(x, y, panelW, squadData.designation or "FIRETEAM", "squad")
+	y = y + barH + Scale(6)
 
-	local innerX = x + borderW + innerPad
-	local innerY = y + innerPad
-
-	-- Header
-	DrawShadowText(squadData.designation or "FIRETEAM", "ixHUDMonoSmall", innerX, innerY, THEME.green)
-	-- Aurebesh: right-aligned in panel
-	DrawShadowText("squad", "ixHUDAurebeshSmall", x + panelW - innerPad, innerY + Scale(1), Color(THEME.green.r, THEME.green.g, THEME.green.b, 55), TEXT_ALIGN_RIGHT)
-
-	innerY = innerY + lineH + Scale(6)
-
-	-- Members
-	local myPos = ply:GetPos()
-	local myAng = ply:EyeAngles()
-	local myYaw = (-myAng.y + 90 + 360) % 360
+	local myPos  = ply:GetPos()
+	local myAng  = ply:EyeAngles()
+	local myYaw  = (-myAng.y + 90 + 360) % 360
 
 	for _, member in ipairs(members) do
-		-- Skip self
 		if (member.steamID == ply:SteamID64()) then continue end
 
 		local healthFrac = math.Clamp(member.health / math.max(member.maxHealth, 1), 0, 1)
-		local barColor = GetBarColor(healthFrac)
-		local dist = math.floor(myPos:Distance(member.pos) / 52.49) -- Convert Hammer units to meters
+		local barColor   = GetBarColor(healthFrac)
+		local dist       = math.floor(myPos:Distance(member.pos) / 52.49)
 
-		-- Calculate bearing
-		local toMember = (member.pos - myPos):GetNormalized()
-		local memberAngle = math.deg(math.atan2(toMember.y, toMember.x))
+		local toMember      = (member.pos - myPos):GetNormalized()
+		local memberAngle   = math.deg(math.atan2(toMember.y, toMember.x))
 		local memberBearing = (-memberAngle + 90 + 360) % 360
-
-		local arrow = GetBearingArrow(memberBearing, myYaw)
-
-		-- Status text
-		local status = "ACTIVE"
-		local statusCol = THEME.gold
-
-		if (!member.alive) then
-			status = "KIA"
-			statusCol = THEME.red
-		elseif (healthFrac < 0.3) then
-			status = "WOUNDED"
-			statusCol = THEME.red
-		elseif (healthFrac < 0.7) then
-			status = "INJURED"
-			statusCol = THEME.yellow
-		end
-
-		-- Rank badge placeholder
-		local badgeSize = Scale(22)
-
-		if (RNDX) then
-			RNDX.Draw(Scale(3), innerX, innerY, badgeSize, badgeSize, Color(20, 20, 20, 200))
-			RNDX.DrawOutlined(Scale(3), innerX, innerY, badgeSize, badgeSize, Color(90, 90, 90, 120), 1)
-		else
-			surface.SetDrawColor(20, 20, 20, 200)
-			surface.DrawRect(innerX, innerY, badgeSize, badgeSize)
-			surface.SetDrawColor(90, 90, 90, 120)
-			surface.DrawOutlinedRect(innerX, innerY, badgeSize, badgeSize)
-		end
-
-		-- Aurebesh rank marker (centered in badge)
-		DrawShadowText("rk", "ixHUDAurebeshSmall", innerX + math.floor(badgeSize * 0.5), innerY + math.floor(badgeSize * 0.5), Color(THEME.textDark.r, THEME.textDark.g, THEME.textDark.b, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-
-		-- Name
-		local nameX = innerX + badgeSize + Scale(6)
-
-		DrawShadowText(member.name, "ixHUDLabelSmall", nameX, innerY, THEME.text)
-
-		-- Health bar
-		local barY = innerY + lineH
-		local barW = panelW - borderW - innerPad * 2 - badgeSize - Scale(6) - Scale(50)
-
-		DrawBar(nameX, barY, barW, Scale(4), healthFrac, barColor)
+		local arrow         = GetBearingArrow(memberBearing, myYaw)
 
 		-- Status
-		DrawShadowText(status, "ixHUDMonoSmall", nameX + barW + Scale(6), barY - Scale(2), statusCol)
+		local status, statusCol
+		if (!member.alive) then
+			status, statusCol = "KIA", HUD_DANGER_COLOR
+		elseif (healthFrac < 0.3) then
+			status, statusCol = "WOUNDED", HUD_DANGER_COLOR
+		elseif (healthFrac < 0.7) then
+			status, statusCol = "INJURED", THEME.textMuted
+		else
+			status, statusCol = "ACTIVE", THEME.accent
+		end
 
-		-- Distance & bearing
-		DrawShadowText(dist .. "M // " .. arrow, "ixHUDMonoSmall", nameX, barY + Scale(6), THEME.textDark)
+		-- Health-colored vertical pip (replaces rank badge box).
+		surface.SetDrawColor(barColor.r, barColor.g, barColor.b, 180)
+		surface.DrawRect(x, y, Scale(3), lineH + Scale(4))
 
-		innerY = innerY + memberH
+		local nameX = x + Scale(8)
+
+		DrawShadowText(member.name, "ixHUDData", nameX, y, THEME.text)
+		DrawShadowText(status, "ixHUDLabel", x + panelW, y, statusCol, TEXT_ALIGN_RIGHT)
+
+		local barY = y + lineH
+		local barW = panelW - Scale(8) - Scale(48)
+		DrawBar(nameX, barY, barW, Scale(6), healthFrac, barColor)
+
+		DrawShadowText(dist .. "M  " .. arrow, "ixHUDLabel", nameX, barY + Scale(8), THEME.textMuted)
+
+		y = y + Scale(6) + lineH + Scale(4) + lineH
+		DrawImpliedSeparator(x, y - Scale(2), panelW)
+		y = y + Scale(4)
 	end
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- PLAYER VITALS (Bottom Left)
+-- PLAYER VITALS — Bottom Left
+-- Character name wordmark + gold faction/class bar mirrors "You" tab header.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 function PLUGIN:DrawVitals(scrW, scrH, ply, pad, healthFrac)
 	local char = ply:GetCharacter()
-
 	if (!char) then return end
 
-	local x = pad
-	local y = scrH - pad - Scale(115)
-	local panelW = Scale(220)
-	local barW = Scale(200)
-	local lineH = Scale(14)
-	local borderW = Scale(4)
-	local innerPad = Scale(8)
+	local panelW  = Scale(240)
+	local x       = pad
+	local lineH   = Scale(14)
+	local barW    = panelW - Scale(10)
 
-	-- Player identity
-	local charName = char:GetName() or "UNKNOWN"
-	local faction = team.GetName(ply:Team()) or "Unknown"
+	-- Identity strings.
+	local charName  = char:GetName() or "UNKNOWN"
+	local faction   = team.GetName(ply:Team()) or "UNKNOWN"
 	local className = ""
-
-	local classID = char:GetClass()
-
+	local classID   = char:GetClass()
 	if (classID and classID > 0 and ix.class.list[classID]) then
 		className = ix.class.list[classID].name or ""
 	end
+	local subtitleText = string.upper(faction)
+	if (className != "") then
+		subtitleText = subtitleText .. "  ·  " .. string.upper(className)
+	end
 
-	local rankLine = className != "" and (className .. " // " .. faction) or faction
+	-- Calculate total height to anchor from bottom.
+	-- Rows: name (32) + gold bar (16) + gap (10) + vitals label+bar (14+6+4) + stamina label+bar (14+6) = ~102
+	local baseH     = Scale(102)
+	local hasWarn   = healthFrac < 0.3
+	local totalH    = baseH + (hasWarn and Scale(16) or 0)
+	local y         = scrH - pad - totalH
 
-	-- Calculate total panel height
-	local panelH = Scale(112)
-	local health = ply:Health()
-	local maxHealth = ply:GetMaxHealth()
+	-- Corner notches: TL + BR diagonal pair bracketing the vitals block extent.
+	local notchPad = Scale(10)
+	DrawNotch(x - notchPad, y - notchPad, "TL")
+	DrawNotch(x + panelW + notchPad, y + totalH + notchPad, "BR")
+
+	-- ── CHARACTER NAME WORDMARK ───────────────────────────────────────────────
+	-- Mirrors cl_unified_panel.lua L60: large Orbitron name above gold bar.
+	DrawShadowText(string.upper(charName), "ixHUDDataLarge", x, y, THEME.text)
+	y = y + Scale(34)
+
+	-- ── GOLD FACTION/CLASS BAR ────────────────────────────────────────────────
+	-- Exact mirror of cl_unified_panel.lua L65–72: accent bg, black text, Aurebesh right.
+	local barH = DrawTitleBar(x, y, panelW, subtitleText)
+	y = y + barH + Scale(10)
+
+	-- ── VITALS BAR ────────────────────────────────────────────────────────────
 	local vitalCol = GetVitalColor(healthFrac)
-	local barCol = GetBarColor(healthFrac)
-	local pct = math.floor(healthFrac * 100)
+	local barCol   = GetBarColor(healthFrac)
+	local pct      = math.floor(healthFrac * 100)
 
-	-- Read stamina from Helix NetVar (default plugin uses "stm", check common alternatives)
-	local staminaFrac = 1
-	local stamina = ply:GetNetVar("stm", ply:GetNetVar("ixStamina", ply:GetNetVar("stamina", -1)))
+	DrawShadowText("VITALS", "ixHUDLabel", x, y, THEME.textMuted)
+	DrawShadowText(pct .. "%", "ixHUDData", x + Scale(48), y, vitalCol)
+	y = y + lineH
+	DrawBar(x, y, barW, Scale(6), healthFrac, barCol)
+	y = y + Scale(6) + Scale(4)
 
-	if (stamina >= 0) then
-		staminaFrac = math.Clamp(stamina / 100, 0, 1)
+	-- Critical warning — 1.5 Hz pulse.
+	if (hasWarn) then
+		local pulse = math.abs(math.sin(CurTime() * 1.5))
+		DrawShadowText("WARNING: MEDICAL ATTENTION REQUIRED", "ixHUDLabel", x, y, ColorAlpha(HUD_DANGER_COLOR, math.Round(180 + pulse * 75)))
+		y = y + lineH
 	end
 
-	-- Increase height if health is critical (for warning)
-	if (healthFrac < 0.3) then
-		panelH = panelH + Scale(16)
-	end
+	-- ── STAMINA BAR ───────────────────────────────────────────────────────────
+	local stamina     = ply:GetNetVar("stm", ply:GetNetVar("ixStamina", ply:GetNetVar("stamina", -1)))
+	local staminaFrac = (stamina >= 0) and math.Clamp(stamina / 100, 0, 1) or 1
 
-	-- Draw panel with amber border
-	DrawPanel(x, y + Scale(4), panelW, panelH, THEME.borderAmber, 185)
-
-	local innerX = x + borderW + innerPad
-	local innerY = y + innerPad
-
-	-- Player name
-	DrawShadowText(charName, "ixHUDName", innerX, innerY, THEME.text)
-
-	innerY = innerY + Scale(16)
-
-	-- Rank / faction line
-	DrawShadowText(rankLine, "ixHUDRank", innerX, innerY, THEME.textMuted)
-
-	innerY = innerY + Scale(16)
-
-	-- Aurebesh personnel decoration (subtle, below rank line)
-	DrawShadowText("personnel ident", "ixHUDAurebeshSmall", innerX, innerY, Color(THEME.textMuted.r, THEME.textMuted.g, THEME.textMuted.b, 50))
-
-	innerY = innerY + Scale(10)
-
-	-- VITALS bar
-	DrawShadowText("VITALS", "ixHUDMono", innerX, innerY + Scale(6), THEME.textDark)
-	DrawShadowText(pct .. "%", "ixHUDMonoLarge", innerX + Scale(50), innerY - Scale(2), vitalCol)
-
-	innerY = innerY + Scale(20)
-
-	DrawBar(innerX, innerY, barW, Scale(8), healthFrac, barCol)
-
-	-- Aurebesh "biometrics" right-aligned beside health bar
-	-- DrawShadowText("biometrics", "ixHUDAurebeshSmall", innerX + barW + Scale(8), innerY, Color(vitalCol.r, vitalCol.g, vitalCol.b, 45))
-
-	-- Critical health warning
-	if (healthFrac < 0.3) then
-		innerY = innerY + Scale(12)
-
-		local pulse = math.sin(CurTime() * 4) * 0.3 + 0.7
-
-		DrawShadowText("WARNING: MEDICAL ATTENTION REQUIRED", "ixHUDMonoSmall", innerX, innerY, ColorAlpha(THEME.red, math.floor(255 * pulse)))
-	end
-
-	innerY = innerY + Scale(14)
-
-	-- STAMINA bar
-	DrawShadowText("STAMINA", "ixHUDMono", innerX, innerY, THEME.textDark)
-	DrawShadowText(math.floor(staminaFrac * 100) .. "%", "ixHUDMono", innerX + Scale(55), innerY, THEME.amberDim)
-	
-	innerY = innerY + lineH
-	-- Aurebesh "endurance" right-aligned beside stamina bar
-	-- DrawShadowText("endurance", "ixHUDAurebeshSmall", innerX + barW + Scale(8), innerY - Scale(1), Color(THEME.amberDim.r, THEME.amberDim.g, THEME.amberDim.b, 45))
-
-	DrawBar(innerX, innerY, barW, Scale(5), staminaFrac, THEME.amberDim)
+	DrawShadowText("STAMINA", "ixHUDLabel", x, y, THEME.textMuted)
+	DrawShadowText(math.floor(staminaFrac * 100) .. "%", "ixHUDData", x + Scale(55), y, THEME.accentSoft or THEME.accent)
+	y = y + lineH
+	DrawBar(x, y, barW, Scale(6), staminaFrac, THEME.accentSoft or THEME.accent)
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- WEAPON & AMMUNITION (Bottom Right)
+-- WEAPON & AMMUNITION — Bottom Right
+-- Fire mode: implied separator line (no box). Ammo: Orbitron replaces OCR-A.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 function PLUGIN:DrawWeapon(scrW, scrH, ply, pad)
 	local wep = ply:GetActiveWeapon()
-
 	if (!IsValid(wep)) then return end
 
-	-- Don't show for fists/physgun/toolgun etc.
 	local wepClass = wep:GetClass()
-
 	if (wepClass == "ix_fists" or wepClass == "gmod_tool" or wepClass == "weapon_physgun" or wepClass == "gmod_camera") then
 		return
 	end
 
-	-- Only show weapon display for ArcCW and ARC9 weapons
-	if (!wep.GetCurrentFiremodeTable and !wep.GetCurrentFiremode) then
-		return
-	end
+	if (!wep.GetCurrentFiremodeTable and !wep.GetCurrentFiremode) then return end
 
-	local x = scrW - pad - Scale(220)
-	local y = scrH - pad - Scale(100)
-	local lineH = Scale(14)
 	local panelW = Scale(220)
+	local x      = scrW - pad - panelW
+	local y      = scrH - pad - Scale(100)
+	local lineH  = Scale(14)
+	local rightX = scrW - pad
 
-	-- Weapon name
-	local wepName = (wep.GetPrintName and wep:GetPrintName()) or wep:GetClass()
+	-- Track start Y for corner notches.
+	local startY = y
 
-	wepName = string.upper(wepName)
-
-	DrawShadowText(wepName, "ixHUDMono", scrW - pad, y, THEME.textDark, TEXT_ALIGN_RIGHT)
-
+	-- Weapon name — Roboto label (clearly secondary to ammo/fire mode data below).
+	local wepName = string.upper((wep.GetPrintName and wep:GetPrintName()) or wep:GetClass())
+	DrawShadowText(wepName, "ixHUDLabel", rightX, y, THEME.textMuted, TEXT_ALIGN_RIGHT)
 	y = y + lineH
+	DrawImpliedSeparator(rightX - panelW, y, panelW)
+	y = y + Scale(6)
 
-	-- Aurebesh weapon designation (beneath weapon name, right-aligned)
-	DrawShadowText("weapon sys", "ixHUDAurebeshSmall", scrW - pad, y, Color(THEME.textDark.r, THEME.textDark.g, THEME.textDark.b, 45), TEXT_ALIGN_RIGHT)
-
-	y = y + Scale(10)
-
-	-- Fire mode (ARC9 and ArcCW only)
-	local fireMode = ""
+	-- ── FIRE MODE ─────────────────────────────────────────────────────────────
+	-- 1px implied separator replaces DrawOutlinedRect (VANIR §1 fix).
+	local fireMode  = ""
 	local isArcWeapon = false
 
 	if (wep.GetCurrentFiremodeTable) then
-		-- ARC9 style
 		isArcWeapon = true
 		local fmTable = wep:GetCurrentFiremodeTable()
-
 		if (fmTable) then
 			fireMode = fmTable.PrintName or fmTable.Name or ""
 			if (fireMode == "" and fmTable.Mode) then
-				-- Fallback to mode number/type
-				if (fmTable.Mode == 1) then
-					fireMode = "SEMI"
-				elseif (fmTable.Mode == 0) then
-					fireMode = "SAFE"
-				elseif (fmTable.Mode < 0) then
-					fireMode = "AUTO"
-				else
-					fireMode = tostring(fmTable.Mode) .. "-ROUND"
+				if     (fmTable.Mode == 1)  then fireMode = "SEMI"
+				elseif (fmTable.Mode == 0)  then fireMode = "SAFE"
+				elseif (fmTable.Mode <  0)  then fireMode = "AUTO"
+				else                             fireMode = tostring(fmTable.Mode) .. "-ROUND"
 				end
 			end
 			fireMode = string.upper(fireMode)
 		end
 	elseif (wep.GetCurrentFiremode) then
-		-- ArcCW classic style
 		isArcWeapon = true
 		local fm = wep:GetCurrentFiremode()
-		
-		-- Handle if fm itself is a table (direct firemode data)
 		if (istable(fm)) then
 			fireMode = fm.PrintName or fm.Name or ""
-			
 			if (fireMode == "" and fm.Mode) then
-				if (fm.Mode == 1) then
-					fireMode = "SEMI"
-				elseif (fm.Mode == 0) then
-					fireMode = "SAFE"
-				elseif (fm.Mode == 2) then
-					fireMode = "AUTO"
-				elseif (fm.Mode < 0) then
-					fireMode = "BURST"
-				else
-					fireMode = tostring(fm.Mode) .. "-ROUND"
+				if     (fm.Mode == 1)  then fireMode = "SEMI"
+				elseif (fm.Mode == 0)  then fireMode = "SAFE"
+				elseif (fm.Mode == 2)  then fireMode = "AUTO"
+				elseif (fm.Mode < 0)   then fireMode = "BURST"
+				else                        fireMode = tostring(fm.Mode) .. "-ROUND"
 				end
 			elseif (fireMode == "") then
-				-- Last fallback - use mode index only if it's a number
-				fireMode = isnumber(fm) and ("MODE " .. fm) or "ACTIVE"
+				fireMode = "SEMI"
 			end
-			
-			fireMode = string.upper(fireMode)
-		elseif (fm and wep.Firemodes and wep.Firemodes[fm]) then
-			local fmData = wep.Firemodes[fm]
-			fireMode = fmData.PrintName or fmData.Name or ""
-			
-			if (fireMode == "" and fmData.Mode) then
-				-- Fallback to mode interpretation
-				if (fmData.Mode == 1) then
-					fireMode = "SEMI"
-				elseif (fmData.Mode == 0) then
-					fireMode = "SAFE"
-				elseif (fmData.Mode == 2) then
-					fireMode = "AUTO"
-				elseif (fmData.Mode < 0) then
-					fireMode = "BURST"
-				else
-					fireMode = tostring(fmData.Mode) .. "-ROUND"
-				end
-			elseif (fireMode == "") then
-				-- Last fallback - use mode index only if it's a number
-				fireMode = isnumber(fm) and ("MODE " .. fm) or "ACTIVE"
-			end
-			
 			fireMode = string.upper(fireMode)
 		elseif (isnumber(fm)) then
-			-- Numeric mode index without firemode table
-			fireMode = "MODE " .. fm
+			if     (fm == 1)  then fireMode = "SEMI"
+			elseif (fm == 0)  then fireMode = "SAFE"
+			elseif (fm == 2)  then fireMode = "AUTO"
+			elseif (fm < 0)   then fireMode = "BURST"
+			else                   fireMode = tostring(fm) .. "-ROUND"
+			end
 		end
 	end
 
-	if (isArcWeapon and fireMode != "") then
-		-- Fire mode box
-		surface.SetFont("ixHUDMono")
-
-		local fmW, fmH = surface.GetTextSize(fireMode)
-
-		fmW = fmW + Scale(12)
-		fmH = fmH + Scale(4)
-
-		local fmX = scrW - pad - fmW
-		local fmR = Scale(3)
+	if (fireMode != "") then
+		local fmW = Scale(80)
+		local fmH = Scale(24)
+		local fmX = rightX - fmW
+		local accent = THEME.accent
 
 		if (RNDX) then
-			RNDX.Draw(fmR, fmX, y + Scale(10), fmW, fmH, Color(0, 0, 0, 170))
-			RNDX.DrawOutlined(fmR, fmX, y + Scale(10), fmW, fmH, Color(THEME.amber.r, THEME.amber.g, THEME.amber.b, 190), 1)
+			RNDX.Draw(Scale(3), fmX, y, fmW, fmH, Color(0, 0, 0, 170))
+			RNDX.DrawOutlined(Scale(3), fmX, y, fmW, fmH, Color(accent.r, accent.g, accent.b, 190), 1)
 		else
 			surface.SetDrawColor(0, 0, 0, 170)
-			surface.DrawRect(fmX, y + Scale(10), fmW, fmH)
-			surface.SetDrawColor(THEME.amber.r, THEME.amber.g, THEME.amber.b, 190)
-			surface.DrawOutlinedRect(fmX, y + Scale(10), fmW, fmH)
+			surface.DrawRect(fmX, y, fmW, fmH)
+			surface.SetDrawColor(accent.r, accent.g, accent.b, 190)
+			surface.DrawOutlinedRect(fmX, y, fmW, fmH)
 		end
-		
-		DrawShadowText(fireMode, "ixHUDMono", fmX + Scale(6), y + Scale(12), THEME.amber)
 
+		DrawShadowText(fireMode, "ixHUDData", fmX + Scale(6), y + fmH * 0.5, THEME.accent, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 		y = y + fmH + Scale(4)
 	else
 		y = y + Scale(4)
 	end
 
-	-- Ammunition display
-	local clip = wep:Clip1()
-	local maxClip = wep:GetMaxClip1()
+	-- ── AMMUNITION ───────────────────────────────────────────────────────────
+	local clip     = wep:Clip1()
+	local maxClip  = wep:GetMaxClip1()
 	local ammoType = wep:GetPrimaryAmmoType()
-	local reserve = (ammoType >= 0) and ply:GetAmmoCount(ammoType) or 0
-
-	-- Check if weapon uses ammo
+	local reserve  = (ammoType >= 0) and ply:GetAmmoCount(ammoType) or 0
 	local usesAmmo = maxClip > 0 or ammoType >= 0
 
 	if (usesAmmo) then
-		-- Check for reloading
 		local isReloading = false
-
 		if (wep.GetReloading) then
 			isReloading = wep:GetReloading()
 		elseif (wep.Reloading) then
@@ -1430,62 +1088,143 @@ function PLUGIN:DrawWeapon(scrW, scrH, ply, pad)
 		end
 
 		if (isReloading) then
-			DrawShadowText("RELOADING...", "ixHUDMono", scrW - pad, y + Scale(25), THEME.amber, TEXT_ALIGN_RIGHT)
-
+			DrawShadowText("RELOADING...", "ixHUDData", rightX, y + Scale(12), THEME.accent, TEXT_ALIGN_RIGHT)
 			y = y + Scale(32)
-
-			-- Reload progress bar
-			-- local barW = Scale(180)
-
-			-- DrawBar(scrW - pad - barW, y, barW, Scale(6), 0.6, THEME.amberDim)
-
-			y = y + Scale(12)
 		elseif (clip == 0 and reserve == 0) then
-			DrawShadowText("NO AMMUNITION", "ixHUDMono", scrW - pad, y, THEME.red, TEXT_ALIGN_RIGHT)
-
+			DrawShadowText("NO AMMUNITION", "ixHUDData", rightX, y, HUD_DANGER_COLOR, TEXT_ALIGN_RIGHT)
 			y = y + lineH + Scale(4)
 		else
-			-- Large ammo count
-			local clipStr = clip >= 0 and string.format("%02d", clip) or "--"
+			-- Large clip count (Orbitron replaces OCR-A 44).
+			local clipStr    = clip >= 0 and string.format("%02d", clip) or "--"
 			local reserveStr = tostring(reserve)
 
-			DrawShadowText(clipStr, "ixHUDMonoHuge", scrW - pad - Scale(60), y, THEME.text, TEXT_ALIGN_RIGHT)
-			DrawShadowText("/", "ixHUDMonoLarge", scrW - pad - Scale(44), y + Scale(10), THEME.textDark, TEXT_ALIGN_CENTER)
-			DrawShadowText(reserveStr, "ixHUDMonoLarge", scrW - pad, y + Scale(12), THEME.textMuted, TEXT_ALIGN_RIGHT)
-
-			y = y + Scale(44)
+			DrawShadowText(clipStr, "ixHUDDataLarge", rightX - Scale(44), y, THEME.text, TEXT_ALIGN_RIGHT)
+			DrawShadowText("/", "ixHUDData", rightX - Scale(36), y + Scale(12), THEME.textMuted, TEXT_ALIGN_CENTER)
+			DrawShadowText(reserveStr, "ixHUDData", rightX, y + Scale(14), THEME.textMuted, TEXT_ALIGN_RIGHT)
+			y = y + Scale(38)
 		end
 	end
 
-	-- Overheat bar (ArcCW / ARC9 heat system) - only show for weapons that use heat
+	-- ── OVERHEAT BAR ─────────────────────────────────────────────────────────
 	local hasHeat = wep.Heat ~= nil or wep.HeatCapacity ~= nil
-
 	if (!hasHeat) then return end
 
-	local heat = wep.Heat or 0
+	local heat         = wep.Heat or 0
 	local heatCapacity = wep.HeatCapacity or 1
-	local heatFrac = math.Clamp(heat / math.max(heatCapacity, 1), 0, 1)
-	local heatCol = GetHeatColor(heatFrac)
+	local heatFrac     = math.Clamp(heat / math.max(heatCapacity, 1), 0, 1)
+	local heatCol      = GetHeatColor(heatFrac)
+	local heatBarW     = Scale(180)
 
 	y = y - Scale(16)
 
-	DrawShadowText("HEAT", "ixHUDMonoSmall", scrW - pad - Scale(180), y, THEME.textDark, TEXT_ALIGN_LEFT)
-	DrawShadowText(math.floor(heatFrac * 100) .. "%", "ixHUDMonoSmall", scrW - pad - Scale(140), y, heatCol, TEXT_ALIGN_LEFT)
-
+	DrawShadowText("HEAT", "ixHUDLabel", rightX - heatBarW, y, THEME.textMuted)
+	DrawShadowText(math.floor(heatFrac * 100) .. "%", "ixHUDData", rightX - heatBarW + Scale(36), y, heatCol)
 	y = y + lineH
 
-	local heatBarW = Scale(180)
+	DrawBar(rightX - heatBarW, y, heatBarW, Scale(6), heatFrac, heatCol)
 
-	DrawBar(scrW - pad - heatBarW, y, heatBarW, Scale(5), heatFrac, heatCol)
+	-- Corner notches: TR at top of weapon content, BR at screen bottom — bracket the column.
+	DrawNotch(rightX + Scale(4), startY - Scale(4), "TR")
+	DrawNotch(rightX + Scale(4), scrH - pad, "BR")
 
-	-- Overheat warning
+	-- Overheat warning — 1.5 Hz pulse.
 	if (heatFrac >= 0.8) then
-		y = y + Scale(8)
-
-		local pulse = math.sin(CurTime() * 4) * 0.3 + 0.7
-
-		DrawShadowText("WARNING: COOLING REQUIRED", "ixHUDMonoSmall", scrW - pad, y, ColorAlpha(THEME.red, math.floor(255 * pulse)), TEXT_ALIGN_RIGHT)
+		y = y + Scale(10)
+		local pulse = math.abs(math.sin(CurTime() * 1.5))
+		DrawShadowText("WARNING: COOLING REQUIRED", "ixHUDLabel", rightX, y, ColorAlpha(HUD_DANGER_COLOR, math.Round(180 + pulse * 75)), TEXT_ALIGN_RIGHT)
 	end
+end
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- LIGHTSABER COMBAT STATUS — Bottom Right
+-- Occupies the same slot as the ammo counter; DrawWeapon returns early for
+-- LSCS weapons (no GetCurrentFiremodeTable/GetCurrentFiremode), so there is
+-- never a conflict. Shows stance, block points, combo hits, and force level.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+function PLUGIN:DrawLightsaber(scrW, scrH, ply, pad)
+	if (not LSCS) then return end
+
+	local wep = ply:GetActiveWeapon()
+	if (not IsValid(wep) or not wep.LSCS) then return end
+
+	local panelW = Scale(220)
+	local x      = scrW - pad - panelW
+	local y      = scrH - pad - Scale(100)
+	local lineH  = Scale(14)
+	local rightX = scrW - pad
+	local barW   = Scale(180)
+
+	local startY = y
+
+	-- ── DATA GATHERING ────────────────────────────────────────────────────────
+	local combo       = wep.GetCombo and wep:GetCombo()
+	local stanceName  = (combo and combo.name) and string.upper(combo.name) or "LIGHTSABER"
+	local isAutoBlock = combo and combo.AutoBlock
+
+	local blockPoints = (wep.GetBlockPoints    and wep:GetBlockPoints())    or 0
+	local maxBP       = (wep.GetMaxBlockPoints  and wep:GetMaxBlockPoints()) or 1
+	local comboHits   = (wep.GetComboHits       and wep:GetComboHits())      or 0
+	local bpFrac      = math.Clamp(blockPoints / math.max(maxBP, 1), 0, 1)
+	local bpCol       = GetBPColor(bpFrac)
+
+	local hasForce  = ply.lscsGetForceAllowed and ply:lscsGetForceAllowed()
+	local force     = (hasForce and ply:lscsGetForce())    or 0
+	local maxForce  = (hasForce and ply:lscsGetMaxForce()) or 1
+	local forceFrac = math.Clamp(force / math.max(maxForce, 1), 0, 1)
+
+	-- ── STANCE NAME (mirrors weapon name row) ─────────────────────────────────
+	DrawShadowText(stanceName, "ixHUDLabel", rightX, y, THEME.textMuted, TEXT_ALIGN_RIGHT)
+	y = y + lineH
+	DrawImpliedSeparator(rightX - panelW, y, panelW)
+	y = y + Scale(6)
+
+	-- ── BLOCK POINTS — large fraction display (mirrors ammo clip / reserve) ──
+	if (isAutoBlock) then
+		local notifyTime = wep.GetBlockPointNotifyTime and wep:GetBlockPointNotifyTime() or 0
+		local depleted   = blockPoints <= 1 and notifyTime > CurTime()
+
+		if (depleted) then
+			local pulse = math.abs(math.sin(CurTime() * 7.5))
+			DrawShadowText("BLOCK DEPLETED", "ixHUDData", rightX, y + Scale(12),
+				ColorAlpha(HUD_DANGER_COLOR, math.Round(180 + pulse * 75)), TEXT_ALIGN_RIGHT)
+			y = y + Scale(32)
+		else
+			local bpStr  = string.format("%02d", math.floor(blockPoints))
+			local maxStr = tostring(math.floor(maxBP))
+			DrawShadowText(bpStr,   "ixHUDDataLarge", rightX - Scale(44), y,           bpCol,          TEXT_ALIGN_RIGHT)
+			DrawShadowText("/",     "ixHUDData",       rightX - Scale(36), y + Scale(12), THEME.textMuted, TEXT_ALIGN_CENTER)
+			DrawShadowText(maxStr,  "ixHUDData",       rightX,             y + Scale(14), THEME.textMuted, TEXT_ALIGN_RIGHT)
+			y = y + Scale(38)
+		end
+	end
+
+	-- ── COMBO HIT COUNTER ─────────────────────────────────────────────────────
+	if (comboHits > 0) then
+		DrawShadowText("COMBO  \xC3\x97" .. comboHits, "ixHUDData", rightX, y, THEME.accent, TEXT_ALIGN_RIGHT)
+		y = y + lineH + Scale(2)
+	end
+
+	-- ── BLOCK POINTS BAR (mirrors heat bar) ──────────────────────────────────
+	if (isAutoBlock) then
+		DrawShadowText("BLOCK",                            "ixHUDLabel", rightX - barW,           y, THEME.textMuted)
+		DrawShadowText(math.floor(bpFrac * 100) .. "%",   "ixHUDData",  rightX - barW + Scale(38), y, bpCol)
+		y = y + lineH
+		DrawBar(rightX - barW, y, barW, Scale(6), bpFrac, bpCol)
+		y = y + Scale(6) + Scale(4)
+	end
+
+	-- ── FORCE POWER BAR ───────────────────────────────────────────────────────
+	if (hasForce) then
+		DrawShadowText("FORCE",                             "ixHUDLabel", rightX - barW,           y, THEME.textMuted)
+		DrawShadowText(math.floor(forceFrac * 100) .. "%", "ixHUDData",  rightX - barW + Scale(40), y, lscsForceColor)
+		y = y + lineH
+		DrawBar(rightX - barW, y, barW, Scale(6), forceFrac, lscsForceColor)
+	end
+
+	-- ── CORNER NOTCHES (mirrors weapon panel) ────────────────────────────────
+	DrawNotch(rightX + Scale(4), startY - Scale(4), "TR")
+	DrawNotch(rightX + Scale(4), scrH - pad,         "BR")
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -1500,16 +1239,13 @@ if (!draw.LinearGradient) then
 		if (!stops or #stops < 2) then return end
 
 		local totalSize = isVertical and h or w
-
 		if (totalSize <= 0) then return end
 
 		local bandCount = math.min(gradientBands, math.max(1, math.floor(totalSize)))
-		local bandSize = totalSize / bandCount
+		local bandSize  = totalSize / bandCount
 
 		for i = 0, bandCount - 1 do
-			local frac = (i + 0.5) / bandCount
-
-			-- Interpolate between stops
+			local frac   = (i + 0.5) / bandCount
 			local r, g, b, a = 0, 0, 0, 0
 
 			for j = 1, #stops - 1 do
@@ -1518,12 +1254,10 @@ if (!draw.LinearGradient) then
 
 				if (frac >= s1.offset and frac <= s2.offset) then
 					local localFrac = (frac - s1.offset) / math.max(s2.offset - s1.offset, 0.001)
-
 					r = Lerp(localFrac, s1.color.r, s2.color.r)
 					g = Lerp(localFrac, s1.color.g, s2.color.g)
 					b = Lerp(localFrac, s1.color.b, s2.color.b)
 					a = Lerp(localFrac, s1.color.a, s2.color.a)
-
 					break
 				end
 			end
@@ -1532,14 +1266,10 @@ if (!draw.LinearGradient) then
 
 			if (isVertical) then
 				local bandY = y + math.floor(i * bandSize)
-				local bandH = math.ceil(bandSize)
-
-				surface.DrawRect(x, bandY, w, bandH)
+				surface.DrawRect(x, bandY, w, math.ceil(bandSize))
 			else
 				local bandX = x + math.floor(i * bandSize)
-				local bandW = math.ceil(bandSize)
-
-				surface.DrawRect(bandX, y, bandW, h)
+				surface.DrawRect(bandX, y, math.ceil(bandSize), h)
 			end
 		end
 	end

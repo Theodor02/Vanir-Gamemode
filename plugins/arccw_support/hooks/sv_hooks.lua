@@ -92,6 +92,30 @@ function PLUGIN:OnPlayerUnRestricted(client)
     client.ArcCW_Weapons = nil
 end
 
+-- Sync inventory ammo items with player's reserve pool after ArcCW reloads.
+-- This ensures inventory_ammo item round counts reflect ammo consumed during play.
+function PLUGIN:ArcCW_PostReload(weapon)
+    local client = weapon:GetOwner()
+    if !IsValid(client) or !client:IsPlayer() or !client.TakeInventoryAmmo then return end
+
+    local ammoID = game.GetAmmoName(weapon:GetPrimaryAmmoType())
+    if !isstring(ammoID) then return end
+
+    local inventoryTotal = 0
+    for _, item in pairs(client:GetItems()) do
+        if item.ammo == ammoID and item.ammoAmount then
+            inventoryTotal = inventoryTotal + item:GetData("rounds", item.ammoAmount)
+        end
+    end
+
+    local poolCount = client:GetAmmoCount(ammoID)
+    local taken = inventoryTotal - poolCount
+
+    if taken > 0 then
+        client:TakeInventoryAmmo(ammoID, taken)
+    end
+end
+
 function PLUGIN:EntityRemoved(entity)
     if (ix.arccw.grenades[entity:GetClass()] and entity.ixItem) then
         local client = entity.ixItem:GetOwner()

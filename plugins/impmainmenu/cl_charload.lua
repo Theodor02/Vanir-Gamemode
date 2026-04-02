@@ -78,7 +78,8 @@ local function ApplyCharacterModelData(modelPanel, character)
         modelPanel:SetLookAt(center)
         modelPanel:SetFOV(35)
         modelPanel:SetCamPos(center + Vector(distance, 0, 0))
-        entity:SetAngles(Angle(0, 45, 0))
+        modelPanel.dragYaw = 0
+        entity:SetAngles(Angle(0, 0, 0))
     end
 
     timer.Simple(0, ConfigureEntity)
@@ -255,10 +256,42 @@ function PANEL:Init()
     self.model:Dock(FILL)
     self.model:DockMargin(Scale(12), 0, Scale(12), 0)
     self.model:SetModel("models/error.mdl")
-    self.model.LayoutEntity = function(_, ent)
-        if (IsValid(ent)) then
-            ent:SetAngles(Angle(0, 30, 0))
+    self.model:SetMouseInputEnabled(true)
+    self.model:SetCursor("sizewe")
+    self.model.dragYaw = 0
+    self.model.isDragging = false
+    self.model.lastMouseX = 0
+
+    self.model.OnMousePressed = function(this, mcode)
+        if (mcode == MOUSE_LEFT) then
+            this.isDragging = true
+            this.lastMouseX = gui.MouseX()
         end
+    end
+
+    self.model.OnMouseReleased = function(this, mcode)
+        if (mcode == MOUSE_LEFT) then
+            this.isDragging = false
+        end
+    end
+
+    local charPanel = self
+    self.model.LayoutEntity = function(this, ent)
+        if (this.isDragging) then
+            local dx = gui.MouseX() - this.lastMouseX
+            this.dragYaw = this.dragYaw + dx * 0.5
+            this.lastMouseX = gui.MouseX()
+        end
+        if (IsValid(ent)) then
+            ent:SetAngles(Angle(0, this.dragYaw, 0))
+        end
+    end
+
+    function self.model:PreDrawModel(ent)
+        render.OverrideColorWriteEnable(true, false)
+        ent:DrawModel()
+        render.OverrideColorWriteEnable(false, false)
+        render.SetBlend(charPanel:GetAlpha() / 255)
     end
 
     self.modelBottomSep = self.scanPanel:Add("Panel")
@@ -322,45 +355,55 @@ function PANEL:Init()
         if (!self.selectedCharacter) then return end
 
         local char = self.selectedCharacter
+
+        -- Build faction · class subtitle (same pattern as YOU tab header)
+        local faction = ix.faction.indices[char:GetFaction()]
+        local factionName = faction and string.upper(L(faction.name)) or "UNKNOWN"
+        local class = ix.class.list[char:GetClass()]
+        local subtitleText = factionName
+        if (class) then
+            subtitleText = subtitleText .. "  ·  " .. string.upper(class.name)
+        end
+
+        surface.SetFont("ixImpMenuLabel")
+        local tw = surface.GetTextSize(subtitleText)
+        local barPad = Scale(14)
+        local barH = Scale(16)
+        local barY = Scale(4)
+
+        surface.SetDrawColor(THEME.accent)
+        surface.DrawRect(0, barY, tw + barPad * 2, barH)
+        draw.SimpleText(subtitleText, "ixImpMenuLabel", barPad, barY + barH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+
+        local x = Scale(12)
+        local y = barY + barH + Scale(14)
+        local pri = ThemeTextPrimary()
+
+        -- Character name (primary, large)
+        surface.SetFont("ixImpMenuTitle")
+        local name = char:GetName()
+        draw.SimpleText(name, "ixImpMenuTitle", x, y, pri, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        local _, titleH = surface.GetTextSize(name)
+        y = y + titleH + Scale(6)
+
+        -- Background (secondary, smaller — less prominent than name)
         local backgrounds = char:GetBackgrounds() or {}
         local backgroundText = ""
-
         for k, _ in pairs(backgrounds) do
             local bck = ix.backgrounds[k]
             if (bck) then
                 backgroundText = backgroundText .. bck.name .. ", "
             end
         end
-
         if (backgroundText != "") then
             backgroundText = backgroundText:sub(1, -3)
         else
-            backgroundText = "UNCLASSIFIED"
+            backgroundText = "unclassified"
         end
+        draw.SimpleText("Background: " .. backgroundText, "ixImpMenuDiag", x, y, ThemeTextSecondary(), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        y = y + Scale(20)
 
-        local titleSpacing = Scale(2)
-        local headerFont = "ixImpMenuSubtitle"
-        local headerText = "BACKGROUND: " .. string.upper(backgroundText)
-        local textW, textH = ix.ui.GetSpacedTextSize(headerText, headerFont, titleSpacing)
-        local barPadX = Scale(12)
-        local barPadY = Scale(4)
-        local barW = textW + (barPadX * 2) - titleSpacing
-        local barH = textH + (barPadY * 2)
-
-        surface.SetDrawColor(THEME.accent)
-        surface.DrawRect(0, 0, barW, barH)
-        ix.ui.DrawSpacedText(headerText, headerFont, barPadX, barPadY, THEME.background, titleSpacing, TEXT_ALIGN_LEFT)
-
-        local x = Scale(12)
-        local y = barH + Scale(16) -- Added breathing room between header and name
-        local pri = ThemeTextPrimary()
-
-        surface.SetFont("ixImpMenuTitle")
-        local name = char:GetName()
-        draw.SimpleText(name, "ixImpMenuTitle", x, y, pri, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-        local _, titleH = surface.GetTextSize(name)
-        y = y + titleH + Scale(12)
-
+        -- Description
         local desc = char:GetDescription()
         if (desc and #desc > 0) then
             local wAvail = w - x * 2
@@ -370,9 +413,9 @@ function PANEL:Init()
             for _, word in ipairs(words) do
                 local test = line .. word .. " "
                 surface.SetFont("ixImpMenuLabel")
-                local tw = surface.GetTextSize(test)
+                local tw2 = surface.GetTextSize(test)
 
-                if (tw > wAvail) then
+                if (tw2 > wAvail) then
                     draw.SimpleText(line, "ixImpMenuLabel", x, y, ThemeTextSecondary(), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
                     y = y + Scale(20)
                     line = word .. " "

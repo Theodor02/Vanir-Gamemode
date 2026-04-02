@@ -121,7 +121,7 @@ function PANEL:SetupInventory(bgPanel, rightFixedW, padding)
 
 		local iconSize = math.floor(canvasH / invH)
 
-		local maxW = bgPanel:GetWide() - rightFixedW - padding * 3
+		local maxW = bgPanel:GetWide() - rightFixedW - padding * 4
 		if (maxW > 0 and iconSize * invW > maxW) then
 			iconSize = math.floor(maxW / invW)
 		end
@@ -174,7 +174,7 @@ function PANEL:PaintOver(w, h)
 	surface.DrawRect(0, 0, w, headerH)
 
 	-- "FIELD INVENTORY" label (black text on gold)
-	draw.SimpleText("FIELD INVENTORY", "ixImpMenuDiag", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+	draw.SimpleText("FIELD INVENTORY", "ixImpMenuLabel", Scale(8), headerH * 0.5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 
 	-- Item count (Aurebesh, right-aligned, black on gold)
 	local inventory = LocalPlayer():GetCharacter() and LocalPlayer():GetCharacter():GetInventory()
