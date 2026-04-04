@@ -476,31 +476,32 @@ function PANEL:Paint(w, h)
 	end
 
 	-- All sizes proportional to the panel, so they scale correctly with zoom
-	local iconSize = math.Round(w * 0.35)
-	local iconX = math.Round((w - iconSize) * 0.5)
-	local iconY = math.Round(h * 0.1)
+	local iconMargin = math.Round(w * 0.05)
+	local iconSize = w - (iconMargin * 2)
 
 	if (self.iconMat and !self.iconMat:IsError()) then
 		local iconAlpha = (state == "locked") and 100 or 255
 		surface.SetDrawColor(255, 255, 255, iconAlpha)
 		surface.SetMaterial(self.iconMat)
-		surface.DrawTexturedRect(iconX, iconY, iconSize, iconSize)
+		surface.DrawTexturedRect(iconMargin, iconMargin, iconSize, iconSize)
 	end
 
 	-- Name (truncated) — only draw when panel is large enough to read
 	if (w >= 40) then
-		local nameY = iconY + iconSize + math.Round(h * 0.05)
+		local nameY = h + math.Round(h * 0.05)
 		local nameColor = (state == "locked") and THEME.textMuted or THEME.text
 
+		DisableClipping(true)
 		draw.SimpleText(node.name, "ixUnlockNodeName", w * 0.5, nameY, nameColor, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-	end
 
-	-- Level indicator for repeatable nodes
-	if (node.repeatable and w >= 40) then
-		local character = LocalPlayer():GetCharacter()
-		local level = character and character:GetNodeLevel(self.treeID, self.nodeID) or 0
-		local levelText = level .. "/" .. node.maxLevel
-		draw.SimpleText(levelText, "ixUnlockNodeLevel", w * 0.5, h - math.Round(h * 0.17), THEME.textMuted, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		-- Level indicator for repeatable nodes
+		if (node.repeatable) then
+			local character = LocalPlayer():GetCharacter()
+			local level = character and character:GetNodeLevel(self.treeID, self.nodeID) or 0
+			local levelText = level .. "/" .. node.maxLevel
+			draw.SimpleText(levelText, "ixUnlockNodeLevel", w * 0.5, nameY + math.Round(h * 0.2), THEME.textMuted, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		end
+		DisableClipping(false)
 	end
 end
 

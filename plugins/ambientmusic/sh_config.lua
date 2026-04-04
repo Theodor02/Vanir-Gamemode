@@ -1,0 +1,69 @@
+
+local PLUGIN = PLUGIN
+
+-- whether ambient music is enabled for everyone, 'true' does not force it on the client but false will force it off
+ix.config.Add("allowAmbientMusic", true, "Whether or not ambient music should play for players. If false, ambient music will never play, regardless of player local config settings.", function(oldValue, newValue)
+    if SERVER then
+        net.Start("ixAmbientMusic")
+            net.WriteBool(newValue)
+        net.Broadcast()
+    end
+end,
+{
+    category = "Ambient Music",
+})
+
+if CLIENT then
+    -- whether or not ambient music will play for this client
+    ix.option.Add("ambientMusicEnable", ix.type.bool, true, {
+        category = "Ambient Music",
+        OnChanged = function(oldValue, newValue)
+            if newValue then
+                LocalPlayer():AmbientMusicStart()
+            else
+                LocalPlayer():AmbientMusicStop()
+            end
+        end,
+    })
+
+    -- lower/upper bound for the interval between tracks in seconds. T = LEN(lastTrack) + rand(MIN, MAX)
+    ix.option.Add("ambientMusicIntMin", ix.type.number, 120, {  -- 0 to 5 min
+        category = "Ambient Music",
+        min = 0,
+        max = 300,    
+    })
+    ix.option.Add("ambientMusicIntMax", ix.type.number, 300, {  -- 5 to 20 min
+        category = "Ambient Music",
+        min = 300,
+        max = 1200,    
+    })
+    
+    -- volume of the ambient music, expressed as a percentage
+    ix.option.Add("ambientMusicVolume", ix.type.number, 100, {
+        category = "Ambient Music",
+        min = 1,
+        max = 300,
+        OnChanged = function(oldValue, newValue)
+            LocalPlayer():AmbientMusicVolume(newValue)
+        end,
+    })
+    
+    -- fade-in duration when ambient tracks start playing (in seconds)
+    ix.option.Add("ambientMusicFadeIn", ix.type.number, 2, {
+        category = "Ambient Music",
+        min = 0,
+        max = 10,
+    })
+    
+    -- fade-out duration when ambient tracks stop or switch (in seconds)
+    ix.option.Add("ambientMusicFadeOut", ix.type.number, 2, {
+        category = "Ambient Music",
+        min = 0,
+        max = 10,
+    })
+
+    -- enables verbose client-side debug output for ambient music scheduling and playback
+    ix.option.Add("ambientMusicDebug", ix.type.bool, false, {
+        category = "Ambient Music",
+    })
+end

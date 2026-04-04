@@ -783,11 +783,20 @@ function MAIN:BuildToolbar()
 	zoomIn:SetWide(Scale(28))
 	zoomIn:DockMargin(0, margin, Scale(6), margin)
 	zoomIn.DoClick = function()
-		if (self.canvas) then
-			self.canvas.zoom = math.Clamp(self.canvas.zoom + ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)
-			self.canvas:LayoutNodes()
-		end
-	end
+if (self.canvas) then
+local oldZoom = self.canvas.zoom
+self.canvas.zoom = math.Clamp(self.canvas.zoom + ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)
+
+local mx = self.canvas:GetWide() * 0.5
+local my = self.canvas:GetTall() * 0.5
+local zoomRatio = self.canvas.zoom / oldZoom
+
+self.canvas.offsetX = mx - (mx - self.canvas.offsetX) * zoomRatio
+self.canvas.offsetY = my - (my - self.canvas.offsetY) * zoomRatio
+
+self.canvas:LayoutNodes()
+end
+end
 
 	-- Zoom out
 	local zoomOut = vgui.Create("ixUnlockToolbarButton", self.toolbar)
@@ -796,11 +805,20 @@ function MAIN:BuildToolbar()
 	zoomOut:SetWide(Scale(28))
 	zoomOut:DockMargin(0, margin, Scale(2), margin)
 	zoomOut.DoClick = function()
-		if (self.canvas) then
-			self.canvas.zoom = math.Clamp(self.canvas.zoom - ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)
-			self.canvas:LayoutNodes()
-		end
-	end
+if (self.canvas) then
+local oldZoom = self.canvas.zoom
+self.canvas.zoom = math.Clamp(self.canvas.zoom - ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)
+
+local mx = self.canvas:GetWide() * 0.5
+local my = self.canvas:GetTall() * 0.5
+local zoomRatio = self.canvas.zoom / oldZoom
+
+self.canvas.offsetX = mx - (mx - self.canvas.offsetX) * zoomRatio
+self.canvas.offsetY = my - (my - self.canvas.offsetY) * zoomRatio
+
+self.canvas:LayoutNodes()
+end
+end
 
 	-- Centre button
 	local centreBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
@@ -1146,11 +1164,20 @@ function TAB_EMBED:BuildToolbar()
 	zoomIn:SetWide(Scale(28))
 	zoomIn:DockMargin(0, margin, Scale(6), margin)
 	zoomIn.DoClick = function()
-		if (self.canvas) then
-			self.canvas.zoom = math.Clamp(self.canvas.zoom + ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)
-			self.canvas:LayoutNodes()
-		end
-	end
+if (self.canvas) then
+local oldZoom = self.canvas.zoom
+self.canvas.zoom = math.Clamp(self.canvas.zoom + ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)
+
+local mx = self.canvas:GetWide() * 0.5
+local my = self.canvas:GetTall() * 0.5
+local zoomRatio = self.canvas.zoom / oldZoom
+
+self.canvas.offsetX = mx - (mx - self.canvas.offsetX) * zoomRatio
+self.canvas.offsetY = my - (my - self.canvas.offsetY) * zoomRatio
+
+self.canvas:LayoutNodes()
+end
+end
 
 	-- Zoom out
 	local zoomOut = vgui.Create("ixUnlockToolbarButton", self.toolbar)
@@ -1159,11 +1186,20 @@ function TAB_EMBED:BuildToolbar()
 	zoomOut:SetWide(Scale(28))
 	zoomOut:DockMargin(0, margin, Scale(2), margin)
 	zoomOut.DoClick = function()
-		if (self.canvas) then
-			self.canvas.zoom = math.Clamp(self.canvas.zoom - ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)
-			self.canvas:LayoutNodes()
-		end
-	end
+if (self.canvas) then
+local oldZoom = self.canvas.zoom
+self.canvas.zoom = math.Clamp(self.canvas.zoom - ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)
+
+local mx = self.canvas:GetWide() * 0.5
+local my = self.canvas:GetTall() * 0.5
+local zoomRatio = self.canvas.zoom / oldZoom
+
+self.canvas.offsetX = mx - (mx - self.canvas.offsetX) * zoomRatio
+self.canvas.offsetY = my - (my - self.canvas.offsetY) * zoomRatio
+
+self.canvas:LayoutNodes()
+end
+end
 
 	-- Centre button
 	local centreBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)

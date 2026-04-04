@@ -148,6 +148,33 @@ function ix.unlocks.RegisterNode(treeID, nodeID, data)
 	return tree.nodes[nodeID]
 end
 
+--- Merge visual layout data (position, icon) to an existing tree.
+-- Use this to apply visual updates from the editor without destroying existing node logic.
+-- @param treeID string
+-- @param data table Keyed by nodeID, containing { position = {x, y}, icon = "path" }
+function ix.unlocks.MergeVisuals(treeID, data)
+	local tree = ix.unlocks.trees[treeID]
+
+	if (!tree) then
+		ErrorNoHalt("[UnlockTrees] Cannot merge visuals: tree '" .. treeID .. "' does not exist.\n")
+		return
+	end
+
+	data = data or {}
+
+	for nodeID, nodeData in pairs(data) do
+		local liveNode = tree.nodes[nodeID]
+		if (liveNode) then
+			if (nodeData.position) then
+				liveNode.position = nodeData.position
+			end
+			if (nodeData.icon) then
+				liveNode.icon = nodeData.icon
+			end
+		end
+	end
+end
+
 --- Connect two nodes with a prerequisite edge (parent -> child).
 -- The parent must be unlocked before the child can be unlocked.
 -- @param treeID string

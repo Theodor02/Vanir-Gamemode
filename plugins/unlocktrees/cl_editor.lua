@@ -84,8 +84,16 @@ local editorState = {
 	edges = {},       -- {{from, to}, ...}
 	nextNodeIndex = 1,
 	selectedNode = nil,
+	selectedNodes = {},
 	connectingFrom = nil, -- when in connection mode, the source node
-	mode = "select"       -- "select", "connect", "delete"
+	mode = "select",      -- "select", "connect", "delete"
+	undoStack = {},
+	redoStack = {},
+	clipboard = nil,
+	isRestoring = false,
+	dirty = false,
+	lastSavedAt = 0,
+	lastBackupAt = 0
 }
 
 local function ResetEditorState()
@@ -96,17 +104,203 @@ local function ResetEditorState()
 	editorState.edges = {}
 	editorState.nextNodeIndex = 1
 	editorState.selectedNode = nil
+	editorState.selectedNodes = {}
 	editorState.connectingFrom = nil
 	editorState.mode = "select"
+	editorState.undoStack = {}
+	editorState.redoStack = {}
+	editorState.clipboard = nil
+	editorState.isRestoring = false
+	editorState.dirty = false
+	editorState.lastSavedAt = 0
+	editorState.lastBackupAt = 0
 end
 
 local function SnapToGrid(value)
 	return math.Round(value / GRID_SNAP) * GRID_SNAP
 end
 
+local function IsTextInputFocused()
+	local focus = vgui.GetKeyboardFocus()
+
+	if (!IsValid(focus)) then return false end
+
+	if (focus.IsTextEntry and focus:IsTextEntry()) then return true end
+
+	local className = focus.GetClassName and focus:GetClassName() or ""
+
+	return (className == "DTextEntry" or className == "DNumberWang")
+end
+
+local function GetSelectedNodeIDs()
+	local nodeIDs = {}
+
+	for nodeID in pairs(editorState.selectedNodes) do
+		nodeIDs[#nodeIDs + 1] = nodeID
+	end
+
+	table.sort(nodeIDs)
+	return nodeIDs
+end
+
+local function GetFirstSelectedNodeID()
+	for nodeID in pairs(editorState.selectedNodes) do
+		return nodeID
+	end
+
+	return nil
+end
+
+local function SyncPrimarySelection(preferredID)
+	local primary = preferredID
+
+	if (primary and !editorState.selectedNodes[primary]) then
+		primary = nil
+	end
+
+	if (!primary) then
+		primary = GetFirstSelectedNodeID()
+	end
+
+	editorState.selectedNode = primary
+	hook.Run("UnlockEditorNodeSelected", primary)
+end
+
+local function ClearSelection()
+	editorState.selectedNodes = {}
+	editorState.selectedNode = nil
+	hook.Run("UnlockEditorNodeSelected", nil)
+end
+
+local function SetSelection(nodeIDs, preferredID)
+	editorState.selectedNodes = {}
+
+	for _, nodeID in ipairs(nodeIDs or {}) do
+		if (editorState.nodes[nodeID]) then
+			editorState.selectedNodes[nodeID] = true
+		end
+	end
+
+	SyncPrimarySelection(preferredID)
+end
+
+local function AddToSelection(nodeID)
+	if (!editorState.nodes[nodeID]) then return end
+	editorState.selectedNodes[nodeID] = true
+	SyncPrimarySelection(nodeID)
+end
+
+local function ToggleSelection(nodeID)
+	if (!editorState.nodes[nodeID]) then return end
+
+	if (editorState.selectedNodes[nodeID]) then
+		editorState.selectedNodes[nodeID] = nil
+		SyncPrimarySelection(editorState.selectedNode == nodeID and nil or editorState.selectedNode)
+	else
+		editorState.selectedNodes[nodeID] = true
+		SyncPrimarySelection(nodeID)
+	end
+end
+
+local function SelectionCount()
+	local count = 0
+
+	for _ in pairs(editorState.selectedNodes) do
+		count = count + 1
+	end
+
+	return count
+end
+
+local function SelectionContains(nodeID)
+	return editorState.selectedNodes[nodeID] == true
+end
+
+local function GetUniqueNodeID(baseID)
+	local base = tostring(baseID or "node")
+	base = string.lower(base:gsub("[^%w_]+", "_"))
+	base = base:gsub("_+", "_")
+	base = base:gsub("^_+", "")
+	base = base:gsub("_+$", "")
+
+	if (base == "") then
+		base = "node"
+	end
+
+	local candidate
+
+	repeat
+		candidate = base .. "_" .. editorState.nextNodeIndex
+		editorState.nextNodeIndex = editorState.nextNodeIndex + 1
+	until (!editorState.nodes[candidate])
+
+	return candidate
+end
+
+local function GetSelectionCenter(nodeIDs)
+local sumX, sumY, count = 0, 0, 0
+
+for _, nodeID in ipairs(nodeIDs) do
+local node = editorState.nodes[nodeID]
+
+if (node and node.position) then
+sumX = sumX + node.position.x + (NODE_SIZE * 0.5)
+sumY = sumY + node.position.y + (NODE_SIZE * 0.5)
+count = count + 1
+end
+end
+
+if (count == 0) then
+return 0, 0
+end
+
+return sumX / count, sumY / count
+end
+
+local function GetCanvasCursorPosition(canvas)
+if (!IsValid(canvas)) then
+return 0, 0
+end
+
+local mx, my = gui.MousePos()
+local cx, cy = canvas:ScreenToCanvas(mx, my)
+
+return cx, cy
+end
+
+local function FormatTimestamp(timeValue)
+	if (!timeValue) then return "-" end
+	return os.date("%Y-%m-%d %H:%M", timeValue)
+end
+
+local function MakeDraftID(label)
+	local id = tostring(label or "draft")
+	id = string.lower(id:gsub("[^%w_%-%s]+", "_"))
+	id = id:gsub("%s+", "_")
+	id = id:gsub("_+", "_")
+	id = id:gsub("^_+", "")
+	id = id:gsub("_+$", "")
+
+	if (id == "") then
+		id = "draft"
+	end
+
+	return string.sub(id, 1, 64)
+end
+
 -- ─────────────────────────────────────────────
 -- Editor Canvas
 -- ─────────────────────────────────────────────
+
+local iconCache = {}
+local function GetNodeIcon(iconPath)
+	if (!iconPath or string.Trim(iconPath) == "") then return nil end
+	if (iconCache[iconPath]) then return iconCache[iconPath] end
+	
+	local mat = Material(iconPath, "noclamp smooth")
+	iconCache[iconPath] = mat
+	return mat
+end
 
 local CANVAS = {}
 
@@ -115,10 +309,16 @@ function CANVAS:Init()
 	self.offsetY = 0
 	self.zoom = 1.0
 	self.dragging = false
+	self.marqueeSelecting = false
 	self.dragStartX = 0
 	self.dragStartY = 0
 	self.dragStartOffX = 0
 	self.dragStartOffY = 0
+	self.marqueeStartX = 0
+	self.marqueeStartY = 0
+	self.marqueeEndX = 0
+	self.marqueeEndY = 0
+	self.marqueeAdditive = false
 
 	self.draggingNode = nil
 	self.nodeDragOffX = 0
@@ -219,8 +419,9 @@ function CANVAS:Paint(w, h)
 
 		nx, ny = math.Round(nx), math.Round(ny)
 
-		local isSelected = (editorState.selectedNode == nodeID)
-		local border = isSelected and THEME.editorNodeSelected or THEME.editorNode
+		local isSelected = SelectionContains(nodeID)
+		local isPrimary = (editorState.selectedNode == nodeID)
+		local border = isPrimary and THEME.editorNodeSelected or (isSelected and THEME.accentSoft or THEME.editorNode)
 		local bg = THEME.buttonBg
 
 		-- Background
@@ -235,12 +436,37 @@ function CANVAS:Paint(w, h)
 			surface.DrawOutlinedRect(nx + 1, ny + 1, scaledSize - 2, scaledSize - 2)
 		end
 
-		-- Name
-		local textY = ny + scaledSize * 0.5
-		draw.SimpleText(node.name or nodeID, "ixUnlockEditorNode", nx + scaledSize * 0.5, textY, THEME.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		-- Icon
+		if (node.icon and node.icon != "") then
+			local iconMat = GetNodeIcon(node.icon)
+			if (iconMat and !iconMat:IsError()) then
+				surface.SetMaterial(iconMat)
+				surface.SetDrawColor(Color(255, 255, 255, 255))
+				
+				local iconMargin = 2
+				local iconSize = scaledSize - (iconMargin * 2)
+				surface.DrawTexturedRect(nx + iconMargin, ny + iconMargin, iconSize, iconSize)
+			end
+		end
 
-		-- Node ID below
-		draw.SimpleText(nodeID, "ixUnlockEditorSmall", nx + scaledSize * 0.5, ny + scaledSize - Scale(10), THEME.textMuted, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		-- Name (below the node)
+		local textY = ny + scaledSize + Scale(4)
+		draw.SimpleText(node.name or nodeID, "ixUnlockEditorNode", nx + scaledSize * 0.5, textY, THEME.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+
+		-- Node ID below the name
+		draw.SimpleText(nodeID, "ixUnlockEditorSmall", nx + scaledSize * 0.5, textY + Scale(14), THEME.textMuted, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+	end
+
+	if (self.marqueeSelecting) then
+		local sx1, sy1 = self:ScreenToLocal(self.marqueeStartX, self.marqueeStartY)
+		local sx2, sy2 = self:ScreenToLocal(self.marqueeEndX, self.marqueeEndY)
+		local left, right = math.min(sx1, sx2), math.max(sx1, sx2)
+		local top, bottom = math.min(sy1, sy2), math.max(sy1, sy2)
+
+		surface.SetDrawColor(Color(THEME.accent.r, THEME.accent.g, THEME.accent.b, 40))
+		surface.DrawRect(left, top, right - left, bottom - top)
+		surface.SetDrawColor(THEME.accentSoft)
+		surface.DrawOutlinedRect(left, top, right - left, bottom - top)
 	end
 
 	-- Mode indicator
@@ -250,48 +476,61 @@ function CANVAS:Paint(w, h)
 		modeText = modeText .. " (from: " .. editorState.connectingFrom .. ")"
 	end
 
+	local selectedCount = SelectionCount()
+
+	if (selectedCount > 0) then
+		modeText = modeText .. " | SELECTED: " .. selectedCount
+	end
+
 	draw.SimpleText(modeText, "ixUnlockEditorSmall", Scale(8), h - Scale(16), THEME.accentSoft, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 end
 
 function CANVAS:OnMousePressed(code)
 	local mx, my = gui.MousePos()
 	local hitNode = self:HitTestNode(mx, my)
+	local ctrlDown = input.IsKeyDown(KEY_LCONTROL) or input.IsKeyDown(KEY_RCONTROL)
 
 	if (code == MOUSE_LEFT) then
 		if (editorState.mode == "select") then
 			if (hitNode) then
-				editorState.selectedNode = hitNode
-
-				-- Start dragging node
-				local node = editorState.nodes[hitNode]
-				local nx, ny = self:CanvasToLocal(node.position.x, node.position.y)
+				if (ctrlDown) then
+					ToggleSelection(hitNode)
+					return
+				else
+					SetSelection({hitNode}, hitNode)
+				end
 				local lx, ly = self:ScreenToLocal(mx, my)
 
+				if (IsValid(ix.unlocks.editorPanel)) then
+					ix.unlocks.editorPanel:PushUndoSnapshot("move_node")
+				end
+
 				self.draggingNode = hitNode
+				
+				local node = editorState.nodes[hitNode]
+				local nx, ny = self:CanvasToLocal(node.position.x, node.position.y)
+				
 				self.nodeDragOffX = lx - nx
 				self.nodeDragOffY = ly - ny
-
-				-- Notify inspector
-				hook.Run("UnlockEditorNodeSelected", hitNode)
 			else
-				editorState.selectedNode = nil
-				hook.Run("UnlockEditorNodeSelected", nil)
-
-				-- Start panning
-				self.dragging = true
-				self.dragStartX, self.dragStartY = mx, my
-				self.dragStartOffX = self.offsetX
-				self.dragStartOffY = self.offsetY
+				self.marqueeSelecting = true
+				self.marqueeStartX = mx
+				self.marqueeStartY = my
+				self.marqueeEndX = mx
+				self.marqueeEndY = my
+				self.marqueeAdditive = ctrlDown
 				self:MouseCapture(true)
+
+				if (!ctrlDown) then
+					ClearSelection()
+				end
 			end
 		elseif (editorState.mode == "connect") then
 			if (hitNode) then
 				if (!editorState.connectingFrom) then
 					editorState.connectingFrom = hitNode
 				else
-					-- Complete connection
 					if (hitNode != editorState.connectingFrom) then
-						-- Check for duplicate
 						local exists = false
 
 						for _, edge in ipairs(editorState.edges) do
@@ -302,6 +541,10 @@ function CANVAS:OnMousePressed(code)
 						end
 
 						if (!exists) then
+							if (IsValid(ix.unlocks.editorPanel)) then
+								ix.unlocks.editorPanel:PushUndoSnapshot("connect_nodes")
+							end
+
 							editorState.edges[#editorState.edges + 1] = {
 								from = editorState.connectingFrom,
 								to = hitNode
@@ -315,31 +558,32 @@ function CANVAS:OnMousePressed(code)
 				editorState.connectingFrom = nil
 			end
 		elseif (editorState.mode == "delete") then
-			if (hitNode) then
-				-- Remove node and its edges
-				editorState.nodes[hitNode] = nil
-
-				for i = #editorState.edges, 1, -1 do
-					if (editorState.edges[i].from == hitNode or editorState.edges[i].to == hitNode) then
-						table.remove(editorState.edges, i)
-					end
-				end
-
-				if (editorState.selectedNode == hitNode) then
-					editorState.selectedNode = nil
-					hook.Run("UnlockEditorNodeSelected", nil)
+			if (hitNode and IsValid(ix.unlocks.editorPanel)) then
+				if (SelectionContains(hitNode)) then
+					ix.unlocks.editorPanel:DeleteNodes(GetSelectedNodeIDs())
+				else
+					ix.unlocks.editorPanel:DeleteNodes({hitNode})
 				end
 			end
 		end
+	elseif (code == MOUSE_MIDDLE) then
+		self.dragging = true
+		self.dragStartX, self.dragStartY = mx, my
+		self.dragStartOffX = self.offsetX
+		self.dragStartOffY = self.offsetY
+		self:MouseCapture(true)
 	elseif (code == MOUSE_RIGHT) then
 		-- Right-click: create new node at cursor or show context menu
 		if (!hitNode and editorState.mode == "select") then
-			local cx, cy = self:ScreenToCanvas(mx, my)
-			cx = SnapToGrid(cx)
-			cy = SnapToGrid(cy)
+			if (IsValid(ix.unlocks.editorPanel)) then
+				ix.unlocks.editorPanel:PushUndoSnapshot("create_node")
+			end
 
-			local newID = "node_" .. editorState.nextNodeIndex
-			editorState.nextNodeIndex = editorState.nextNodeIndex + 1
+			local cx, cy = self:ScreenToCanvas(mx, my)
+			cx = SnapToGrid(cx - NODE_SIZE * 0.5)
+			cy = SnapToGrid(cy - NODE_SIZE * 0.5)
+
+			local newID = GetUniqueNodeID("node")
 
 			editorState.nodes[newID] = {
 				id = newID,
@@ -358,10 +602,13 @@ function CANVAS:OnMousePressed(code)
 				cooldown = 0
 			}
 
-			editorState.selectedNode = newID
-			hook.Run("UnlockEditorNodeSelected", newID)
+			SetSelection({newID}, newID)
 		elseif (hitNode and editorState.mode == "connect") then
 			-- Right-click a node in connect mode: remove edges from/to it
+			if (IsValid(ix.unlocks.editorPanel)) then
+				ix.unlocks.editorPanel:PushUndoSnapshot("delete_edges")
+			end
+
 			for i = #editorState.edges, 1, -1 do
 				local edge = editorState.edges[i]
 
@@ -375,12 +622,43 @@ end
 
 function CANVAS:OnMouseReleased(code)
 	if (code == MOUSE_LEFT) then
+		if (self.marqueeSelecting) then
+			self.marqueeSelecting = false
+			self:MouseCapture(false)
+
+			local startX, startY = self:ScreenToCanvas(self.marqueeStartX, self.marqueeStartY)
+			local endX, endY = self:ScreenToCanvas(self.marqueeEndX, self.marqueeEndY)
+			local left, right = math.min(startX, endX), math.max(startX, endX)
+			local top, bottom = math.min(startY, endY), math.max(startY, endY)
+
+			if (math.abs(right - left) < 2 and math.abs(bottom - top) < 2) then
+				if (!self.marqueeAdditive) then
+					ClearSelection()
+				end
+			else
+				local nodeIDs = self.marqueeAdditive and GetSelectedNodeIDs() or {}
+
+				for nodeID, node in pairs(editorState.nodes) do
+					if (node.position.x + NODE_SIZE >= left and node.position.x <= right and node.position.y + NODE_SIZE >= top and node.position.y <= bottom) then
+						nodeIDs[#nodeIDs + 1] = nodeID
+					end
+				end
+
+				SetSelection(nodeIDs, #nodeIDs > 0 and nodeIDs[#nodeIDs] or nil)
+			end
+		end
+
 		if (self.dragging) then
 			self.dragging = false
 			self:MouseCapture(false)
 		end
 
 		self.draggingNode = nil
+	elseif (code == MOUSE_MIDDLE) then
+		if (self.dragging) then
+			self.dragging = false
+			self:MouseCapture(false)
+		end
 	end
 end
 
@@ -390,6 +668,10 @@ function CANVAS:Think()
 
 		self.offsetX = self.dragStartOffX + (mx - self.dragStartX)
 		self.offsetY = self.dragStartOffY + (my - self.dragStartY)
+	end
+
+	if (self.marqueeSelecting) then
+		self.marqueeEndX, self.marqueeEndY = gui.MousePos()
 	end
 
 	if (self.draggingNode) then
@@ -438,8 +720,8 @@ function CANVAS:CenterView()
 	local avgX = sumX / count
 	local avgY = sumY / count
 
-	self.offsetX = (self:GetWide() * 0.5) - (avgX * self.zoom)
-	self.offsetY = (self:GetTall() * 0.5) - (avgY * self.zoom)
+	self.offsetX = (self:GetWide() * 0.5) - (avgX * self.zoom) - (NODE_SIZE * self.zoom * 0.5)
+	self.offsetY = (self:GetTall() * 0.5) - (avgY * self.zoom) - (NODE_SIZE * self.zoom * 0.5)
 end
 
 vgui.Register("ixUnlockEditorCanvas", CANVAS, "DPanel")
@@ -516,6 +798,12 @@ function INSPECTOR:AddTextEntry(label, value, onChange)
 		entry:DrawTextEntryText(THEME.text, THEME.accent, THEME.text)
 	end
 	entry.OnChange = function()
+		if (editorState.isRestoring) then return end
+
+		if (IsValid(ix.unlocks.editorPanel)) then
+			ix.unlocks.editorPanel:PushUndoSnapshot("edit_node")
+		end
+
 		if (onChange) then
 			onChange(entry:GetValue())
 		end
@@ -546,6 +834,12 @@ function INSPECTOR:AddNumberEntry(label, value, onChange)
 		entry:DrawTextEntryText(THEME.text, THEME.accent, THEME.text)
 	end
 	entry.OnValueChanged = function(_, val)
+		if (editorState.isRestoring) then return end
+
+		if (IsValid(ix.unlocks.editorPanel)) then
+			ix.unlocks.editorPanel:PushUndoSnapshot("edit_node")
+		end
+
 		if (onChange) then
 			onChange(tonumber(val) or 0)
 		end
@@ -568,6 +862,12 @@ function INSPECTOR:AddCheckbox(label, value, onChange)
 	cb:SetWide(Scale(18))
 	cb:SetValue(value or false)
 	cb.OnChange = function(_, val)
+		if (editorState.isRestoring) then return end
+
+		if (IsValid(ix.unlocks.editorPanel)) then
+			ix.unlocks.editorPanel:PushUndoSnapshot("edit_node")
+		end
+
 		if (onChange) then
 			onChange(val)
 		end
@@ -608,9 +908,53 @@ function INSPECTOR:LoadNode(nodeID)
 	end)
 
 	-- Icon
-	self:AddTextEntry("Icon", node.icon, function(val)
-		node.icon = val
-	end)
+	self:AddLabel("Icon (with path resolver)")
+	local iconRow = vgui.Create("DPanel", self)
+	iconRow:Dock(TOP)
+	iconRow:SetTall(Scale(24))
+	iconRow:DockMargin(0, 0, 0, Scale(2))
+	iconRow.Paint = function() end
+
+	local iconEntry = vgui.Create("DTextEntry", iconRow)
+	iconEntry:Dock(FILL)
+	iconEntry:SetFont("ixUnlockEditorLabel")
+	iconEntry:SetText(node.icon or "")
+	iconEntry:SetTextColor(THEME.text)
+	iconEntry:SetCursorColor(THEME.accent)
+	iconEntry.Paint = function(_, w, h)
+		surface.SetDrawColor(THEME.buttonBg)
+		surface.DrawRect(0, 0, w, h)
+		surface.SetDrawColor(THEME.frameSoft)
+		surface.DrawOutlinedRect(0, 0, w, h)
+		iconEntry:DrawTextEntryText(THEME.text, THEME.accent, THEME.text)
+	end
+	iconEntry.OnChange = function()
+		if (editorState.isRestoring) then return end
+		if (IsValid(ix.unlocks.editorPanel)) then
+			ix.unlocks.editorPanel:PushUndoSnapshot("edit_node")
+		end
+		node.icon = iconEntry:GetValue()
+	end
+	
+	local iconBtn = vgui.Create("ixUnlockToolbarButton", iconRow)
+	iconBtn:SetLabel("...")
+	iconBtn:Dock(RIGHT)
+	iconBtn:SetWide(Scale(24))
+	iconBtn:DockMargin(Scale(4), 0, 0, 0)
+	iconBtn.DoClick = function()
+		if (IsValid(ix.unlocks.editorPanel)) then
+			ix.unlocks.editorPanel:OpenIconBrowser(function(selectedIcon)
+				if (IsValid(iconEntry)) then
+					iconEntry:SetText(selectedIcon)
+					iconEntry:OnChange()
+				end
+			end)
+		end
+	end
+
+	self.fields[#self.fields + 1] = iconRow
+	self.fields[#self.fields + 1] = iconEntry
+	self.fields[#self.fields + 1] = iconBtn
 
 	-- Position (read-only)
 	self:AddLabel("Position: " .. node.position.x .. ", " .. node.position.y)
@@ -665,6 +1009,14 @@ vgui.Register("ixUnlockEditorInspector", INSPECTOR, "DScrollPanel")
 -- Main Editor Frame
 -- ─────────────────────────────────────────────
 
+-- A whitelist of folders to scan when browsing for icons.
+ix.unlocks.iconWhitelistFolders = {
+	"materials/icon16",
+	"materials/vgui/icons",
+	"materials/jedi",
+	"materials/sith"
+}
+
 local EDITOR = {}
 
 function EDITOR:Init()
@@ -678,11 +1030,92 @@ function EDITOR:Init()
 	self:ShowCloseButton(false)
 	self:SetDraggable(true)
 	self:MakePopup()
+	self.closePromptShown = false
 
 	ResetEditorState()
 
 	self:BuildToolbar()
 	self:BuildBody()
+end
+
+function EDITOR:RequestClose()
+	if (!editorState.dirty) then
+		self:Remove()
+		return
+	end
+
+	if (self.closePromptShown) then return end
+	self.closePromptShown = true
+
+	Derma_Query("You have unsaved changes. Close the editor anyway?", "Unsaved Changes", "Close", function()
+		if (IsValid(self)) then
+			self:Remove()
+		end
+	end, "Cancel", function()
+		if (IsValid(self)) then
+			self.closePromptShown = false
+		end
+	end)
+end
+
+function EDITOR:OpenIconBrowser(callback)
+	local frame = vgui.Create("DFrame")
+	frame:SetSize(Scale(400), Scale(500))
+	frame:Center()
+	frame:SetTitle("Icon Browser")
+	frame:MakePopup()
+
+	local search = vgui.Create("DTextEntry", frame)
+	search:Dock(TOP)
+	search:DockMargin(Scale(8), Scale(8), Scale(8), Scale(4))
+	search:SetPlaceholderText("Search...")
+
+	local scroll = vgui.Create("DScrollPanel", frame)
+	scroll:Dock(FILL)
+	scroll:DockMargin(Scale(8), 4, Scale(8), Scale(8))
+
+	local grid = vgui.Create("DIconLayout", scroll)
+	grid:Dock(FILL)
+	grid:SetSpaceY(Scale(4))
+	grid:SetSpaceX(Scale(4))
+
+	local allIcons = {}
+
+	for _, folder in ipairs(ix.unlocks.iconWhitelistFolders or {}) do
+		for _, ext in ipairs({"*.png", "*.jpg", "*.vmt"}) do
+			local searchFolder = string.TrimRight(folder, "/") .. "/" .. ext
+			local files, _ = file.Find(searchFolder, "GAME")
+			
+			for _, f in ipairs(files or {}) do
+				local cleanFolder = string.gsub(folder, "^materials/", "")
+				allIcons[#allIcons + 1] = cleanFolder .. "/" .. f
+			end
+		end
+	end
+
+	local function Populate(query)
+		grid:Clear()
+		local q = string.lower(query or "")
+
+		for _, path in ipairs(allIcons) do
+			if (q == "" or string.find(string.lower(path), q, 1, true)) then
+				local btn = grid:Add("DImageButton")
+				btn:SetSize(Scale(32), Scale(32))
+				btn:SetImage(path)
+				btn:SetTooltip(path)
+				btn.DoClick = function()
+					if (callback) then callback(path) end
+					frame:Remove()
+				end
+			end
+		end
+	end
+
+	Populate("")
+
+	search.OnChange = function()
+		Populate(search:GetValue())
+	end
 end
 
 function EDITOR:BuildToolbar()
@@ -762,17 +1195,27 @@ function EDITOR:BuildToolbar()
 	closeBtn:SetWide(btnW)
 	closeBtn:DockMargin(0, margin, margin, margin)
 	closeBtn.DoClick = function()
-		self:Remove()
+		self:RequestClose()
 	end
 
-	-- Export button
+	-- Export Code button
 	local exportBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
-	exportBtn:SetLabel("EXPORT")
+	exportBtn:SetLabel("CODE")
 	exportBtn:Dock(RIGHT)
 	exportBtn:SetWide(btnW)
 	exportBtn:DockMargin(0, margin, Scale(4), margin)
 	exportBtn.DoClick = function()
 		self:ExportTree()
+	end
+	
+	-- Export Layout button
+	local layoutExpBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	layoutExpBtn:SetLabel("LAYOUT")
+	layoutExpBtn:Dock(RIGHT)
+	layoutExpBtn:SetWide(btnW)
+	layoutExpBtn:DockMargin(0, margin, Scale(4), margin)
+	layoutExpBtn.DoClick = function()
+		self:ExportLayout()
 	end
 
 	-- Import button
@@ -795,6 +1238,42 @@ function EDITOR:BuildToolbar()
 		self:ShowLoadMenu()
 	end
 
+	local draftsBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	draftsBtn:SetLabel("DRAFTS")
+	draftsBtn:Dock(RIGHT)
+	draftsBtn:SetWide(btnW)
+	draftsBtn:DockMargin(0, margin, Scale(4), margin)
+	draftsBtn.DoClick = function()
+		self:OpenDraftBrowser()
+	end
+
+	local saveDraftBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	saveDraftBtn:SetLabel("SAVE DRAFT")
+	saveDraftBtn:Dock(RIGHT)
+	saveDraftBtn:SetWide(Scale(90))
+	saveDraftBtn:DockMargin(0, margin, Scale(4), margin)
+	saveDraftBtn.DoClick = function()
+		self:OpenDraftSaveDialog()
+	end
+
+	local presetsBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	presetsBtn:SetLabel("PRESETS")
+	presetsBtn:Dock(RIGHT)
+	presetsBtn:SetWide(btnW)
+	presetsBtn:DockMargin(0, margin, Scale(4), margin)
+	presetsBtn.DoClick = function()
+		self:OpenPresetBrowser()
+	end
+
+	local savePresetBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	savePresetBtn:SetLabel("SAVE PRESET")
+	savePresetBtn:Dock(RIGHT)
+	savePresetBtn:SetWide(Scale(90))
+	savePresetBtn:DockMargin(0, margin, Scale(4), margin)
+	savePresetBtn.DoClick = function()
+		self:OpenPresetSaveDialog()
+	end
+
 	-- Auto-layout button
 	local layoutBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
 	layoutBtn:SetLabel("AUTO LAYOUT")
@@ -803,6 +1282,53 @@ function EDITOR:BuildToolbar()
 	layoutBtn:DockMargin(0, margin, Scale(4), margin)
 	layoutBtn.DoClick = function()
 		self:AutoLayout()
+	end
+
+	local actionBtnW = Scale(60)
+
+	local pasteBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	pasteBtn:SetLabel("PASTE")
+	pasteBtn:Dock(RIGHT)
+	pasteBtn:SetWide(actionBtnW)
+	pasteBtn:DockMargin(0, margin, Scale(4), margin)
+	pasteBtn.DoClick = function()
+		self:PasteClipboard()
+	end
+
+	local cutBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	cutBtn:SetLabel("CUT")
+	cutBtn:Dock(RIGHT)
+	cutBtn:SetWide(actionBtnW)
+	cutBtn:DockMargin(0, margin, Scale(4), margin)
+	cutBtn.DoClick = function()
+		self:CutSelection()
+	end
+
+	local copyBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	copyBtn:SetLabel("COPY")
+	copyBtn:Dock(RIGHT)
+	copyBtn:SetWide(actionBtnW)
+	copyBtn:DockMargin(0, margin, Scale(4), margin)
+	copyBtn.DoClick = function()
+		self:CopySelection()
+	end
+
+	local redoBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	redoBtn:SetLabel("REDO")
+	redoBtn:Dock(RIGHT)
+	redoBtn:SetWide(actionBtnW)
+	redoBtn:DockMargin(0, margin, Scale(4), margin)
+	redoBtn.DoClick = function()
+		self:Redo()
+	end
+
+	local undoBtn = vgui.Create("ixUnlockToolbarButton", self.toolbar)
+	undoBtn:SetLabel("UNDO")
+	undoBtn:Dock(RIGHT)
+	undoBtn:SetWide(actionBtnW)
+	undoBtn:DockMargin(0, margin, Scale(4), margin)
+	undoBtn.DoClick = function()
+		self:Undo()
 	end
 end
 
@@ -824,6 +1350,251 @@ function EDITOR:BuildBody()
 	end)
 end
 
+function EDITOR:CreateSnapshot()
+	return {
+		treeID = editorState.treeID,
+		treeName = editorState.treeName,
+		treeDescription = editorState.treeDescription,
+		nodes = table.Copy(editorState.nodes),
+		edges = table.Copy(editorState.edges),
+		nextNodeIndex = editorState.nextNodeIndex,
+		selectedNode = editorState.selectedNode,
+		selectedNodes = table.Copy(editorState.selectedNodes),
+		mode = editorState.mode,
+		connectingFrom = editorState.connectingFrom
+	}
+end
+
+function EDITOR:ApplySnapshot(snapshot)
+	if (!snapshot) then return end
+
+	editorState.isRestoring = true
+
+	editorState.treeID = snapshot.treeID or ""
+	editorState.treeName = snapshot.treeName or "New Tree"
+	editorState.treeDescription = snapshot.treeDescription or ""
+	editorState.nodes = table.Copy(snapshot.nodes or {})
+	editorState.edges = table.Copy(snapshot.edges or {})
+	editorState.nextNodeIndex = snapshot.nextNodeIndex or 1
+	editorState.mode = snapshot.mode or "select"
+	editorState.connectingFrom = snapshot.connectingFrom
+	editorState.selectedNodes = table.Copy(snapshot.selectedNodes or {})
+	editorState.selectedNode = snapshot.selectedNode
+
+	if (editorState.selectedNode and !editorState.selectedNodes[editorState.selectedNode]) then
+		editorState.selectedNode = GetFirstSelectedNodeID()
+	end
+
+	if (IsValid(self.treeIDEntry)) then
+		self.treeIDEntry:SetText(editorState.treeID)
+	end
+
+	if (!editorState.selectedNode) then
+		SyncPrimarySelection(GetFirstSelectedNodeID())
+	else
+		SyncPrimarySelection(editorState.selectedNode)
+	end
+
+	editorState.isRestoring = false
+
+	if (IsValid(self.inspector)) then
+		self.inspector:LoadNode(editorState.selectedNode)
+	end
+end
+
+function EDITOR:PushUndoSnapshot(reason)
+	if (editorState.isRestoring) then return end
+
+	local snapshot = self:CreateSnapshot()
+	snapshot.reason = reason
+
+	editorState.undoStack[#editorState.undoStack + 1] = snapshot
+
+	if (#editorState.undoStack > 50) then
+		table.remove(editorState.undoStack, 1)
+	end
+
+	editorState.redoStack = {}
+	editorState.dirty = true
+
+	if (IsValid(self)) then
+		self:ScheduleAutoBackup()
+	end
+end
+
+function EDITOR:Undo()
+	if (table.IsEmpty(editorState.undoStack)) then return end
+
+	local current = self:CreateSnapshot()
+	local snapshot = table.remove(editorState.undoStack)
+
+	editorState.redoStack[#editorState.redoStack + 1] = current
+	self:ApplySnapshot(snapshot)
+end
+
+function EDITOR:Redo()
+	if (table.IsEmpty(editorState.redoStack)) then return end
+
+	local current = self:CreateSnapshot()
+	local snapshot = table.remove(editorState.redoStack)
+
+	editorState.undoStack[#editorState.undoStack + 1] = current
+	self:ApplySnapshot(snapshot)
+end
+
+function EDITOR:DeleteNodes(nodeIDs)
+	if (!nodeIDs or table.IsEmpty(nodeIDs)) then return end
+
+	self:PushUndoSnapshot("delete_nodes")
+
+	local removeSet = {}
+
+	for _, nodeID in ipairs(nodeIDs) do
+		if (editorState.nodes[nodeID]) then
+			removeSet[nodeID] = true
+		end
+	end
+
+	for nodeID in pairs(removeSet) do
+		editorState.nodes[nodeID] = nil
+	end
+
+	for i = #editorState.edges, 1, -1 do
+		local edge = editorState.edges[i]
+
+		if (removeSet[edge.from] or removeSet[edge.to]) then
+			table.remove(editorState.edges, i)
+		end
+	end
+
+	for nodeID in pairs(removeSet) do
+		editorState.selectedNodes[nodeID] = nil
+	end
+
+	SyncPrimarySelection(GetFirstSelectedNodeID())
+end
+
+function EDITOR:CopySelection()
+	local nodeIDs = GetSelectedNodeIDs()
+
+	if (table.IsEmpty(nodeIDs)) then return false end
+
+	local selectedSet = {}
+	local clipboardNodes = {}
+	local clipboardEdges = {}
+
+	for _, nodeID in ipairs(nodeIDs) do
+		selectedSet[nodeID] = true
+		clipboardNodes[nodeID] = table.Copy(editorState.nodes[nodeID])
+	end
+
+	for _, edge in ipairs(editorState.edges) do
+		if (selectedSet[edge.from] and selectedSet[edge.to]) then
+			clipboardEdges[#clipboardEdges + 1] = {from = edge.from, to = edge.to}
+		end
+	end
+
+	local centerX, centerY = GetSelectionCenter(nodeIDs)
+
+	editorState.clipboard = {
+		nodes = clipboardNodes,
+		edges = clipboardEdges,
+		anchor = {x = centerX, y = centerY},
+		pasteCount = 0,
+		sourceIDs = nodeIDs
+	}
+
+	return true
+end
+
+function EDITOR:CutSelection()
+	local nodeIDs = GetSelectedNodeIDs()
+
+	if (table.IsEmpty(nodeIDs)) then return false end
+
+	if (!self:CopySelection()) then return false end
+
+	self:DeleteNodes(nodeIDs)
+	return true
+end
+
+function EDITOR:PasteClipboard()
+	if (!editorState.clipboard or table.IsEmpty(editorState.clipboard.nodes)) then return false end
+
+	local clipboard = editorState.clipboard
+	local targetX, targetY = GetCanvasCursorPosition(self.canvas)
+	local offsetStep = GRID_SNAP * 2
+	local pasteOffset = (clipboard.pasteCount or 0) * offsetStep
+
+	self:PushUndoSnapshot("paste_nodes")
+
+	local remap = {}
+	local pastedNodeIDs = {}
+	local anchor = clipboard.anchor or {x = 0, y = 0}
+
+	for oldNodeID, node in pairs(clipboard.nodes) do
+		local newNodeID = GetUniqueNodeID(oldNodeID)
+		local copy = table.Copy(node)
+
+		copy.id = newNodeID
+		copy.position = copy.position or {x = 0, y = 0}
+		copy.position.x = SnapToGrid(targetX + (copy.position.x - anchor.x) + pasteOffset)
+		copy.position.y = SnapToGrid(targetY + (copy.position.y - anchor.y) + pasteOffset)
+
+		editorState.nodes[newNodeID] = copy
+		remap[oldNodeID] = newNodeID
+		pastedNodeIDs[#pastedNodeIDs + 1] = newNodeID
+	end
+
+	for _, edge in ipairs(clipboard.edges) do
+		local fromID = remap[edge.from]
+		local toID = remap[edge.to]
+
+		if (fromID and toID) then
+			editorState.edges[#editorState.edges + 1] = {from = fromID, to = toID}
+		end
+	end
+
+	clipboard.pasteCount = (clipboard.pasteCount or 0) + 1
+	SetSelection(pastedNodeIDs, pastedNodeIDs[1])
+
+	return true
+end
+
+function EDITOR:RotateSelection()
+	local nodeIDs = GetSelectedNodeIDs()
+
+	if (table.IsEmpty(nodeIDs)) then return false end
+
+	self:PushUndoSnapshot("rotate_nodes")
+
+	local cx, cy = GetSelectionCenter(nodeIDs)
+
+	for _, nodeID in ipairs(nodeIDs) do
+		local node = editorState.nodes[nodeID]
+
+		if (node and node.position) then
+			-- Get absolute geometric center of the node
+			local nx = node.position.x + (NODE_SIZE * 0.5)
+			local ny = node.position.y + (NODE_SIZE * 0.5)
+
+			-- Calculate distance vector from the collective rotation center
+			local dx = nx - cx
+			local dy = ny - cy
+
+			-- 90 degrees clockwise rotation matrix (x' = -y, y' = x)
+			local rdx = -dy
+			local rdy = dx
+
+			-- Apply new position, accounting for node width shift to get back to top-left coordinate
+			node.position.x = SnapToGrid(cx + rdx - (NODE_SIZE * 0.5))
+			node.position.y = SnapToGrid(cy + rdy - (NODE_SIZE * 0.5))
+		end
+	end
+
+	return true
+end
+
 function EDITOR:Paint(w, h)
 	surface.SetDrawColor(THEME.background)
 	surface.DrawRect(0, 0, w, h)
@@ -833,24 +1604,814 @@ function EDITOR:Paint(w, h)
 	surface.DrawOutlinedRect(1, 1, w - 2, h - 2)
 
 	draw.SimpleText("UNLOCK TREE EDITOR", "ixUnlockEditorTitle", Scale(14), Scale(8), THEME.accent, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+
+	local statusY = h - Scale(24)
+	surface.SetDrawColor(Color(0, 0, 0, 120))
+	surface.DrawRect(0, statusY, w, Scale(24))
+	surface.SetDrawColor(THEME.frameSoft)
+	surface.DrawLine(0, statusY, w, statusY)
+
+	local statusParts = {
+		"TREE: " .. (editorState.treeID ~= "" and editorState.treeID or "untitled"),
+		"MODE: " .. editorState.mode,
+		"SELECTED: " .. tostring(SelectionCount()),
+		"UNDO: " .. tostring(#editorState.undoStack),
+		"STATE: " .. (editorState.dirty and "dirty" or "clean")
+	}
+
+	if (editorState.lastSavedAt > 0) then
+		statusParts[#statusParts + 1] = "SAVED: " .. os.date("%H:%M:%S", editorState.lastSavedAt)
+	end
+
+	if (editorState.lastBackupAt > 0) then
+		statusParts[#statusParts + 1] = "BACKUP: " .. os.date("%H:%M:%S", editorState.lastBackupAt)
+	end
+
+	draw.SimpleText(table.concat(statusParts, "   |   "), "ixUnlockEditorSmall", Scale(12), statusY + Scale(4), THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 end
 
-function EDITOR:OnKeyCodePressed(key)
-	if (key == KEY_ESCAPE) then
-		self:Remove()
-	elseif (key == KEY_DELETE and editorState.selectedNode) then
-		local nodeID = editorState.selectedNode
+function EDITOR:SaveDraftToServer(scope, draftID, label)
+	local snapshot = self:CreateSnapshot()
+	local kind = "draft"
 
-		editorState.nodes[nodeID] = nil
+	return self:SaveRecordToServer(kind, scope, draftID, label, snapshot)
+end
 
-		for i = #editorState.edges, 1, -1 do
-			if (editorState.edges[i].from == nodeID or editorState.edges[i].to == nodeID) then
-				table.remove(editorState.edges, i)
+function EDITOR:SaveRecordToServer(kind, scope, draftID, label, snapshot, silent)
+	local encoded = util.TableToJSON(snapshot, true)
+
+	if (!encoded) then
+		chat.AddText(THEME.danger, "[Editor] ", THEME.text, "Failed to serialize draft.")
+		return
+	end
+
+	local compressed = util.Compress(encoded)
+
+	if (!compressed) then
+		chat.AddText(THEME.danger, "[Editor] ", THEME.text, "Failed to compress draft.")
+		return
+	end
+
+	net.Start("ixUnlockEditorDraftSaveRequest")
+		net.WriteString(kind or "draft")
+		net.WriteBool(silent and true or false)
+		net.WriteString(scope or "private")
+		net.WriteString(draftID or MakeDraftID(label))
+		net.WriteString(label or self.treeIDEntry:GetValue() or editorState.treeName or "Draft")
+		net.WriteUInt(#compressed, 32)
+		net.WriteData(compressed, #compressed)
+	net.SendToServer()
+
+	if (!silent) then
+		editorState.dirty = false
+		editorState.lastSavedAt = os.time()
+	end
+end
+
+function EDITOR:GetAutoBackupID()
+	local steamID64 = (LocalPlayer and LocalPlayer():SteamID64()) or "local"
+	return "__autosave_" .. MakeDraftID(steamID64) .. "_" .. MakeDraftID(editorState.treeID ~= "" and editorState.treeID or "tree")
+end
+
+function EDITOR:ScheduleAutoBackup()
+	if (self.autoBackupTimer) then
+		timer.Remove(self.autoBackupTimer)
+	end
+
+	self.autoBackupTimer = "ixUnlockEditorAutoBackup_" .. tostring(self)
+
+	timer.Create(self.autoBackupTimer, 2, 1, function()
+		if (!IsValid(self)) then return end
+		editorState.lastBackupAt = os.time()
+		self:SaveRecordToServer("draft", "private", self:GetAutoBackupID(), "Auto Backup", self:CreateSnapshot(), true)
+	end)
+end
+
+function EDITOR:RequestDraftList(kind)
+	net.Start("ixUnlockEditorDraftListRequest")
+		net.WriteString(kind or "draft")
+	net.SendToServer()
+end
+
+function EDITOR:RequestDraftLoad(kind, scope, draftID)
+	net.Start("ixUnlockEditorDraftLoadRequest")
+		net.WriteString(kind or "draft")
+		net.WriteString(scope or "private")
+		net.WriteString(draftID or "")
+	net.SendToServer()
+end
+
+function EDITOR:CreateSelectionSnapshot()
+	local nodeIDs = GetSelectedNodeIDs()
+
+	if (table.IsEmpty(nodeIDs)) then
+		return self:CreateSnapshot()
+	end
+
+	local selectedSet = {}
+	local nodes = {}
+	local edges = {}
+
+	for _, nodeID in ipairs(nodeIDs) do
+		selectedSet[nodeID] = true
+		nodes[nodeID] = table.Copy(editorState.nodes[nodeID])
+	end
+
+	for _, edge in ipairs(editorState.edges) do
+		if (selectedSet[edge.from] and selectedSet[edge.to]) then
+			edges[#edges + 1] = {from = edge.from, to = edge.to}
+		end
+	end
+
+	return {
+		treeID = editorState.treeID,
+		treeName = editorState.treeName,
+		treeDescription = editorState.treeDescription,
+		nodes = nodes,
+		edges = edges,
+		nextNodeIndex = editorState.nextNodeIndex,
+		selectedNode = editorState.selectedNode,
+		selectedNodes = table.Copy(editorState.selectedNodes),
+		mode = editorState.mode,
+		connectingFrom = editorState.connectingFrom
+	}
+end
+
+function EDITOR:OpenDraftSaveDialog()
+	return self:OpenRecordSaveDialog("draft", "Save Draft", self:CreateSnapshot())
+end
+
+function EDITOR:OpenPresetSaveDialog()
+	return self:OpenRecordSaveDialog("preset", "Save Preset", self:CreateSelectionSnapshot())
+end
+
+function EDITOR:OpenRecordSaveDialog(kind, title, snapshot)
+	local frame = vgui.Create("DFrame")
+	frame:SetSize(Scale(360), Scale(170))
+	frame:Center()
+	frame:SetTitle(title or "Save")
+	frame:MakePopup()
+
+	local form = vgui.Create("DPanel", frame)
+	form:Dock(FILL)
+	form:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
+	form.Paint = function() end
+	local recordNameLabel = (kind == "preset") and "Preset name" or "Draft name"
+	local recordIDLabel = (kind == "preset") and "Preset ID" or "Draft ID"
+
+	local nameEntry = vgui.Create("DTextEntry", form)
+	nameEntry:Dock(TOP)
+	nameEntry:SetPlaceholderText(recordNameLabel)
+	nameEntry:SetText(editorState.treeName or "Draft")
+	nameEntry:DockMargin(0, 0, 0, Scale(4))
+
+	local idEntry = vgui.Create("DTextEntry", form)
+	idEntry:Dock(TOP)
+	idEntry:SetPlaceholderText(recordIDLabel)
+	idEntry:SetText(MakeDraftID(nameEntry:GetValue()))
+	idEntry:DockMargin(0, 0, 0, Scale(4))
+
+	nameEntry.OnChange = function()
+		if (idEntry:GetValue() == "" or idEntry:GetValue() == MakeDraftID(nameEntry:GetValue())) then
+			idEntry:SetText(MakeDraftID(nameEntry:GetValue()))
+		end
+	end
+
+	local scopeCombo = vgui.Create("DComboBox", form)
+	scopeCombo:Dock(TOP)
+	scopeCombo:DockMargin(0, 0, 0, Scale(8))
+	scopeCombo:SetValue(kind == "preset" and "shared" or "private")
+	scopeCombo:AddChoice("private")
+	scopeCombo:AddChoice("shared")
+
+	if (kind == "preset") then
+		scopeCombo:SetValue("shared")
+		scopeCombo:SetEnabled(false)
+	end
+
+	local saveBtn = vgui.Create("DButton", form)
+	saveBtn:Dock(TOP)
+	saveBtn:SetText("Save")
+	saveBtn.DoClick = function()
+		local scope = scopeCombo:GetValue()
+		local draftID = idEntry:GetValue()
+		local label = nameEntry:GetValue()
+
+		if (draftID == "") then
+			draftID = MakeDraftID(label)
+		end
+
+		self:SaveRecordToServer(kind, scope, draftID, label, snapshot)
+		frame:Remove()
+	end
+end
+
+function EDITOR:OpenDraftBrowser()
+	return self:OpenRecordBrowser("draft", "Drafts")
+end
+
+function EDITOR:OpenPresetBrowser()
+	return self:OpenRecordBrowser("preset", "Presets")
+end
+
+function EDITOR:OpenRecordBrowser(kind, title)
+	if (IsValid(self.draftBrowserFrame)) then
+		self.draftBrowserFrame:Remove()
+	end
+
+	local frame = vgui.Create("DFrame")
+	frame:SetSize(Scale(760), Scale(420))
+	frame:Center()
+	frame:SetTitle(title or "Records")
+	frame:MakePopup()
+
+	self.draftBrowserFrame = frame
+	self.draftBrowserKind = kind or "draft"
+	self.draftBrowserData = {}
+	self.draftBrowserSearch = ""
+	self.draftBrowserSelection = nil
+
+	local header = vgui.Create("DLabel", frame)
+	header:Dock(TOP)
+	header:DockMargin(Scale(10), Scale(8), Scale(10), 0)
+	header:SetFont("ixUnlockEditorLabel")
+	header:SetTextColor(THEME.textMuted)
+	header:SetText((title or "Records") .. " - manage saved editor states, presets, and backups")
+	header:SizeToContents()
+
+	local search = vgui.Create("DTextEntry", frame)
+	search:Dock(TOP)
+	search:DockMargin(Scale(8), Scale(8), Scale(8), Scale(4))
+	search:SetPlaceholderText("Search by name, id, owner, or scope")
+	search.OnChange = function()
+		self.draftBrowserSearch = string.Trim(string.lower(search:GetValue() or ""))
+		self:RefreshDraftBrowserRows()
+	end
+
+	local toolbar = vgui.Create("DPanel", frame)
+	toolbar:Dock(TOP)
+	toolbar:SetTall(Scale(28))
+	toolbar:DockMargin(Scale(8), 0, Scale(8), Scale(4))
+	toolbar.Paint = function() end
+
+	local list = vgui.Create("DListView", frame)
+	list:Dock(FILL)
+	list:DockMargin(Scale(8), Scale(8), Scale(8), Scale(8))
+	list:AddColumn("Kind")
+	list:AddColumn("Scope")
+	list:AddColumn("Name")
+	list:AddColumn("Record ID")
+	list:AddColumn("Updated")
+	list:AddColumn("Owner")
+	list:AddColumn("Backups")
+	list:SetSortable(true)
+	list.OnRowSelected = function(_, _, line)
+		self.draftBrowserSelection = line.draft
+	end
+	list.OnRowDoubleClicked = function(_, _, line)
+		self.draftBrowserSelection = line.draft
+		self:LoadSelectedDraftBrowserRecord()
+	end
+
+	self.draftBrowserList = list
+
+	local bottom = vgui.Create("DPanel", frame)
+	bottom:Dock(BOTTOM)
+	bottom:SetTall(Scale(36))
+	bottom:DockMargin(Scale(8), 0, Scale(8), Scale(8))
+	bottom.Paint = function() end
+
+	local loadBtn = vgui.Create("DButton", bottom)
+	loadBtn:Dock(LEFT)
+	loadBtn:SetWide(Scale(90))
+	loadBtn:SetText((kind == "preset") and "Import" or "Open")
+	loadBtn.DoClick = function()
+		self:LoadSelectedDraftBrowserRecord()
+	end
+
+	local restoreBtn = vgui.Create("DButton", bottom)
+	restoreBtn:Dock(LEFT)
+	restoreBtn:SetWide(Scale(118))
+	restoreBtn:DockMargin(Scale(4), 0, 0, 0)
+	restoreBtn:SetText("Restore Backup")
+	restoreBtn.DoClick = function()
+		self:RestoreSelectedDraftBrowserRecord()
+	end
+
+	local renameBtn = vgui.Create("DButton", bottom)
+	renameBtn:Dock(LEFT)
+	renameBtn:SetWide(Scale(90))
+	renameBtn:DockMargin(Scale(4), 0, 0, 0)
+	renameBtn:SetText("Rename")
+	renameBtn.DoClick = function()
+		self:RenameSelectedDraftBrowserRecord()
+	end
+
+	local deleteBtn = vgui.Create("DButton", bottom)
+	deleteBtn:Dock(LEFT)
+	deleteBtn:SetWide(Scale(90))
+	deleteBtn:DockMargin(Scale(4), 0, 0, 0)
+	deleteBtn:SetText("Delete")
+	deleteBtn.DoClick = function()
+		self:DeleteSelectedDraftBrowserRecord()
+	end
+
+	local refreshBtn = vgui.Create("DButton", bottom)
+	refreshBtn:Dock(LEFT)
+	refreshBtn:SetWide(Scale(90))
+	refreshBtn:DockMargin(Scale(4), 0, 0, 0)
+	refreshBtn:SetText("Refresh")
+	refreshBtn.DoClick = function()
+		self:RequestDraftList(self.draftBrowserKind)
+	end
+
+	local closeBtn = vgui.Create("DButton", bottom)
+	closeBtn:Dock(RIGHT)
+	closeBtn:SetWide(Scale(90))
+	closeBtn:SetText("Close")
+	closeBtn.DoClick = function()
+		frame:Remove()
+	end
+
+	frame.DraftList = list
+	frame.DraftSearch = search
+	frame.DraftToolbar = toolbar
+	self:RequestDraftList(kind)
+end
+
+function EDITOR:GetDraftBrowserSelection()
+	if (self.draftBrowserSelection) then
+		return self.draftBrowserSelection
+	end
+
+	if (!IsValid(self.draftBrowserList)) then return nil end
+
+	local lineID = self.draftBrowserList:GetSelectedLine()
+
+	if (!lineID) then return nil end
+
+	local line = self.draftBrowserList:GetLine(lineID)
+
+	return line and line.draft or nil
+end
+
+function EDITOR:LoadSelectedDraftBrowserRecord()
+	local record = self:GetDraftBrowserSelection()
+
+	if (!record) then return end
+
+	self:RequestDraftLoad(record.kind or self.draftBrowserKind, record.scope or "private", record.id or "")
+end
+
+function EDITOR:RenameSelectedDraftBrowserRecord()
+	local record = self:GetDraftBrowserSelection()
+
+	if (!record) then return end
+
+	Derma_StringRequest("Rename Record", "Enter a new display name.", record.label or record.id or "", function(text)
+		self:RequestDraftRename(record.kind or self.draftBrowserKind, record.scope or "private", record.id or "", text)
+	end)
+end
+
+function EDITOR:DeleteSelectedDraftBrowserRecord()
+	local record = self:GetDraftBrowserSelection()
+
+	if (!record) then return end
+
+	Derma_Query("Delete '" .. tostring(record.label or record.id or "record") .. "'?", "Confirm Delete", "Delete", function()
+		self:RequestDraftDelete(record.kind or self.draftBrowserKind, record.scope or "private", record.id or "")
+	end, "Cancel")
+end
+
+function EDITOR:RestoreSelectedDraftBrowserRecord()
+	local record = self:GetDraftBrowserSelection()
+
+	if (!record) then return end
+
+	self:OpenBackupHistoryDialog(record)
+end
+
+function EDITOR:RequestDraftRename(kind, scope, draftID, newLabel)
+	net.Start("ixUnlockEditorDraftRenameRequest")
+		net.WriteString(kind or "draft")
+		net.WriteString(scope or "private")
+		net.WriteString(draftID or "")
+		net.WriteString(newLabel or "")
+	net.SendToServer()
+end
+
+function EDITOR:RequestDraftDelete(kind, scope, draftID)
+	net.Start("ixUnlockEditorDraftDeleteRequest")
+		net.WriteString(kind or "draft")
+		net.WriteString(scope or "private")
+		net.WriteString(draftID or "")
+	net.SendToServer()
+end
+
+function EDITOR:RequestDraftRestore(kind, scope, draftID)
+	net.Start("ixUnlockEditorDraftRestoreRequest")
+		net.WriteString(kind or "draft")
+		net.WriteString(scope or "private")
+		net.WriteString(draftID or "")
+	net.SendToServer()
+end
+
+function EDITOR:RequestDraftBackupList(kind, scope, draftID)
+	net.Start("ixUnlockEditorDraftBackupListRequest")
+		net.WriteString(kind or "draft")
+		net.WriteString(scope or "private")
+		net.WriteString(draftID or "")
+	net.SendToServer()
+end
+
+function EDITOR:RequestDraftRestoreBackup(kind, scope, draftID, backupIndex)
+	net.Start("ixUnlockEditorDraftRestoreBackupRequest")
+		net.WriteString(kind or "draft")
+		net.WriteString(scope or "private")
+		net.WriteString(draftID or "")
+		net.WriteUInt(math.max(1, tonumber(backupIndex) or 1), 16)
+	net.SendToServer()
+end
+
+function EDITOR:RefreshDraftBrowserRows()
+	if (!IsValid(self.draftBrowserList)) then return end
+
+	local query = string.Trim(string.lower(self.draftBrowserSearch or ""))
+	self.draftBrowserList:Clear()
+
+	for _, draft in ipairs(self.draftBrowserData or {}) do
+		local haystack = string.lower(table.concat({
+			tostring(draft.kind or ""),
+			tostring(draft.scope or ""),
+			tostring(draft.label or ""),
+			tostring(draft.id or ""),
+			tostring(draft.ownerName or ""),
+			tostring(draft.ownerSteamID64 or "")
+		}, " "))
+
+		if (query == "" or string.find(haystack, query, 1, true)) then
+			local line = self.draftBrowserList:AddLine(
+				draft.kind or "draft",
+				draft.scope or "private",
+				draft.label or draft.id or "Draft",
+				draft.id or "",
+				FormatTimestamp(draft.updatedAt),
+				draft.ownerName or draft.ownerSteamID64 or "",
+				tostring(draft.backupCount or 0)
+			)
+			line.draft = draft
+		end
+	end
+
+	self.draftBrowserList:SortByColumn(5, true)
+
+	self.draftBrowserSelection = nil
+end
+
+function EDITOR:PopulateDraftBrowser(drafts)
+	if (!IsValid(self.draftBrowserFrame)) then return end
+
+	self.draftBrowserData = drafts or {}
+	self:RefreshDraftBrowserRows()
+end
+
+function EDITOR:OpenBackupHistoryDialog(record)
+	if (!record) then return end
+
+	if (IsValid(self.backupHistoryFrame)) then
+		self.backupHistoryFrame:Remove()
+	end
+
+	self.backupHistoryRecord = record
+
+	local frame = vgui.Create("DFrame")
+	frame:SetSize(Scale(620), Scale(360))
+	frame:Center()
+	frame:SetTitle("Backup History")
+	frame:MakePopup()
+
+	self.backupHistoryFrame = frame
+
+	local label = vgui.Create("DLabel", frame)
+	label:Dock(TOP)
+	label:DockMargin(Scale(8), Scale(8), Scale(8), Scale(4))
+	label:SetFont("ixUnlockEditorLabel")
+	label:SetTextColor(THEME.textMuted)
+	label:SetText((record.label or record.id or "record") .. " - newest backups first")
+	label:SizeToContents()
+
+	local list = vgui.Create("DListView", frame)
+	list:Dock(FILL)
+	list:DockMargin(Scale(8), 0, Scale(8), Scale(8))
+	list:AddColumn("#")
+	list:AddColumn("Created")
+	list:AddColumn("Label")
+	list:AddColumn("Tree")
+	frame.BackupList = list
+
+	local bottom = vgui.Create("DPanel", frame)
+	bottom:Dock(BOTTOM)
+	bottom:SetTall(Scale(36))
+	bottom:DockMargin(Scale(8), 0, Scale(8), Scale(8))
+	bottom.Paint = function() end
+
+	local restoreBtn = vgui.Create("DButton", bottom)
+	restoreBtn:Dock(LEFT)
+	restoreBtn:SetWide(Scale(96))
+	restoreBtn:SetText("Restore")
+	restoreBtn.DoClick = function()
+		local lineID = list:GetSelectedLine()
+		local line = lineID and list:GetLine(lineID) or nil
+		if (!line) then return end
+		self:RequestDraftRestoreBackup(record.kind or self.draftBrowserKind, record.scope or "private", record.id or "", line.backupIndex or 1)
+	end
+
+	local closeBtn = vgui.Create("DButton", bottom)
+	closeBtn:Dock(RIGHT)
+	closeBtn:SetWide(Scale(90))
+	closeBtn:SetText("Close")
+	closeBtn.DoClick = function()
+		frame:Remove()
+	end
+
+	self:RequestDraftBackupList(record.kind or self.draftBrowserKind, record.scope or "private", record.id or "")
+end
+
+function EDITOR:PopulateBackupHistory(backups)
+	if (!IsValid(self.backupHistoryFrame) or !IsValid(self.backupHistoryFrame.BackupList)) then return end
+
+	local list = self.backupHistoryFrame.BackupList
+	list:Clear()
+
+	for _, backup in ipairs(backups or {}) do
+		local line = list:AddLine(
+			tostring(backup.index or 1),
+			FormatTimestamp(backup.createdAt),
+			backup.label or "Backup",
+			backup.treeName or backup.treeID or ""
+		)
+		line.backupIndex = backup.index or 1
+	end
+end
+
+function EDITOR:RequestBackupHistoryFromSelection()
+	local record = self:GetDraftBrowserSelection()
+
+	if (!record) then return end
+
+	self:OpenBackupHistoryDialog(record)
+end
+
+function EDITOR:ApplyDraftSnapshot(snapshot)
+	if (!snapshot) then return end
+
+	editorState.undoStack = {}
+	editorState.redoStack = {}
+	editorState.clipboard = nil
+	ResetEditorState()
+	self:ApplySnapshot(snapshot)
+	editorState.dirty = false
+	editorState.lastSavedAt = os.time()
+end
+
+function EDITOR:OpenPresetImportDialog(snapshot, metadata)
+	if (!snapshot or !snapshot.nodes) then return end
+
+	local frame = vgui.Create("DFrame")
+	frame:SetSize(Scale(560), Scale(480))
+	frame:Center()
+	frame:SetTitle("Import Preset")
+	frame:MakePopup()
+
+	local info = vgui.Create("DLabel", frame)
+	info:Dock(TOP)
+	info:DockMargin(Scale(8), Scale(8), Scale(8), Scale(4))
+	info:SetFont("ixUnlockEditorLabel")
+	info:SetTextColor(THEME.textMuted)
+	info:SetText("Select nodes to import from " .. tostring(metadata and (metadata.label or metadata.id) or "preset"))
+	info:SizeToContents()
+
+	local controls = vgui.Create("DPanel", frame)
+	controls:Dock(TOP)
+	controls:SetTall(Scale(28))
+	controls:DockMargin(Scale(8), 0, Scale(8), Scale(4))
+	controls.Paint = function() end
+
+	local selectAll = vgui.Create("DButton", controls)
+	selectAll:Dock(LEFT)
+	selectAll:SetWide(Scale(80))
+	selectAll:SetText("All")
+
+	local selectNone = vgui.Create("DButton", controls)
+	selectNone:Dock(LEFT)
+	selectNone:SetWide(Scale(80))
+	selectNone:DockMargin(Scale(4), 0, 0, 0)
+	selectNone:SetText("None")
+
+	local scroll = vgui.Create("DScrollPanel", frame)
+	scroll:Dock(FILL)
+	scroll:DockMargin(Scale(8), 0, Scale(8), Scale(8))
+
+	local rows = {}
+
+	for nodeID, node in SortedPairs(snapshot.nodes) do
+		local row = vgui.Create("DCheckBoxLabel", scroll)
+		row:Dock(TOP)
+		row:DockMargin(0, 0, 0, Scale(2))
+		row:SetText((node.name or nodeID) .. " [" .. nodeID .. "]")
+		row:SetValue(true)
+		row.nodeID = nodeID
+		row:SizeToContents()
+		rows[#rows + 1] = row
+	end
+
+	selectAll.DoClick = function()
+		for _, row in ipairs(rows) do
+			row:SetChecked(true)
+		end
+	end
+
+	selectNone.DoClick = function()
+		for _, row in ipairs(rows) do
+			row:SetChecked(false)
+		end
+	end
+
+	local bottom = vgui.Create("DPanel", frame)
+	bottom:Dock(BOTTOM)
+	bottom:SetTall(Scale(36))
+	bottom:DockMargin(Scale(8), 0, Scale(8), Scale(8))
+	bottom.Paint = function() end
+
+	local importBtn = vgui.Create("DButton", bottom)
+	importBtn:Dock(RIGHT)
+	importBtn:SetWide(Scale(96))
+	importBtn:SetText("Import")
+	importBtn.DoClick = function()
+		local selected = {}
+		for _, row in ipairs(rows) do
+			if (row:GetChecked()) then
+				selected[#selected + 1] = row.nodeID
 			end
 		end
 
-		editorState.selectedNode = nil
-		hook.Run("UnlockEditorNodeSelected", nil)
+		if (table.IsEmpty(selected)) then
+			chat.AddText(THEME.danger, "[Editor] ", THEME.text, "Select at least one node to import.")
+			return
+		end
+
+		local selectedSet = {}
+		local nodes = {}
+		for _, nodeID in ipairs(selected) do
+			selectedSet[nodeID] = true
+			nodes[nodeID] = table.Copy(snapshot.nodes[nodeID])
+		end
+
+		local edges = {}
+		for _, edge in ipairs(snapshot.edges or {}) do
+			if (selectedSet[edge.from] and selectedSet[edge.to]) then
+				edges[#edges + 1] = {from = edge.from, to = edge.to}
+			end
+		end
+
+		self:ImportSnapshot({
+			treeID = snapshot.treeID,
+			treeName = snapshot.treeName,
+			treeDescription = snapshot.treeDescription,
+			nodes = nodes,
+			edges = edges,
+			nextNodeIndex = snapshot.nextNodeIndex
+		})
+
+		chat.AddText(THEME.ready, "[Editor] ", THEME.text, "Imported preset selection: " .. tostring(metadata and (metadata.label or metadata.id) or "preset"))
+
+		frame:Remove()
+	end
+
+	local closeBtn = vgui.Create("DButton", bottom)
+	closeBtn:Dock(RIGHT)
+	closeBtn:SetWide(Scale(90))
+	closeBtn:DockMargin(Scale(4), 0, 0, 0)
+	closeBtn:SetText("Cancel")
+	closeBtn.DoClick = function()
+		frame:Remove()
+	end
+end
+
+function EDITOR:ImportSnapshot(snapshot)
+	if (!snapshot or !snapshot.nodes) then return end
+
+	local nodeIDs = {}
+	local centerX, centerY = 0, 0
+	local count = 0
+
+	for nodeID, node in pairs(snapshot.nodes) do
+		if (node and node.position) then
+			centerX = centerX + node.position.x
+			centerY = centerY + node.position.y
+			count = count + 1
+			nodeIDs[#nodeIDs + 1] = nodeID
+		end
+	end
+
+	if (count == 0) then return end
+
+	editorState.clipboard = {
+		nodes = table.Copy(snapshot.nodes),
+		edges = table.Copy(snapshot.edges or {}),
+		anchor = {x = centerX / count, y = centerY / count},
+		pasteCount = 0,
+		sourceIDs = nodeIDs
+	}
+
+	self:PasteClipboard()
+end
+
+net.Receive("ixUnlockEditorDraftStatus", function()
+	local message = net.ReadString()
+	chat.AddText(THEME.ready, "[Editor] ", THEME.text, message)
+
+	if (IsValid(ix.unlocks.editorPanel) and IsValid(ix.unlocks.editorPanel.draftBrowserFrame)) then
+		timer.Simple(0, function()
+			if (IsValid(ix.unlocks.editorPanel)) then
+				ix.unlocks.editorPanel:RequestDraftList(ix.unlocks.editorPanel.draftBrowserKind)
+			end
+		end)
+	end
+end)
+
+net.Receive("ixUnlockEditorDraftList", function()
+	local len = net.ReadUInt(32)
+	local compressed = net.ReadData(len)
+	local json = util.Decompress(compressed)
+	local drafts = json and util.JSONToTable(json) or {}
+
+	if (IsValid(ix.unlocks.editorPanel)) then
+		ix.unlocks.editorPanel:PopulateDraftBrowser(drafts)
+	end
+end)
+
+net.Receive("ixUnlockEditorDraftLoad", function()
+	local kind = net.ReadString()
+	local scope = net.ReadString()
+	local draftID = net.ReadString()
+	local len = net.ReadUInt(32)
+	local compressed = net.ReadData(len)
+	local json = util.Decompress(compressed)
+	local snapshot = json and util.JSONToTable(json) or nil
+
+	if (!snapshot) then return end
+
+	if (IsValid(ix.unlocks.editorPanel)) then
+		if (kind == "preset") then
+			ix.unlocks.editorPanel:OpenPresetImportDialog(snapshot, {kind = kind, scope = scope, id = draftID, label = draftID})
+		else
+			ix.unlocks.editorPanel:ApplyDraftSnapshot(snapshot)
+			chat.AddText(THEME.ready, "[Editor] ", THEME.text, "Loaded draft: " .. draftID .. " (" .. scope .. ")")
+		end
+	end
+end)
+
+net.Receive("ixUnlockEditorDraftBackupList", function()
+	local len = net.ReadUInt(32)
+	local compressed = net.ReadData(len)
+	local json = util.Decompress(compressed)
+	local backups = json and util.JSONToTable(json) or {}
+
+	if (IsValid(ix.unlocks.editorPanel)) then
+		ix.unlocks.editorPanel:PopulateBackupHistory(backups)
+	end
+end)
+
+function EDITOR:OnKeyCodePressed(key)
+	if (IsTextInputFocused()) then return end
+
+	local ctrlDown = input.IsKeyDown(KEY_LCONTROL) or input.IsKeyDown(KEY_RCONTROL)
+
+	if (key == KEY_ESCAPE) then
+		self:RequestClose()
+	elseif (ctrlDown and key == KEY_Z) then
+		self:Undo()
+	elseif (ctrlDown and key == KEY_Y) then
+		self:Redo()
+	elseif (ctrlDown and key == KEY_C) then
+		self:CopySelection()
+	elseif (ctrlDown and key == KEY_X) then
+		self:CutSelection()
+	elseif (ctrlDown and key == KEY_V) then
+		self:PasteClipboard()
+	elseif (ctrlDown and key == KEY_R) then
+		self:RotateSelection()
+	elseif (ctrlDown and key == KEY_A) then
+		local nodeIDs = {}
+
+		for nodeID in pairs(editorState.nodes) do
+			nodeIDs[#nodeIDs + 1] = nodeID
+		end
+
+		SetSelection(nodeIDs, nodeIDs[1])
+	elseif (key == KEY_DELETE) then
+		self:DeleteNodes(GetSelectedNodeIDs())
 	end
 end
 
@@ -913,6 +2474,31 @@ function EDITOR:ExportTree()
 
 	SetClipboardText(output)
 	chat.AddText(THEME.ready, "[Editor] ", THEME.text, "Tree exported to clipboard as Lua code.")
+end
+
+--- Export only the visual layout (positions and icons) to clipboard for merging.
+function EDITOR:ExportLayout()
+	if (editorState.treeID == "") then
+		chat.AddText(THEME.danger, "[Editor] ", THEME.text, "Set a Tree ID before exporting layout.")
+		return
+	end
+
+	local lines = {}
+	lines[#lines + 1] = "-- Merge visual layout for tree: " .. editorState.treeID
+	lines[#lines + 1] = "ix.unlocks.MergeVisuals(\"" .. editorState.treeID .. "\", {"
+
+	for nodeID, node in SortedPairs(editorState.nodes) do
+		lines[#lines + 1] = "\t[\"" .. nodeID .. "\"] = {"
+		lines[#lines + 1] = "\t\tposition = {x = " .. node.position.x .. ", y = " .. node.position.y .. "},"
+		lines[#lines + 1] = "\t\ticon = \"" .. (node.icon or "icon16/brick.png") .. "\""
+		lines[#lines + 1] = "\t},"
+	end
+
+	lines[#lines + 1] = "})"
+
+	local output = table.concat(lines, "\n")
+	SetClipboardText(output)
+	chat.AddText(THEME.ready, "[Editor] ", THEME.text, "Visual layout exported to clipboard as merge script.")
 end
 
 --- Import a tree from a registered tree into the editor.

@@ -12,6 +12,7 @@ ix.util.Include("sh_node.lua")
 -- Server files
 ix.util.Include("sv_storage.lua")
 ix.util.Include("sv_progression.lua")
+ix.util.Include("sv_editor_drafts.lua")
 ix.util.Include("sv_networking.lua")
 
 -- Client files

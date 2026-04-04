@@ -1,6 +1,6 @@
 PLUGIN.name        = "Character Panel"
 PLUGIN.description = "Equipment panel with dynamic slot registration, integrated into the VANIR YOU tab."
-PLUGIN.author      = "Adolphus"
+PLUGIN.author      = "Theodor"
 
 ix.util.Include("sv_database.lua")
 ix.util.Include("sv_hooks.lua")
@@ -48,15 +48,7 @@ function ix.charPane.RegisterSlot(category, options)
 end
 
 -- Default slot layout (Using different X coordinates to avoid 6-bit integer overflow on Y dimensions)
-ix.charPane.RegisterSlot("headgear",  { side = "left",  order = 1, label = "HEAD",      gridX = 1,  gridY = 1 })
 ix.charPane.RegisterSlot("torso",     { side = "left",  order = 2, label = "TORSO",     gridX = 5,  gridY = 1 })
-ix.charPane.RegisterSlot("kevlar",    { side = "left",  order = 3, label = "KEVLAR",    gridX = 9,  gridY = 1 })
-ix.charPane.RegisterSlot("bag",       { side = "left",  order = 4, label = "BAG",       gridX = 13, gridY = 1 })
-ix.charPane.RegisterSlot("satchel",   { side = "left",  order = 5, label = "SATCHEL",   gridX = 17, gridY = 1 })
-ix.charPane.RegisterSlot("glasses",   { side = "right", order = 1, label = "EYEWEAR",   gridX = 21, gridY = 1 })
-ix.charPane.RegisterSlot("headstrap", { side = "right", order = 2, label = "STRAP",     gridX = 25, gridY = 1 })
-ix.charPane.RegisterSlot("hands",     { side = "right", order = 3, label = "HANDS",     gridX = 29, gridY = 1 })
-ix.charPane.RegisterSlot("legs",      { side = "right", order = 4, label = "LEGS",      gridX = 33, gridY = 1 })
 ix.charPane.RegisterSlot("primary",   { side = "right", order = 5, label = "PRIMARY",   gridX = 37, gridY = 1 })
 ix.charPane.RegisterSlot("secondary", { side = "right", order = 6, label = "SECONDARY", gridX = 41, gridY = 1 })
 ix.charPane.RegisterSlot("tertiary",  { side = "right", order = 7, label = "TERTIARY",  gridX = 45, gridY = 1 })
