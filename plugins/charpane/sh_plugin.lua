@@ -10,6 +10,9 @@ ix.util.IncludeDir(PLUGIN.folder .. "/meta", true)
 -- Other plugins call ix.charPane.RegisterSlot() to add equipment categories.
 -- The registration must happen before the YOU tab panel is first created.
 
+-- Register the equipment inventory grid shape (62 columns by 62 rows to ensure items fit without 6-bit integer overflow! Standard grid inventory sizes in Helix are clamped to `uint6` (0 to 63) over the network layer `net.WriteUInt`, and coordinate spacing requires jumping by `+4` locally to give 3x3 items clearance.)
+ix.inventory.Register("equipment", 62, 62, false)
+
 ix.charPane = ix.charPane or {}
 ix.charPane.slots = ix.charPane.slots or {}
 
@@ -19,27 +22,47 @@ ix.charPane.slots = ix.charPane.slots or {}
 --   side      "left"|"right"  Which column to appear in around the model panel.
 --   order     number          Sort priority within the column (lower = higher).
 --   label     string          Short label displayed beneath the slot (uppercase).
+--   gridX     number          The horizontal X coordinate for "equipment" inventory entry.
+--   gridY     number          The vertical Y coordinate.
 --   condition function|nil    Optional function(ply) → bool; hide slot when false.
 function ix.charPane.RegisterSlot(category, options)
     options = options or {}
+    
+    -- Auto-assign gridX if omitted by incrementing from the highest existing gridX.
+    if not options.gridX then
+        local maxGrid = 0
+        for k, v in pairs(ix.charPane.slots) do
+            if v.gridX and v.gridX > maxGrid then maxGrid = v.gridX end
+        end
+        options.gridX = maxGrid + 4
+    end
+    
     ix.charPane.slots[category] = {
         side      = options.side      or "left",
         order     = options.order     or 50,
         label     = options.label     or string.upper(category),
+        gridX     = options.gridX,
+        gridY     = options.gridY     or 1,
         condition = options.condition,
     }
 end
 
--- Default slot layout
-ix.charPane.RegisterSlot("headgear",  { side = "left",  order = 1, label = "HEAD"    })
-ix.charPane.RegisterSlot("torso",     { side = "left",  order = 2, label = "TORSO"   })
-ix.charPane.RegisterSlot("kevlar",    { side = "left",  order = 3, label = "KEVLAR"  })
-ix.charPane.RegisterSlot("bag",       { side = "left",  order = 4, label = "BAG"     })
-ix.charPane.RegisterSlot("satchel",   { side = "left",  order = 5, label = "SATCHEL" })
-ix.charPane.RegisterSlot("glasses",   { side = "right", order = 1, label = "EYEWEAR" })
-ix.charPane.RegisterSlot("headstrap", { side = "right", order = 2, label = "STRAP"   })
-ix.charPane.RegisterSlot("hands",     { side = "right", order = 3, label = "HANDS"   })
-ix.charPane.RegisterSlot("legs",      { side = "right", order = 4, label = "LEGS"    })
+-- Default slot layout (Using different X coordinates to avoid 6-bit integer overflow on Y dimensions)
+ix.charPane.RegisterSlot("headgear",  { side = "left",  order = 1, label = "HEAD",      gridX = 1,  gridY = 1 })
+ix.charPane.RegisterSlot("torso",     { side = "left",  order = 2, label = "TORSO",     gridX = 5,  gridY = 1 })
+ix.charPane.RegisterSlot("kevlar",    { side = "left",  order = 3, label = "KEVLAR",    gridX = 9,  gridY = 1 })
+ix.charPane.RegisterSlot("bag",       { side = "left",  order = 4, label = "BAG",       gridX = 13, gridY = 1 })
+ix.charPane.RegisterSlot("satchel",   { side = "left",  order = 5, label = "SATCHEL",   gridX = 17, gridY = 1 })
+ix.charPane.RegisterSlot("glasses",   { side = "right", order = 1, label = "EYEWEAR",   gridX = 21, gridY = 1 })
+ix.charPane.RegisterSlot("headstrap", { side = "right", order = 2, label = "STRAP",     gridX = 25, gridY = 1 })
+ix.charPane.RegisterSlot("hands",     { side = "right", order = 3, label = "HANDS",     gridX = 29, gridY = 1 })
+ix.charPane.RegisterSlot("legs",      { side = "right", order = 4, label = "LEGS",      gridX = 33, gridY = 1 })
+ix.charPane.RegisterSlot("primary",   { side = "right", order = 5, label = "PRIMARY",   gridX = 37, gridY = 1 })
+ix.charPane.RegisterSlot("secondary", { side = "right", order = 6, label = "SECONDARY", gridX = 41, gridY = 1 })
+ix.charPane.RegisterSlot("tertiary",  { side = "right", order = 7, label = "TERTIARY",  gridX = 45, gridY = 1 })
+ix.charPane.RegisterSlot("ammo1",     { side = "left", order = 8, label = "AMMO 1",    gridX = 49, gridY = 1 })
+ix.charPane.RegisterSlot("ammo2",     { side = "left", order = 9, label = "AMMO 2",    gridX = 53, gridY = 1 })
+ix.charPane.RegisterSlot("ammo3",     { side = "left", order = 10, label = "AMMO 3",   gridX = 57, gridY = 1 })
 
 -- Legacy pixel-placement table kept for ixCharacterPane (storage view popup).
 PLUGIN.slotPlacements = {
@@ -52,6 +75,9 @@ PLUGIN.slotPlacements = {
     ["legs"]      = { x = 291, y = 370 },
     ["bag"]       = { x = 5,   y = 310 },
     ["satchel"]   = { x = 5,   y = 380 },
+    ["primary"]   = { x = 291, y = 440 },
+    ["secondary"] = { x = 291, y = 510 },
+    ["tertiary"]  = { x = 291, y = 580 },
 }
 
 -- Called when the client is checking if it has access to see the character panel.

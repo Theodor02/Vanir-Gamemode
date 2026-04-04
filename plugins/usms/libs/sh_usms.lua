@@ -36,26 +36,7 @@ USMS_LOG_SQUAD_MEMBER_LEAVE   = "squad_member_leave"
 USMS_LOG_SQUAD_MEMBER_KICKED  = "squad_member_kicked"
 USMS_LOG_GEARUP               = "gearup"
 USMS_LOG_CLASS_WHITELIST       = "class_whitelist"
-USMS_LOG_MISSION_CREATED      = "mission_created"
-USMS_LOG_MISSION_COMPLETED    = "mission_completed"
-USMS_LOG_MISSION_CANCELLED    = "mission_cancelled"
-USMS_LOG_COMMENDATION_AWARDED = "commendation_awarded"
-USMS_LOG_COMMENDATION_REVOKED = "commendation_revoked"
-
--- Mission status
-USMS_MISSION_ACTIVE    = "active"
-USMS_MISSION_COMPLETE  = "complete"
-USMS_MISSION_CANCELLED = "cancelled"
-
--- Mission priority
-USMS_MISSION_PRIORITY_LOW      = 1
-USMS_MISSION_PRIORITY_NORMAL   = 2
-USMS_MISSION_PRIORITY_CRITICAL = 3
-
--- Commendation types
-USMS_COMMENDATION_MEDAL        = "medal"
-USMS_COMMENDATION_COMMENDATION = "commendation"
-USMS_COMMENDATION_REPRIMAND    = "reprimand"
+-- FIX: USMS_LOG_MISSION_*, USMS_LOG_COMMENDATION_*, USMS_MISSION_*, USMS_COMMENDATION_* removed (systems cut by design)
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- SERVER-SIDE CACHE (populated from saved data on load, kept in sync)
@@ -67,15 +48,10 @@ if (SERVER) then
     ix.usms.members = ix.usms.members or {}           -- [charID] = memberData
     ix.usms.squadMembers = ix.usms.squadMembers or {} -- [charID] = squadMemberData
 
-    -- Mission & commendation caches
-    ix.usms.missions = ix.usms.missions or {}             -- [missionID] = missionData
-    ix.usms.commendations = ix.usms.commendations or {}   -- [commendationID] = commendationData
-
     -- Auto-increment counters (managed by sv_database.lua)
     ix.usms.nextUnitID = ix.usms.nextUnitID or 1
     ix.usms.nextSquadID = ix.usms.nextSquadID or 1
-    ix.usms.nextMissionID = ix.usms.nextMissionID or 1
-    ix.usms.nextCommendationID = ix.usms.nextCommendationID or 1
+    -- FIX: nextMissionID, nextCommendationID removed (systems cut by design)
 end
 
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -258,10 +234,7 @@ if (CLIENT) then
         if (ix.usms.clientData and ix.usms.clientData.unit and ix.usms.clientData.unit.id == unitID) then
             return ix.usms.clientData.unit
         end
-        -- Check intel cache
-        if (ix.usms.clientData and ix.usms.clientData.intelUnits[unitID]) then
-            return ix.usms.clientData.intelUnits[unitID]
-        end
+        -- FIX: intelUnits removed; return nil directly
         return nil
     end
 

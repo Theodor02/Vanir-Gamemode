@@ -59,7 +59,19 @@ function ix.charPanel.RestoreCharPanel(panelID, callback)
                             restoredItem.characterID = characterID
                             restoredItem.playerID = (playerID == "" or playerID == "NULL") and nil or playerID
 
-                            equippedSlots[restoredItem.outfitCategory] = restoredItem;
+                            local cat = restoredItem.outfitCategory
+                            if (cat == "ammo") then
+                                -- Map to ammo1, ammo2, etc. based on gridX which is inside data usually, but data has no gridX.
+                                -- Use a fallback for ammo:
+                                for slotID, slotData in pairs(ix.charPane.slots) do
+                                    if string.StartsWith(slotID, "ammo") and not equippedSlots[slotID] then
+                                        cat = slotID
+                                        break
+                                    end
+                                end
+                            end
+
+                            equippedSlots[cat] = restoredItem;
                         end
                     end
                 end
@@ -110,8 +122,8 @@ net.Receive("ixCharPanelReceiveItem", function(length, client)
 	local invID = net.ReadUInt(32)
 	local panelID = net.ReadUInt(32)
 
-	if(ix.charPanel.HasIntegrity(client, item, invID, panelID, true)) then
-		local charPanel = ix.charPanels[panelID];
+	local charPanel = ix.charPanels[panelID]
+	if(panelID != 0 and charPanel and ix.charPanel.HasIntegrity(client, item, invID, panelID, true)) then
 		item = ix.item.instances[item]
 		charPanel:Add(item.id, {}, item.outfitCategory)
 	else
@@ -128,7 +140,6 @@ net.Receive("ixCharPanelTransfer", function(length, client)
 	if(ix.charPanel.HasIntegrity(client, item, invID, panelID, false)) then
 		local charPanel = ix.charPanels[panelID];
         item = ix.item.instances[item]
-        
 		charPanel:Transfer(item.id, invID, x, y)
 	else
 		return

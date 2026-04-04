@@ -80,7 +80,48 @@ function ITEM:OnLoadout()
     return
 end
 
+-- Charpane specific hooks for equipping/unequipping when moved into a visual loadout slot
+function ITEM:OnEquipped(client)
+    -- Charpane automatically evaluates native Equip() in sv_hooks.lua, so no need to call it twice.
+end
+
+function ITEM:OnUnequipped(client)
+    -- Charpane automatically evaluates native Unequip() in sv_hooks.lua, so no need to call it twice.
+end
+
+-- Suppress default inventory equipping to force using Charpane
+ITEM.functions = ITEM.functions or {}
+
+ITEM.functions.EquipUn = {
+	name = "unequip",
+	tip = "unequipTip",
+	icon = "icon16/cross.png",
+	OnRun = function(item)
+		item:Unequip(item.player, true)
+		return false
+	end,
+	OnCanRun = function(item)
+        -- We return false so you can't equip via right-click in inventory. Must use charpane!
+		return false
+	end
+}
+
+ITEM.functions.Equip = {
+	name = "equip",
+	tip = "equipTip",
+	icon = "icon16/tick.png",
+	OnRun = function(item)
+		item:Equip(item.player)
+		return false
+	end,
+	OnCanRun = function(item)
+        -- We return false so you can't equip via right-click in inventory. Must use charpane!
+		return false
+	end
+}
+
 function ITEM:Equip(client, bNoSelect, bNoSound)
+    client = client or self.player
     client.carryWeapons = client.carryWeapons or {}
 
     for k, _ in client:GetCharacter():GetInventory():Iter() do
@@ -151,6 +192,7 @@ function ITEM:Equip(client, bNoSelect, bNoSound)
 end
 
 function ITEM:Unequip(client, bPlaySound, bRemoveItem)
+    client = client or self.player
     client.carryWeapons = client.carryWeapons or {}
 
     local weapon = client.carryWeapons[self.weaponCategory]
@@ -158,6 +200,8 @@ function ITEM:Unequip(client, bPlaySound, bRemoveItem)
     if (!IsValid(weapon)) then
         weapon = client:GetWeapon(self.class)
     end
+
+    print("[Charpane] ArcCW Unequip called for", self.name, "client:", tostring(client), "weapon:", tostring(weapon), "class:", tostring(self.class))
 
     if weapon and (IsValid(weapon)) then
         weapon.ixItem = nil

@@ -1,29 +1,6 @@
 --- USMS Loadout Panel
 -- Displays current class info, available classes, loadout items and costs, gear-up button.
 
-local THEME = {
-    background = Color(10, 10, 10, 255),
-    frame = Color(191, 148, 53, 255),
-    frameSoft = Color(191, 148, 53, 120),
-    text = Color(235, 235, 235, 255),
-    textMuted = Color(168, 168, 168, 140),
-    accent = Color(191, 148, 53, 255),
-    accentSoft = Color(191, 148, 53, 220),
-    buttonBg = Color(16, 16, 16, 255),
-    buttonBgHover = Color(26, 26, 26, 255),
-    panelBg = Color(12, 12, 12, 255),
-    rowEven = Color(14, 14, 14, 255),
-    rowOdd = Color(18, 18, 18, 255),
-    rowHover = Color(24, 22, 14, 255),
-    danger = Color(180, 60, 60, 255),
-    ready = Color(60, 170, 90, 255),
-    supply = Color(80, 140, 200, 255)
-}
-
-local function Scale(value)
-    return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
 local PANEL = {}
 
 function PANEL:Init()
@@ -32,10 +9,10 @@ function PANEL:Init()
     -- Top label
     self.header = self:Add("DLabel")
     self.header:Dock(TOP)
-    self.header:SetTall(Scale(28))
-    self.header:DockMargin(Scale(4), Scale(4), 0, Scale(2))
+    self.header:SetTall(ix.ui.Scale(28))
+    self.header:DockMargin(ix.ui.Scale(4), ix.ui.Scale(4), 0, ix.ui.Scale(2))
     self.header:SetFont("ixImpMenuSubtitle")
-    self.header:SetTextColor(THEME.accent)
+    self.header:SetTextColor(ix.ui.THEME.accent)
     self.header:SetText("CLASS & LOADOUT")
 
     -- Split: class selector (left) + loadout detail (right)
@@ -46,19 +23,19 @@ function PANEL:Init()
     -- Class list
     self.classPanel = self.splitContainer:Add("DScrollPanel")
     self.classPanel:Dock(LEFT)
-    self.classPanel:DockMargin(0, 0, Scale(4), 0)
+    self.classPanel:DockMargin(0, 0, ix.ui.Scale(4), 0)
     self.classPanel.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.panelBg)
+        surface.SetDrawColor(ix.ui.THEME.panelBg)
         surface.DrawRect(0, 0, w, h)
     end
 
     local sbar = self.classPanel:GetVBar()
-    sbar:SetWide(Scale(4))
+    sbar:SetWide(ix.ui.Scale(4))
     sbar.Paint = function() end
     sbar.btnUp.Paint = function() end
     sbar.btnDown.Paint = function() end
     sbar.btnGrip.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawRect(0, 0, w, h)
     end
 
@@ -66,31 +43,31 @@ function PANEL:Init()
     self.detailPanel = self.splitContainer:Add("EditablePanel")
     self.detailPanel:Dock(FILL)
     self.detailPanel.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.panelBg)
+        surface.SetDrawColor(ix.ui.THEME.panelBg)
         surface.DrawRect(0, 0, w, h)
     end
 
     self.detailTitle = self.detailPanel:Add("DLabel")
     self.detailTitle:Dock(TOP)
-    self.detailTitle:SetTall(Scale(28))
-    self.detailTitle:DockMargin(Scale(8), Scale(4), 0, 0)
+    self.detailTitle:SetTall(ix.ui.Scale(28))
+    self.detailTitle:DockMargin(ix.ui.Scale(8), ix.ui.Scale(4), 0, 0)
     self.detailTitle:SetFont("ixImpMenuSubtitle")
-    self.detailTitle:SetTextColor(THEME.accent)
+    self.detailTitle:SetTextColor(ix.ui.THEME.accent)
     self.detailTitle:SetText("")
 
     self.detailDesc = self.detailPanel:Add("DLabel")
     self.detailDesc:Dock(TOP)
-    self.detailDesc:SetTall(Scale(20))
-    self.detailDesc:DockMargin(Scale(8), 0, Scale(8), Scale(4))
+    self.detailDesc:SetTall(ix.ui.Scale(20))
+    self.detailDesc:DockMargin(ix.ui.Scale(8), 0, ix.ui.Scale(8), ix.ui.Scale(4))
     self.detailDesc:SetFont("ixImpMenuDiag")
-    self.detailDesc:SetTextColor(THEME.textMuted)
+    self.detailDesc:SetTextColor(ix.ui.THEME.textMuted)
     self.detailDesc:SetText("")
 
     -- Action row
     self.actionRow = self.detailPanel:Add("EditablePanel")
     self.actionRow:Dock(TOP)
-    self.actionRow:SetTall(Scale(36))
-    self.actionRow:DockMargin(Scale(4), 0, Scale(4), Scale(4))
+    self.actionRow:SetTall(ix.ui.Scale(36))
+    self.actionRow:DockMargin(ix.ui.Scale(4), 0, ix.ui.Scale(4), ix.ui.Scale(4))
     self.actionRow.Paint = function() end
 
     self.changeClassBtn = self:MakeButton(self.actionRow, "CHANGE CLASS", function()
@@ -99,35 +76,42 @@ function PANEL:Init()
         end
     end)
     self.changeClassBtn:Dock(LEFT)
-    self.changeClassBtn:SetWide(Scale(140))
-    self.changeClassBtn:DockMargin(0, Scale(2), Scale(4), Scale(2))
+    self.changeClassBtn:SetWide(ix.ui.Scale(140))
+    self.changeClassBtn:DockMargin(0, ix.ui.Scale(2), ix.ui.Scale(4), ix.ui.Scale(2))
 
     self.gearUpBtn = self:MakeButton(self.actionRow, "GEAR UP", function()
         ix.usms.Request("gearup", {})
     end)
     self.gearUpBtn:Dock(LEFT)
-    self.gearUpBtn:SetWide(Scale(100))
-    self.gearUpBtn:DockMargin(0, Scale(2), Scale(4), Scale(2))
+    self.gearUpBtn:SetWide(ix.ui.Scale(100))
+    self.gearUpBtn:DockMargin(0, ix.ui.Scale(2), ix.ui.Scale(4), ix.ui.Scale(2))
+
+    self.whitelistBtn = self:MakeButton(self.actionRow, "MANAGE WHITELIST", function()
+        self:OpenWhitelistManager()
+    end)
+    self.whitelistBtn:Dock(RIGHT)
+    self.whitelistBtn:SetWide(ix.ui.Scale(140))
+    self.whitelistBtn:DockMargin(ix.ui.Scale(4), ix.ui.Scale(2), 0, ix.ui.Scale(2))
 
     self.costLabel = self.actionRow:Add("DLabel")
     self.costLabel:Dock(FILL)
-    self.costLabel:DockMargin(Scale(8), 0, 0, 0)
+    self.costLabel:DockMargin(ix.ui.Scale(8), 0, 0, 0)
     self.costLabel:SetFont("ixImpMenuDiag")
-    self.costLabel:SetTextColor(THEME.supply)
+    self.costLabel:SetTextColor(ix.ui.THEME.info)
     self.costLabel:SetText("")
 
     -- Loadout items scroll
     self.itemScroll = self.detailPanel:Add("DScrollPanel")
     self.itemScroll:Dock(FILL)
-    self.itemScroll:DockMargin(Scale(4), 0, Scale(4), Scale(4))
+    self.itemScroll:DockMargin(ix.ui.Scale(4), 0, ix.ui.Scale(4), ix.ui.Scale(4))
 
     local sbar2 = self.itemScroll:GetVBar()
-    sbar2:SetWide(Scale(4))
+    sbar2:SetWide(ix.ui.Scale(4))
     sbar2.Paint = function() end
     sbar2.btnUp.Paint = function() end
     sbar2.btnDown.Paint = function() end
     sbar2.btnGrip.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawRect(0, 0, w, h)
     end
 
@@ -153,12 +137,12 @@ function PANEL:MakeButton(parent, text, onClick)
     btn.labelText = text
     btn.DoClick = onClick
     btn.Paint = function(s, w, h)
-        local bg = s:IsHovered() and THEME.buttonBgHover or THEME.buttonBg
+        local bg = s:IsHovered() and ix.ui.THEME.buttonBgHover or ix.ui.THEME.buttonBg
         surface.SetDrawColor(bg)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        draw.SimpleText(s.labelText, "ixImpMenuStatus", w * 0.5, h * 0.5, THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(s.labelText, "ixImpMenuStatus", w * 0.5, h * 0.5, ix.ui.THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
     return btn
 end
@@ -170,16 +154,8 @@ function PANEL:GetAvailableClasses()
     local factionID = char:GetFaction()
     local classes = {}
 
-    -- Get own whitelist from roster data
-    local myWhitelist = {}
-    local myCharID = char:GetID()
-    local roster = ix.usms.clientData and ix.usms.clientData.roster or {}
-    for _, entry in ipairs(roster) do
-        if (entry.charID == myCharID and entry.classWhitelist) then
-            myWhitelist = entry.classWhitelist
-            break
-        end
-    end
+    -- Get own whitelist from client cache
+    local myWhitelist = ix.usms.clientData and ix.usms.clientData.myWhitelist or {}
 
     -- Iterate ix.class.list for matching faction classes
     for key, classData in pairs(ix.class.list or {}) do
@@ -211,8 +187,8 @@ function PANEL:RebuildClasses()
     for _, entry in ipairs(sorted) do
         local card = self.classPanel:Add("EditablePanel")
         card:Dock(TOP)
-        card:SetTall(Scale(44))
-        card:DockMargin(Scale(4), Scale(2), Scale(4), Scale(2))
+        card:SetTall(ix.ui.Scale(44))
+        card:DockMargin(ix.ui.Scale(4), ix.ui.Scale(2), ix.ui.Scale(4), ix.ui.Scale(2))
         card:SetMouseInputEnabled(true)
         card.classKey = entry.key
         card.classData = entry.data
@@ -230,39 +206,39 @@ function PANEL:RebuildClasses()
 
         card.Paint = function(s, w, h)
             local selected = (self.selectedClassKey == s.classKey)
-            local bg = s.bHovered and THEME.buttonBgHover or THEME.buttonBg
+            local bg = s.bHovered and ix.ui.THEME.buttonBgHover or ix.ui.THEME.buttonBg
             surface.SetDrawColor(bg)
             surface.DrawRect(0, 0, w, h)
 
             if (selected) then
-                surface.SetDrawColor(THEME.accent)
-                surface.DrawRect(0, 0, Scale(3), h)
+                surface.SetDrawColor(ix.ui.THEME.accent)
+                surface.DrawRect(0, 0, ix.ui.Scale(3), h)
             end
 
             if (s.isCurrent) then
-                surface.SetDrawColor(THEME.ready.r, THEME.ready.g, THEME.ready.b, 40)
+                surface.SetDrawColor(ColorAlpha(ix.ui.THEME.ready, 40))
                 surface.DrawRect(0, 0, w, h)
             end
 
-            surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 30)
+            surface.SetDrawColor(ColorAlpha(ix.ui.THEME.frameSoft, 30))
             surface.DrawOutlinedRect(0, 0, w, h, 1)
 
-            local nameColor = s.isCurrent and THEME.ready or THEME.text
-            local pad = Scale(10)
-            draw.SimpleText(s.classData.name or ("Class #" .. s.classKey), "ixImpMenuButton", pad, Scale(6), nameColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+            local nameColor = s.isCurrent and ix.ui.THEME.ready or ix.ui.THEME.text
+            local pad = ix.ui.Scale(10)
+            draw.SimpleText(s.classData.name or ("Class #" .. s.classKey), "ixImpMenuButton", pad, ix.ui.Scale(6), nameColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 
             local tag = s.isCurrent and "CURRENT" or ""
-            draw.SimpleText(tag, "ixImpMenuDiag", pad, Scale(26), THEME.ready, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+            draw.SimpleText(tag, "ixImpMenuDiag", pad, ix.ui.Scale(26), ix.ui.THEME.ready, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
         end
     end
 
     if (#sorted == 0) then
         local lbl = self.classPanel:Add("DLabel")
         lbl:Dock(TOP)
-        lbl:SetTall(Scale(32))
-        lbl:DockMargin(Scale(8), Scale(8), 0, 0)
+        lbl:SetTall(ix.ui.Scale(32))
+        lbl:DockMargin(ix.ui.Scale(8), ix.ui.Scale(8), 0, 0)
         lbl:SetFont("ixImpMenuDiag")
-        lbl:SetTextColor(THEME.textMuted)
+        lbl:SetTextColor(ix.ui.THEME.textMuted)
         lbl:SetText("No classes available.")
     end
 
@@ -280,6 +256,8 @@ function PANEL:RebuildDetail()
         self.detailTitle:SetText("< SELECT A CLASS >")
         self.detailDesc:SetText("")
         self.costLabel:SetText("")
+        self.changeClassBtn:SetEnabled(false)
+        self.gearUpBtn:SetEnabled(false)
         return
     end
 
@@ -288,6 +266,8 @@ function PANEL:RebuildDetail()
         self.detailTitle:SetText("< CLASS NOT FOUND >")
         self.detailDesc:SetText("")
         self.costLabel:SetText("")
+        self.changeClassBtn:SetEnabled(false)
+        self.gearUpBtn:SetEnabled(false)
         return
     end
 
@@ -298,13 +278,25 @@ function PANEL:RebuildDetail()
     local loadout = classData.loadout or {}
     local totalCost = 0
 
+    local currentClass = LocalPlayer():GetCharacter() and LocalPlayer():GetCharacter():GetClass()
+    self.changeClassBtn:SetEnabled(self.selectedClassKey != currentClass)
+    -- FIX: GEAR UP visibility based on assigned class (char:GetClass()), not the browsed selection
+    local assignedClassData = currentClass and currentClass > 0 and ix.class.list and ix.class.list[currentClass]
+    local assignedLoadout = assignedClassData and assignedClassData.loadout or {}
+    self.gearUpBtn:SetVisible(istable(assignedLoadout) and #assignedLoadout > 0)
+    
+    if (IsValid(self.whitelistBtn)) then
+        local char = LocalPlayer():GetCharacter()
+        self.whitelistBtn:SetVisible(char and (char:IsUnitOfficer() or LocalPlayer():IsSuperAdmin()) or false)
+    end
+
     if (#loadout == 0) then
         local lbl = self.itemScroll:Add("DLabel")
         lbl:Dock(TOP)
-        lbl:SetTall(Scale(24))
-        lbl:DockMargin(Scale(8), Scale(4), 0, 0)
+        lbl:SetTall(ix.ui.Scale(24))
+        lbl:DockMargin(ix.ui.Scale(8), ix.ui.Scale(4), 0, 0)
         lbl:SetFont("ixImpMenuDiag")
-        lbl:SetTextColor(THEME.textMuted)
+        lbl:SetTextColor(ix.ui.THEME.textMuted)
         lbl:SetText("No loadout items defined.")
     end
 
@@ -335,23 +327,9 @@ function PANEL:RebuildDetail()
             itemDesc = item.description or ""
             itemCategory = item.category or ""
         elseif (type(item) == "string") then
-            itemUID = item
-            -- Lookup cost from catalog
-            local catalogItem = ix.usms and ix.usms.catalogs and ix.usms.catalogs.global and ix.usms.catalogs.global[item]
-            if (catalogItem) then
-                itemCost = catalogItem.cost or 0
-                itemName = catalogItem.name or item
-                itemCategory = catalogItem.category or ""
-            end
-            -- Try item base for name and description
-            local ixItem = ix.item and ix.item.list and ix.item.list[item]
-            if (ixItem) then
-                if (itemName == item) then
-                    itemName = ixItem.name or item
-                end
-                itemDesc = ixItem.description or ""
-                itemCategory = itemCategory != "" and itemCategory or (ixItem.category or "")
-            end
+            -- FIX: catalog lookup removed (sh_catalogs.lua deleted); log and skip string-format items
+            ErrorNoHalt("[USMS] Loadout item is a string UID '" .. item .. "' — inline table format required. Skipping.\n")
+            continue
         end
 
         totalCost = totalCost + itemCost
@@ -360,8 +338,8 @@ function PANEL:RebuildDetail()
 
         local row = self.itemScroll:Add("EditablePanel")
         row:Dock(TOP)
-        row:SetTall(Scale(34))
-        row:DockMargin(0, Scale(1), 0, 0)
+        row:SetTall(ix.ui.Scale(34))
+        row:DockMargin(0, ix.ui.Scale(1), 0, 0)
         row:SetMouseInputEnabled(true)
         row.rowIndex = i
         row.itemName = itemName
@@ -376,19 +354,19 @@ function PANEL:RebuildDetail()
             -- Show tooltip if item has a description
             if (s.itemDesc != "" and !IsValid(s.tooltip)) then
                 local tip = vgui.Create("EditablePanel")
-                tip:SetSize(Scale(220), Scale(60))
+                tip:SetSize(ix.ui.Scale(220), ix.ui.Scale(60))
                 tip:SetDrawOnTop(true)
                 tip.desc = s.itemDesc
                 tip.Paint = function(t, w, h)
                     surface.SetDrawColor(20, 20, 20, 240)
                     surface.DrawRect(0, 0, w, h)
-                    surface.SetDrawColor(THEME.frameSoft)
+                    surface.SetDrawColor(ix.ui.THEME.frameSoft)
                     surface.DrawOutlinedRect(0, 0, w, h, 1)
-                    draw.DrawText(t.desc, "ixImpMenuDiag", Scale(6), Scale(6), THEME.text, TEXT_ALIGN_LEFT)
+                    draw.DrawText(t.desc, "ixImpMenuDiag", ix.ui.Scale(6), ix.ui.Scale(6), ix.ui.THEME.text, TEXT_ALIGN_LEFT)
                 end
                 tip:SetParent(vgui.GetWorldPanel())
                 local mx, my = gui.MousePos()
-                tip:SetPos(mx + Scale(12), my - Scale(30))
+                tip:SetPos(mx + ix.ui.Scale(12), my - ix.ui.Scale(30))
                 s.tooltip = tip
             end
         end
@@ -403,42 +381,42 @@ function PANEL:RebuildDetail()
         row.Paint = function(s, w, h)
             local bg
             if (s.bHovered) then
-                bg = THEME.rowHover
+                bg = ix.ui.THEME.rowHover
             elseif (s.rowIndex % 2 == 0) then
-                bg = THEME.rowEven
+                bg = ix.ui.THEME.rowEven
             else
-                bg = THEME.rowOdd
+                bg = ix.ui.THEME.rowOdd
             end
             surface.SetDrawColor(bg)
             surface.DrawRect(0, 0, w, h)
 
             -- Left color bar: green if owned, muted if not
-            local barColor = s.isOwned and THEME.ready or Color(60, 60, 60, 100)
+            local barColor = s.isOwned and ix.ui.THEME.ready or Color(60, 60, 60, 100)
             surface.SetDrawColor(barColor)
-            surface.DrawRect(0, 0, Scale(3), h)
+            surface.DrawRect(0, 0, ix.ui.Scale(3), h)
 
-            local pad = Scale(10)
+            local pad = ix.ui.Scale(10)
 
             -- Category tag (small, muted, left-aligned)
             if (s.itemCategory != "") then
-                draw.SimpleText(string.upper(s.itemCategory), "ixImpMenuStatus", pad, Scale(3), THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-                draw.SimpleText(s.itemName, "ixImpMenuDiag", pad, Scale(16), THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+                draw.SimpleText(string.upper(s.itemCategory), "ixImpMenuStatus", pad, ix.ui.Scale(3), ix.ui.THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+                draw.SimpleText(s.itemName, "ixImpMenuDiag", pad, ix.ui.Scale(16), ix.ui.THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
             else
-                draw.SimpleText(s.itemName, "ixImpMenuDiag", pad, h * 0.5, THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText(s.itemName, "ixImpMenuDiag", pad, h * 0.5, ix.ui.THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
             end
 
             -- Owned indicator
             if (s.isOwned) then
-                draw.SimpleText("✓", "ixImpMenuDiag", w - Scale(40), h * 0.5, THEME.ready, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText("✓", "ixImpMenuDiag", w - ix.ui.Scale(40), h * 0.5, ix.ui.THEME.ready, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
 
             -- Cost
             if (s.itemCost > 0) then
-                draw.SimpleText("-" .. s.itemCost, "ixImpMenuDiag", w - Scale(8), h * 0.5, THEME.supply, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText("-" .. s.itemCost, "ixImpMenuDiag", w - ix.ui.Scale(8), h * 0.5, ix.ui.THEME.info, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
 
             -- Bottom separator
-            surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 15)
+            surface.SetDrawColor(ColorAlpha(ix.ui.THEME.frameSoft, 15))
             surface.DrawRect(0, h - 1, w, 1)
         end
     end
@@ -447,6 +425,42 @@ function PANEL:RebuildDetail()
 end
 
 function PANEL:Paint(w, h)
+end
+
+function PANEL:OpenWhitelistManager()
+    local char = LocalPlayer():GetCharacter()
+    if (!char) then return end
+
+    local roster = ix.usms.clientData and ix.usms.clientData.roster or {}
+    if (#roster == 0) then return end
+
+    local menu = DermaMenu()
+    for _, entry in ipairs(roster) do
+        local targetCharID = entry.charID
+        local targetName = entry.name or "Unknown"
+        local targetRole = entry.role or 0
+
+        -- Only manage lower/equal rank unless superadmin
+        if (LocalPlayer():IsSuperAdmin() or targetRole <= char:GetUsmUnitRole()) then
+            local targetWhitelist = entry.classWhitelist or {}
+            local plyMenu = menu:AddSubMenu(targetName)
+
+            for key, classData in pairs(ix.class.list or {}) do
+                if (classData.faction == char:GetFaction() and classData.uniqueID and !classData.isDefault) then
+                    local isWhitelisted = table.HasValue(targetWhitelist, classData.uniqueID)
+                    local label = (isWhitelisted and "[X] " or "[ ] ") .. (classData.name or classData.uniqueID)
+                    plyMenu:AddOption(label, function()
+                        if (isWhitelisted) then
+                            ix.usms.Request("class_whitelist_remove", {charID = targetCharID, classUID = classData.uniqueID})
+                        else
+                            ix.usms.Request("class_whitelist_add", {charID = targetCharID, classUID = classData.uniqueID})
+                        end
+                    end)
+                end
+            end
+        end
+    end
+    menu:Open()
 end
 
 vgui.Register("ixUSMSLoadoutPanel", PANEL, "EditablePanel")

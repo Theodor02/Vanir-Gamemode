@@ -1,168 +1,232 @@
---[[
-	© 2020 TERRANOVA do not share, re-distribute or modify
-	without permission of its author.
---]]
+local PLUGIN = PLUGIN
 
-local PLUGIN = PLUGIN;
+local function ResolveInventoryClient(inv, item)
+    local owner = inv and inv.GetOwner and inv:GetOwner()
 
--- Called when a player enters observer
-function PLUGIN:OnPlayerObserve(client, state)
-	if (!client.GetParts) then return end
+    if (owner) then
+        if (isnumber(owner)) then
+            local character = ix.char.loaded[owner]
+            if (character) then
+                local ownerPlayer = character:GetPlayer()
+                if (IsValid(ownerPlayer)) then return ownerPlayer end
+            end
+        elseif (owner.GetPlayer and isfunction(owner.GetPlayer)) then
+            local ownerPlayer = owner:GetPlayer()
+            if (IsValid(ownerPlayer)) then return ownerPlayer end
+        end
+    end
 
-	if(state) then
-		local curParts = client:GetParts()
+    if (item and IsValid(item.player)) then return item.player end
 
-		-- Hide any PACs when going observer.
-		if (curParts) then
-			client:ResetParts()
-		end
-	else
-		-- Reload the pacs when exiting out of observer.
-		local character = client:GetCharacter()
-		if (!character) then return end
+    if (inv and inv.GetReceivers) then
+        local receivers = inv:GetReceivers()
+        if (istable(receivers)) then
+            for _, receiver in ipairs(receivers) do
+                if (IsValid(receiver)) then return receiver end
+            end
+        end
+    end
 
-		local charPanel = character:GetCharPanel()
-		local inv = character:GetInventory()
-
-		if (charPanel) then
-			for _, v in pairs(charPanel:GetItems()) do
-				if (v.pacData) then
-					client:AddPart(v.uniqueID, v)
-				end
-			end
-		end
-
-		if (inv) then
-			for _, v in pairs(inv:GetItems()) do
-				if (v:GetData("equip") == true and v.pacData) then
-					client:AddPart(v.uniqueID, v)
-				end
-			end
-		end
-	end
+    return nil
 end
 
--- Called when a player tries to equip an item with items in their character panel.
-function PLUGIN:CanPlayerEquipItem(client, item)
-	local charPanel = client:GetCharacter():GetCharPanel();
-
-	if(item.outfitCategory) then
-		if(charPanel:HasEquipped()) then
-			client:Notify("You can't equip a full outfit with items in your character panel!")
-			return false;
-		end
-	end;
-
-	return true;
+function PLUGIN:OnCharacterCreated(client, character)
+    ix.inventory.New(character:GetID(), "equipment", function(inv)
+        inv.invType = "equipment"
+        -- Explicitly set owner here in case character wasn't loaded during New()
+        inv:SetOwner(character:GetID())
+        character:SetData("equipInv", inv:GetID())
+    end)
 end
 
--- Called during character load when the panel needs to be loaded.
-function PLUGIN:CharPanelLoaded(character)
-	local client = character:GetPlayer()
-	if (!IsValid(client) or !client.AddPart) then return end
+function PLUGIN:CharacterLoaded(character)
+    local client = character:GetPlayer()
+    local equipInvID = character:GetData("equipInv")
 
-	local charPanel = character:GetCharPanel()
-	if (!charPanel) then return end
-
-	for _, v in pairs(charPanel:GetItems()) do
-		if (v.pacData) then
-			client:AddPart(v.uniqueID, v)
-		end
-	end
+    if (equipInvID) then
+        ix.inventory.Restore(equipInvID, 62, 62, function(inv)
+            if (IsValid(client) and inv) then
+                inv.invType = "equipment"
+                -- Ensure owner is set on restored inventory
+                inv:SetOwner(character:GetID())
+                inv:AddReceiver(client)
+                character.equipInv = inv
+                
+                -- Load initial equipment states
+                for _, item in pairs(inv:GetItems()) do
+                    if (item.pacData and client.AddPart) then
+                        client:AddPart(item.uniqueID, item)
+                    end
+                    if (item.OnLoadout) then
+                        item:OnLoadout(client)
+                    end
+                end
+            end
+        end)
+    else
+        -- Backwards compatibility: Create equipment inventory for older characters on load
+        ix.inventory.New(character:GetID(), "equipment", function(inv)
+            if (IsValid(client) and inv) then
+                inv.invType = "equipment"
+                inv:SetOwner(character:GetID())
+                character:SetData("equipInv", inv:GetID())
+                inv:AddReceiver(client)
+                character.equipInv = inv
+            end
+        end)
+    end
 end
 
--- Called when a character is spawning.
 function PLUGIN:PostPlayerLoadout(client)
-	local character = client:GetCharacter()
-	local charPanel = character:GetCharPanel();
-
-	if (charPanel) then
-		for _, v in pairs(charPanel:GetItems()) do
-			if(v.OnLoadout) then
-				v:Call("OnLoadout", client)
-			end
-		end
-	end
+    local character = client:GetCharacter()
+    if (!character) then return end
+    local inv = character.equipInv
+    if (inv) then
+        for _, item in pairs(inv:GetItems()) do
+            if (item.OnLoadout) then
+                item:OnLoadout(client)
+            end
+        end
+    end
 end
 
--- Called when character data is being saved.
-function PLUGIN:CharacterPreSave(character)
-	local client = character:GetPlayer()
-
-	for _, v in pairs(character:GetCharPanel():GetItems()) do
-		if (v.OnSave) then
-			v:Call("OnSave", client)
-		end
-	end
+function PLUGIN:CanTransferItem(item, oldInv, newInv)
+    if (oldInv and oldInv.invType == "equipment" and newInv and newInv.invType != "equipment") then
+        -- Temporarily clear equip state so base weapon CanTransfer checks don't block explicit unequip moves
+        item:SetData("equip", nil)
+    end
 end
 
--- Called when an item has been added to the character panel
-function PLUGIN:CharPanelItemEquipped(client, item)
-	if(!item.outfitCategory) then return false end;
+function PLUGIN:InventoryItemAdded(oldInv, inv, item)
+    if (inv and inv.invType == "equipment") then
+        local client = ResolveInventoryClient(inv, item)
+        if (!IsValid(client)) then return end
 
-	if(item.OnEquipped) then
-		item:Call("OnEquipped", client)
-	end
+        if (item:GetData("equip") == true) then return end
 
-	if(item.isBag and item:GetData("id")) then
-		local inv = ix.item.inventories[item:GetData("id")]
+        -- Set the equip data so native Helix logic (like weapon bases) realizes it's equipped
+        item:SetData("equip", true)
 
-		if(inv) then
-			inv:AddReceiver(client)
+        if (item.OnEquipped) then
+            item:OnEquipped(client)
+        end
 
-			net.Start("ixCharPanelLoadBag")
-				net.WriteInt(item.id, 32)
-			net.Send(client)
-		end
-	end
+        if (item.isBag and item:GetData("id")) then
+            local bagInv = ix.item.inventories[item:GetData("id")]
+            if (bagInv) then bagInv:AddReceiver(client) end
+        end
 
-	if(item.bodyGroups) then
-		local bodygroup = 0
+        -- If it's a weapon or has native Equip, let it handle applying models/giving entities natively
+        if (item.Equip and isfunction(item.Equip)) then
+            item:Equip(client, true, true)
+        elseif (item.OnLoadout) then
+            item:OnLoadout(client)
+        end
 
-		for _, v in pairs(item.bodyGroups) do
-			bodygroup = v;
-		end
+        if (item.bodyGroups) then
+            local bodygroup = 0
+            for _, v in pairs(item.bodyGroups) do bodygroup = v end
+            PLUGIN:UpdateBodygroup(client, item.outfitCategory, bodygroup)
+        elseif (item.pacData and client.AddPart) then
+            client:AddPart(item.uniqueID, item)
+        end
+    end
+end
 
-		PLUGIN:UpdateBodygroup(client, item.outfitCategory, bodygroup)
-	elseif(item.pacData and client.AddPart) then
-		client:AddPart(item.uniqueID, item)
-	end
-end;
+function PLUGIN:InventoryItemRemoved(inv, item)
+    if (inv and inv.invType == "equipment") then
+        local client = ResolveInventoryClient(inv, item)
+        if (!IsValid(client)) then return end
 
--- Called when an item has been removed from the character panel
-function PLUGIN:CharPanelItemUnequipped(client, item)
-	if(!item.outfitCategory) then return false end;
+        if (item:GetData("equip") == false) then return end
 
-	if(item.OnUnequipped) then
-		item:Call("OnUnequipped", client)
-	end
+        item:SetData("equip", false)
 
-	if(item.isBag and item:GetData("id")) then
-		local inv = ix.item.inventories[item:GetData("id")]
+        if (item.OnUnequipped) then
+            item:OnUnequipped(client)
+        end
 
-		if(inv) then
-			inv:RemoveReceiver(client)
+        -- If it's an item with native equip logic (e.g. weapons, pac outfits), trigger its unequip handler natively
+        if (item.Unequip and isfunction(item.Unequip)) then
+            item:Unequip(client, false, false)
+        end
 
-			net.Start("ixCharPanelBagDrop")
-				net.WriteUInt(item:GetData("id"), 32)
-			net.Send(client)
-		end
-	end
+        if (item.isBag and item:GetData("id")) then
+            local bagInv = ix.item.inventories[item:GetData("id")]
+            if (bagInv) then bagInv:RemoveReceiver(client) end
+        end
 
-	if(item.bodyGroups) then
-		PLUGIN:UpdateBodygroup(client, item.outfitCategory, 0)
-	elseif(item.pacData and client.RemovePart) then
-		client:RemovePart(item.uniqueID)
-	end
-end;
+        if (item.bodyGroups) then
+            PLUGIN:UpdateBodygroup(client, item.outfitCategory, 0)
+        elseif (item.pacData and client.RemovePart) then
+            client:RemovePart(item.uniqueID)
+        end
+    end
+end
+
+function PLUGIN:OnItemTransferred(item, oldInv, newInv)
+    -- Handle unequipping when moved OUT OF equipment into a regular inventory
+    if (oldInv and oldInv.invType == "equipment" and newInv and newInv.invType != "equipment") then
+        local client = ResolveInventoryClient(oldInv, item)
+        if (IsValid(client)) then
+            if (item:GetData("equip") == false) then return end
+
+            item:SetData("equip", false)
+
+            if (item.OnUnequipped) then
+                item:OnUnequipped(client)
+            end
+
+            -- If it's an item with native equip logic (e.g. weapons, pac outfits), trigger its unequip handler natively
+            if (item.Unequip and isfunction(item.Unequip)) then
+                item:Unequip(client, false, false)
+            end
+
+            if (item.isBag and item:GetData("id")) then
+                local bagInv = ix.item.inventories[item:GetData("id")]
+                if (bagInv) then bagInv:RemoveReceiver(client) end
+            end
+
+            if (item.bodyGroups) then
+                PLUGIN:UpdateBodygroup(client, item.outfitCategory, 0)
+            elseif (item.pacData and client.RemovePart) then
+                client:RemovePart(item.uniqueID)
+            end
+        end
+    end
+end
 
 function PLUGIN:UpdateBodygroup(client, outfitCategory, bodygroup)
-	local character = client:GetCharacter()
-	local index = client:FindBodygroupByName(outfitCategory)
-	local groups = character:GetData("groups", {})
+    local character = client:GetCharacter()
+    if (!character) then return end
+    
+    local index = client:FindBodygroupByName(outfitCategory)
+    if (index > -1) then
+        local groups = character:GetData("groups", {})
+        groups[index] = bodygroup
+        character:SetData("groups", groups)
+        client:SetBodygroup(index, bodygroup)
+    end
+end
 
-	groups[index] = bodygroup
-
-	character:SetData("groups", groups)
-	client:SetBodygroup(index, bodygroup)
+function PLUGIN:OnPlayerObserve(client, state)
+    if (!client.GetParts) then return end
+    
+    if (state) then
+        if (client:GetParts()) then
+            client:ResetParts()
+        end
+    else
+        local character = client:GetCharacter()
+        if (!character) then return end
+        
+        local inv = character.equipInv
+        if (inv) then
+            for _, item in pairs(inv:GetItems()) do
+                if (item.pacData) then
+                    client:AddPart(item.uniqueID, item)
+                end
+            end
+        end
+    end
 end

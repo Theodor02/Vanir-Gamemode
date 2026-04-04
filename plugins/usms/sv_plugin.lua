@@ -14,7 +14,7 @@ end
 
 --- Save USMS data periodically (every 10 min) and on shutdown.
 function PLUGIN:SaveData()
-    ix.usms.db.Save()
+    ix.usms.db.ForceSave()
 end
 
 --- Load USMS data on server start.

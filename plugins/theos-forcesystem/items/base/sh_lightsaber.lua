@@ -508,9 +508,26 @@ ITEM.functions.combine = {
         -- Use the inventory the item actually lives in (could be a bag), not
         -- always the main inventory, otherwise ixInventoryRemove is sent with
         -- the wrong invID and the icon ghost-lingers in the bag panel.
-        local itemInv = ix.item.inventories[other.invID]
+        local itemInv = (other.invID and other.invID > 0) and ix.item.inventories[other.invID] or nil
+        if not itemInv and IsValid(client) and client:GetCharacter() then
+            -- Fallback if the item was dragged before its invID updated
+            local charInv = client:GetCharacter():GetInventory()
+            if charInv and charInv:GetItemByID(otherID) then
+                itemInv = charInv
+            end
+        end
+
         if itemInv then
             itemInv:Remove(otherID)
+        else
+            other:Remove()
+            -- Force client wipe to prevent ghost frames if the network failed
+            if IsValid(client) and client:GetCharacter() then
+                net.Start("ixInventoryRemove")
+                    net.WriteUInt(otherID, 32)
+                    net.WriteUInt(client:GetCharacter():GetInventory():GetID(), 32)
+                net.Send(client)
+            end
         end
 
         -- If the saber is currently equipped, re-sync to pick up the new crystal

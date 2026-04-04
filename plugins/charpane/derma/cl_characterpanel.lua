@@ -134,9 +134,25 @@ vgui.Register("ixCharPaneColumn", COL, "EditablePanel")
 
 local CTRL = {}
 
+local function findSlotByCategory(slots, category)
+    if (not slots) then return nil end
+
+    local key = string.lower(category or "")
+
+    for slotCategory, slotPanel in pairs(slots) do
+        if (string.lower(slotCategory or "") == key) then
+            return slotPanel
+        end
+    end
+
+    return nil
+end
+
 function CTRL:Init()
     self:SetSize(0, 0)
-    self:SetVisible(false)
+    -- Don't SetVisible(false) because VGUI panels stop receiving Think when invisible.
+    self:SetPaintBackgroundEnabled(false)
+    self:SetPaintBorderEnabled(false)
     self.panels  = {}   -- [itemID]   → ixCharPanelItemIcon
     self.slots   = {}   -- [category] → ixCharacterEquipmentSlot  (filled by columns)
     self.panelID = 0
@@ -149,38 +165,15 @@ function CTRL:SetupController(leftCol, rightCol)
     ix.gui.charPanel = self
 end
 
---- Load all currently equipped items from a synced charPanel object.
--- Called once when the YOU tab is opened.
-function CTRL:SetupFromCharPanel(charPanel)
-    self.panelID = charPanel:GetID()
-
-    for category, item in pairs(charPanel.slots) do
-        if (not item.id) then continue end
-
-        local instance = ix.item.instances[item.id]
-        if (not instance) then continue end
-
-        local icon = self:AddIcon(
-            instance,
-            instance:GetModel() or "models/props_junk/popcan01a.mdl",
-            category,
-            instance:GetSkin()
-        )
-
-        if (IsValid(icon)) then
-            icon:SetHelixTooltip(function(tooltip)
-                ix.hud.PopulateItemTooltip(tooltip, instance)
-            end)
-            icon.itemID = instance.id
-            self.panels[instance.id] = icon
-        end
-    end
+--- Setup from charPanel
+function CTRL:SetupFromCharPanel()
+    -- Native layout updates are dynamically handled in Think
 end
 
 --- Create an ixCharPanelItemIcon inside the correct slot and return it.
 -- Used by SetupFromCharPanel and the real-time ixCharPanelSet net receiver.
 function CTRL:AddIcon(item, model, category, skin)
-    local slot = self.slots[string.lower(category or "")]
+    local slot = findSlotByCategory(self.slots, category)
     if (not IsValid(slot)) then return end
 
     -- Remove any icon already in this slot
@@ -192,6 +185,7 @@ function CTRL:AddIcon(item, model, category, skin)
 
     local sz   = Scale(58)
     local icon = slot:Add("ixCharPanelItemIcon")
+    icon.slotPanel = slot
     icon:SetSize(sz, sz)
     icon:SetPos(0, 0)
     icon:SetZPos(999)
@@ -211,6 +205,56 @@ end
 
 --- Noop — the model panel is always live with real-time head tracking.
 function CTRL:UpdateModel() end
+
+function CTRL:Think()
+    local char = LocalPlayer():GetCharacter()
+    if (!char) then return end
+    
+    local invID = char:GetData("equipInv")
+    if (!invID) then return end
+    
+    local inv = ix.item.inventories[invID]
+    if (!inv) then return end
+    
+    for category, slotPanel in pairs(self.slots) do
+        local slotData = ix.charPane.slots[category]
+        if (!slotData) then continue end
+        
+        local targetX = slotData.gridX or 1
+        local targetY = slotData.gridY or 1
+        local itemObj = inv:GetItemAt(targetX, targetY)
+        
+        if (itemObj) then
+            if (not IsValid(slotPanel.item) or slotPanel.item.itemID != itemObj.id) then
+                -- Check if this specific item is currently pending a drag operation
+                if (itemObj.bPendingEquipmentTransfer) then
+                    continue
+                end
+
+                local draggedItem = dragndrop.GetDroppable() and dragndrop.GetDroppable()[1]
+                if (IsValid(draggedItem) and draggedItem.itemID == itemObj.id) then
+                    continue
+                end
+
+                local icon = self:AddIcon(itemObj, itemObj:GetModel() or "models/props_junk/popcan01a.mdl", category, itemObj:GetSkin())
+                if (IsValid(icon)) then
+                    icon:SetHelixTooltip(function(tooltip)
+                        ix.hud.PopulateItemTooltip(tooltip, itemObj)
+                    end)
+                    icon.itemID = itemObj.id
+                    self.panels[itemObj.id] = icon
+                end
+            end
+        else
+            if (IsValid(slotPanel.item)) then
+                self.panels[slotPanel.item.itemID] = nil
+                slotPanel.item:Remove()
+                slotPanel.item = nil
+                slotPanel.isEmpty = true
+            end
+        end
+    end
+end
 
 function CTRL:OnRemove()
     if (ix.gui.charPanel == self) then
@@ -236,7 +280,7 @@ function PANEL:Init()
     self:Receiver("ixInventoryItem", self.ReceiveDrop)
 end
 
-function PANEL:SetCharacter(character, charPanel)
+function PANEL:SetCharacter(character)
     if (IsValid(self.model)) then self.model:Remove() end
     self.character = character
 
@@ -245,7 +289,8 @@ function PANEL:SetCharacter(character, charPanel)
     self.model:SetFOV(50)
 
     self:UpdateModel()
-    self:SetCharPanel(charPanel or self:GetCharacter():GetCharPanel())
+    self.panelID = character:GetID()
+    self:BuildSlots()
 end
 
 function PANEL:GetCharacter()
@@ -267,6 +312,42 @@ function PANEL:Think()
 
         local showSlots = hook.Run("CharPanelCanUse", character:GetPlayer())
         self:ToggleSlots(showSlots != false)
+        
+        -- Sync inventory visually if available
+        local invID = character:GetData("equipInv")
+        if invID then
+            local inv = ix.item.inventories[invID]
+            if inv and self.slots then
+                for category, slotPanel in pairs(self.slots) do
+                    local slotData = ix.charPane.slots[category]
+                    if (!slotData) then continue end
+                    
+                    local targetX = slotData.gridX or 1
+                    local targetY = slotData.gridY or 1
+                    local itemObj = inv:GetItemAt(targetX, targetY)
+                    
+                    if (itemObj) then
+                        if (not IsValid(slotPanel.item) or slotPanel.item.itemID != itemObj.id) then
+                            local icon = self:AddIcon(itemObj, itemObj:GetModel() or "models/props_junk/popcan01a.mdl", category, itemObj:GetSkin())
+                            if (IsValid(icon)) then
+                                icon:SetHelixTooltip(function(tooltip)
+                                    ix.hud.PopulateItemTooltip(tooltip, itemObj)
+                                end)
+                                icon.itemID = itemObj.id
+                                self.panels[itemObj.id] = icon
+                            end
+                        end
+                    else
+                        if (IsValid(slotPanel.item)) then
+                            self.panels[slotPanel.item.itemID] = nil
+                            slotPanel.item:Remove()
+                            slotPanel.item = nil
+                            slotPanel.isEmpty = true
+                        end
+                    end
+                end
+            end
+        end
     end
 end
 
@@ -291,35 +372,8 @@ function PANEL:UpdateModel()
     end
 end
 
-function PANEL:SetCharPanel(charPanel)
-    self.panelID = charPanel:GetID()
-    self:BuildSlots()
-
-    for _, items in pairs(charPanel.slots) do
-        if (not items.id) then continue end
-
-        local item = ix.item.instances[items.id]
-        if (item and not IsValid(self.panels[item.id])) then
-            local icon = self:AddIcon(
-                item,
-                item:GetModel() or "models/props_junk/popcan01a.mdl",
-                item.outfitCategory,
-                item:GetSkin()
-            )
-
-            if (IsValid(icon)) then
-                icon:SetHelixTooltip(function(tooltip)
-                    ix.hud.PopulateItemTooltip(tooltip, item)
-                end)
-                icon.itemID = item.id
-                self.panels[item.id] = icon
-            end
-
-            if (self.slots[item.outfitCategory]) then
-                self.slots[item.outfitCategory].isEmpty = false
-            end
-        end
-    end
+function PANEL:SetCharPanel()
+    -- Native layout updates are dynamically handled in Think
 end
 
 function PANEL:BuildSlots()

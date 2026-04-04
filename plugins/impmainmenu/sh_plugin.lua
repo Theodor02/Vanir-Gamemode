@@ -14,7 +14,7 @@ ix.util.Include("derma/cl_classes.lua")
 ix.util.Include("derma/cl_help.lua")
 ix.util.Include("derma/cl_settings.lua")
 ix.util.Include("derma/cl_scoreboard.lua")
-ix.util.Include("cl_tooltip.lua")
+-- ix.util.Include("cl_tooltip.lua")
 
 -- Unified character + inventory panel
 ix.util.Include("vgui/cl_dynamic_sections.lua")

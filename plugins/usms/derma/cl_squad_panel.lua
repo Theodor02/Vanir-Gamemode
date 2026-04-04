@@ -1,31 +1,6 @@
 --- USMS Squad Management Panel
 -- Squad cards, create/leave/disband controls, member list per squad.
 
-local THEME = {
-    background = Color(10, 10, 10, 255),
-    frame = Color(191, 148, 53, 255),
-    frameSoft = Color(191, 148, 53, 120),
-    text = Color(235, 235, 235, 255),
-    textMuted = Color(168, 168, 168, 140),
-    accent = Color(191, 148, 53, 255),
-    accentSoft = Color(191, 148, 53, 220),
-    buttonBg = Color(16, 16, 16, 255),
-    buttonBgHover = Color(26, 26, 26, 255),
-    panelBg = Color(12, 12, 12, 255),
-    danger = Color(180, 60, 60, 255),
-    dangerHover = Color(200, 80, 80, 255),
-    ready = Color(60, 170, 90, 255),
-    rowEven = Color(14, 14, 14, 255),
-    rowOdd = Color(18, 18, 18, 255),
-    rowHover = Color(24, 22, 14, 255),
-    ownSquadBg = Color(30, 26, 12, 255),
-    ownSquadBorder = Color(191, 148, 53, 180)
-}
-
-local function Scale(value)
-    return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
 local UNIT_ROLE_NAMES = {
     [0] = "MEMBER",
     [1] = "XO",
@@ -44,16 +19,16 @@ local function CreateSquadMemberTooltip(data)
     tip:SetDrawOnTop(true)
     tip.lines = {}
 
-    table.insert(tip.lines, {label = "Name", value = data.name or "Unknown", color = THEME.text})
-    table.insert(tip.lines, {label = "Status", value = data.isOnline and "ONLINE" or "OFFLINE", color = data.isOnline and THEME.ready or THEME.textMuted})
-    table.insert(tip.lines, {label = "Unit Role", value = UNIT_ROLE_NAMES[data.role] or "MEMBER", color = (data.role or 0) >= 1 and THEME.accent or THEME.text})
-    table.insert(tip.lines, {label = "Class", value = data.className or "Unassigned", color = THEME.text})
-    table.insert(tip.lines, {label = "Squad Role", value = SQUAD_ROLE_NAMES[data.squadRole] or "MEMBER", color = (data.squadRole or 0) >= USMS_SQUAD_XO and THEME.accent or THEME.text})
+    table.insert(tip.lines, {label = "Name", value = data.name or "Unknown", color = ix.ui.THEME.text})
+    table.insert(tip.lines, {label = "Status", value = data.isOnline and "ONLINE" or "OFFLINE", color = data.isOnline and ix.ui.THEME.ready or ix.ui.THEME.textMuted})
+    table.insert(tip.lines, {label = "Unit Role", value = UNIT_ROLE_NAMES[data.role] or "MEMBER", color = (data.role or 0) >= 1 and ix.ui.THEME.accent or ix.ui.THEME.text})
+    table.insert(tip.lines, {label = "Class", value = data.className or "Unassigned", color = ix.ui.THEME.text})
+    table.insert(tip.lines, {label = "Squad Role", value = SQUAD_ROLE_NAMES[data.squadRole] or "MEMBER", color = (data.squadRole or 0) >= USMS_SQUAD_XO and ix.ui.THEME.accent or ix.ui.THEME.text})
 
-    local lineH = Scale(18)
-    local padX = Scale(10)
-    local padY = Scale(6)
-    local tipW = Scale(220)
+    local lineH = ix.ui.Scale(18)
+    local padX = ix.ui.Scale(10)
+    local padY = ix.ui.Scale(6)
+    local tipW = ix.ui.Scale(220)
     local tipH = padY * 2 + #tip.lines * lineH
 
     tip:SetSize(tipW, tipH)
@@ -61,12 +36,12 @@ local function CreateSquadMemberTooltip(data)
     tip.Paint = function(s, w, h)
         surface.SetDrawColor(10, 10, 10, 240)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
 
         local y = padY
         for _, line in ipairs(s.lines) do
-            draw.SimpleText(line.label .. ":", "ixImpMenuDiag", padX, y, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+            draw.SimpleText(line.label .. ":", "ixImpMenuDiag", padX, y, ix.ui.THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
             draw.SimpleText(line.value, "ixImpMenuDiag", w - padX, y, line.color, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
             y = y + lineH
         end
@@ -87,8 +62,8 @@ function PANEL:Init()
     -- Action bar at top
     self.actionBar = self:Add("EditablePanel")
     self.actionBar:Dock(TOP)
-    self.actionBar:SetTall(Scale(36))
-    self.actionBar:DockMargin(0, 0, 0, Scale(4))
+    self.actionBar:SetTall(ix.ui.Scale(36))
+    self.actionBar:DockMargin(0, 0, 0, ix.ui.Scale(4))
     self.actionBar.Paint = function() end
 
     self.createBtn = self:CreateActionButton(self.actionBar, "CREATE SQUAD", function()
@@ -107,17 +82,17 @@ function PANEL:Init()
         )
     end)
     self.createBtn:Dock(LEFT)
-    self.createBtn:SetWide(Scale(140))
-    self.createBtn:DockMargin(0, 0, Scale(4), 0)
+    self.createBtn:SetWide(ix.ui.Scale(140))
+    self.createBtn:DockMargin(0, 0, ix.ui.Scale(4), 0)
 
     self.leaveBtn = self:CreateActionButton(self.actionBar, "LEAVE SQUAD", function()
         Derma_Query("Leave your current squad?", "Confirm", "Yes", function()
             ix.usms.Request("squad_leave", {})
         end, "No")
-    end, THEME.danger, THEME.dangerHover)
+    end, ix.ui.THEME.danger, ix.ui.THEME.dangerHover)
     self.leaveBtn:Dock(LEFT)
-    self.leaveBtn:SetWide(Scale(130))
-    self.leaveBtn:DockMargin(0, 0, Scale(4), 0)
+    self.leaveBtn:SetWide(ix.ui.Scale(130))
+    self.leaveBtn:DockMargin(0, 0, ix.ui.Scale(4), 0)
 
     -- Split: squad list (left) + detail (right)
     self.splitContainer = self:Add("EditablePanel")
@@ -127,19 +102,19 @@ function PANEL:Init()
     -- Squad list
     self.listPanel = self.splitContainer:Add("DScrollPanel")
     self.listPanel:Dock(LEFT)
-    self.listPanel:DockMargin(0, 0, Scale(4), 0)
+    self.listPanel:DockMargin(0, 0, ix.ui.Scale(4), 0)
     self.listPanel.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.panelBg)
+        surface.SetDrawColor(ix.ui.THEME.panelBg)
         surface.DrawRect(0, 0, w, h)
     end
 
     local sbar = self.listPanel:GetVBar()
-    sbar:SetWide(Scale(4))
+    sbar:SetWide(ix.ui.Scale(4))
     sbar.Paint = function() end
     sbar.btnUp.Paint = function() end
     sbar.btnDown.Paint = function() end
     sbar.btnGrip.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawRect(0, 0, w, h)
     end
 
@@ -147,35 +122,35 @@ function PANEL:Init()
     self.detailPanel = self.splitContainer:Add("EditablePanel")
     self.detailPanel:Dock(FILL)
     self.detailPanel.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.panelBg)
+        surface.SetDrawColor(ix.ui.THEME.panelBg)
         surface.DrawRect(0, 0, w, h)
     end
 
     self.detailLabel = self.detailPanel:Add("DLabel")
     self.detailLabel:Dock(TOP)
-    self.detailLabel:SetTall(Scale(32))
+    self.detailLabel:SetTall(ix.ui.Scale(32))
     self.detailLabel:SetFont("ixImpMenuSubtitle")
-    self.detailLabel:SetTextColor(THEME.accent)
-    self.detailLabel:DockMargin(Scale(8), Scale(4), 0, Scale(2))
+    self.detailLabel:SetTextColor(ix.ui.THEME.accent)
+    self.detailLabel:DockMargin(ix.ui.Scale(8), ix.ui.Scale(4), 0, ix.ui.Scale(2))
     self.detailLabel:SetText("< SELECT A SQUAD >")
 
     self.detailActions = self.detailPanel:Add("EditablePanel")
     self.detailActions:Dock(TOP)
-    self.detailActions:SetTall(Scale(32))
-    self.detailActions:DockMargin(Scale(4), 0, Scale(4), Scale(4))
+    self.detailActions:SetTall(ix.ui.Scale(32))
+    self.detailActions:DockMargin(ix.ui.Scale(4), 0, ix.ui.Scale(4), ix.ui.Scale(4))
     self.detailActions.Paint = function() end
 
     self.detailScroll = self.detailPanel:Add("DScrollPanel")
     self.detailScroll:Dock(FILL)
-    self.detailScroll:DockMargin(Scale(4), 0, Scale(4), Scale(4))
+    self.detailScroll:DockMargin(ix.ui.Scale(4), 0, ix.ui.Scale(4), ix.ui.Scale(4))
 
     local sbar2 = self.detailScroll:GetVBar()
-    sbar2:SetWide(Scale(4))
+    sbar2:SetWide(ix.ui.Scale(4))
     sbar2.Paint = function() end
     sbar2.btnUp.Paint = function() end
     sbar2.btnDown.Paint = function() end
     sbar2.btnGrip.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawRect(0, 0, w, h)
     end
 
@@ -184,7 +159,7 @@ function PANEL:Init()
         s:RebuildSquadList()
         s:RebuildDetail()
     end)
-    hook.Add("USMSSquadDataUpdated", self, function(s)
+    hook.Add("USMSSquadsUpdated", self, function(s)
         s:RebuildSquadList()
         s:RebuildDetail()
     end)
@@ -194,7 +169,7 @@ end
 
 function PANEL:OnRemove()
     hook.Remove("USMSRosterUpdated", self)
-    hook.Remove("USMSSquadDataUpdated", self)
+    hook.Remove("USMSSquadsUpdated", self)
 end
 
 function PANEL:PerformLayout(w, h)
@@ -202,8 +177,8 @@ function PANEL:PerformLayout(w, h)
 end
 
 function PANEL:CreateActionButton(parent, text, onClick, bgColor, hoverColor)
-    bgColor = bgColor or THEME.buttonBg
-    hoverColor = hoverColor or THEME.buttonBgHover
+    bgColor = bgColor or ix.ui.THEME.buttonBg
+    hoverColor = hoverColor or ix.ui.THEME.buttonBgHover
 
     local btn = parent:Add("DButton")
     btn:SetText("")
@@ -213,71 +188,63 @@ function PANEL:CreateActionButton(parent, text, onClick, bgColor, hoverColor)
         local bg = s:IsHovered() and hoverColor or bgColor
         surface.SetDrawColor(bg)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        draw.SimpleText(s.labelText, "ixImpMenuStatus", w * 0.5, h * 0.5, THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText(s.labelText, "ixImpMenuStatus", w * 0.5, h * 0.5, ix.ui.THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
     return btn
 end
 
 function PANEL:BuildSquadData()
-    local squads = {}
-    local roster = ix.usms.clientData.roster or {}
     local squadData = ix.usms.clientData.squads or {}
+    local rosterData = ix.usms.clientData.roster or {}
 
-    -- Build from squad sync data
-    for squadID, sq in pairs(squadData) do
-        squads[squadID] = {
-            id = squadID,
-            name = sq.name or ("SQUAD " .. squadID),
+    local squadIndex = {}
+    local squads = {}
+
+    for sqID, sq in pairs(squadData) do
+        local numericID = tonumber(sqID) or sqID
+        squadIndex[numericID] = {
+            id = numericID,
+            name = sq.name or ("Squad #" .. tostring(numericID)),
             description = sq.description or "",
-            leaderCharID = sq.leaderCharID,
-            leaderName = nil,
             members = {},
-            memberCount = 0
+            memberCount = 0,
+            leaderName = "None"
         }
     end
 
-    -- Populate members from roster
-    for _, entry in ipairs(roster) do
-        local sid = entry.squadID
-        if (sid and sid > 0) then
-            if (!squads[sid]) then
-                squads[sid] = {id = sid, name = entry.squadName or ("SQUAD " .. sid), description = entry.squadDescription or "", members = {}, memberCount = 0}
-            end
-            table.insert(squads[sid].members, entry)
-            squads[sid].memberCount = squads[sid].memberCount + 1
-            if (entry.squadRole == USMS_SQUAD_LEADER) then
-                squads[sid].leaderName = entry.name
-                squads[sid].leaderCharID = entry.charID
-            end
+    for _, member in ipairs(rosterData) do
+        local squadID = tonumber(member.squadID or 0) or 0
+        if (squadID <= 0) then continue end
 
-            -- Update squad name from roster entry if not already set
-            if (entry.squadName and entry.squadName != "" and (squads[sid].name == "SQUAD " .. sid)) then
-                squads[sid].name = entry.squadName
-            end
-            -- Update description from roster entry
-            if (entry.squadDescription and entry.squadDescription != "" and (squads[sid].description == "")) then
-                squads[sid].description = entry.squadDescription
-            end
+        if (!squadIndex[squadID]) then
+            squadIndex[squadID] = {
+                id = squadID,
+                name = "Squad #" .. tostring(squadID),
+                description = "",
+                members = {},
+                memberCount = 0,
+                leaderName = "None"
+            }
+        end
+
+        local mapped = squadIndex[squadID]
+        table.insert(mapped.members, member)
+        mapped.memberCount = mapped.memberCount + 1
+
+        if (member.squadRole == USMS_SQUAD_LEADER) then
+            mapped.leaderName = member.name or mapped.leaderName
         end
     end
 
-    -- Sort squads into list, own squad first
-    local sorted = {}
-    local char = LocalPlayer():GetCharacter()
-    local mySquadID = char and char:GetUsmSquadID() or 0
-
-    for _, sq in pairs(squads) do
-        table.insert(sorted, sq)
+    for _, squad in pairs(squadIndex) do
+        table.insert(squads, squad)
     end
-    table.sort(sorted, function(a, b)
-        -- Own squad always first
-        if (a.id == mySquadID and b.id != mySquadID) then return true end
-        if (b.id == mySquadID and a.id != mySquadID) then return false end
-        return a.id < b.id
-    end)
-    return sorted
+
+    table.sort(squads, function(a, b) return a.id < b.id end)
+
+    return squads
 end
 
 function PANEL:RebuildSquadList()
@@ -285,15 +252,25 @@ function PANEL:RebuildSquadList()
     local squads = self:BuildSquadData()
     local char = LocalPlayer():GetCharacter()
     local mySquadID = char and char:GetUsmSquadID() or 0
+    local inSquad = char and char:IsInSquad()
     local isOfficer = char and (char:IsUnitOfficer() or LocalPlayer():IsSuperAdmin())
+    
+    if (IsValid(self.leaveBtn)) then
+        self.leaveBtn:SetVisible(inSquad)
+    end
+    
+    if (IsValid(self.createBtn)) then
+        local canCreate = isOfficer
+        self.createBtn:SetVisible(canCreate and not inSquad)
+    end
 
     for _, sq in ipairs(squads) do
         local isOwnSquad = (sq.id == mySquadID and mySquadID > 0)
 
         local card = self.listPanel:Add("EditablePanel")
         card:Dock(TOP)
-        card:SetTall(Scale(56))
-        card:DockMargin(Scale(4), Scale(2), Scale(4), Scale(2))
+        card:SetTall(ix.ui.Scale(56))
+        card:DockMargin(ix.ui.Scale(4), ix.ui.Scale(2), ix.ui.Scale(4), ix.ui.Scale(2))
         card:SetMouseInputEnabled(true)
 
         card.squadID = sq.id
@@ -317,30 +294,30 @@ function PANEL:RebuildSquadList()
 
             if (s.isOwnSquad) then
                 -- Own squad: highlighted background
-                local bg = s.bHovered and Color(36, 32, 16, 255) or THEME.ownSquadBg
+                local bg = s.bHovered and Color(36, 32, 16, 255) or Color(26, 24, 14, 255)
                 surface.SetDrawColor(bg)
                 surface.DrawRect(0, 0, w, h)
-                surface.SetDrawColor(THEME.ownSquadBorder)
+                surface.SetDrawColor(ix.ui.THEME.frameSoft)
                 surface.DrawOutlinedRect(0, 0, w, h, 1)
             else
-                local bg = s.bHovered and THEME.buttonBgHover or THEME.buttonBg
+                local bg = s.bHovered and ix.ui.THEME.buttonBgHover or ix.ui.THEME.buttonBg
                 surface.SetDrawColor(bg)
                 surface.DrawRect(0, 0, w, h)
-                surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 40)
+                surface.SetDrawColor(ColorAlpha(ix.ui.THEME.frameSoft, 40))
                 surface.DrawOutlinedRect(0, 0, w, h, 1)
             end
 
             if (selected) then
-                surface.SetDrawColor(THEME.accent)
-                surface.DrawRect(0, 0, Scale(3), h)
+                surface.SetDrawColor(ix.ui.THEME.accent)
+                surface.DrawRect(0, 0, ix.ui.Scale(3), h)
             end
 
-            local pad = Scale(10)
-            local nameColor = s.isOwnSquad and THEME.accent or THEME.accent
-            draw.SimpleText(s.squadData.name .. (s.isOwnSquad and "  ★" or ""), "ixImpMenuButton", pad, Scale(8), nameColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+            local pad = ix.ui.Scale(10)
+            local nameColor = s.isOwnSquad and ix.ui.THEME.accent or ix.ui.THEME.accent
+            draw.SimpleText(s.squadData.name .. (s.isOwnSquad and "  ★" or ""), "ixImpMenuButton", pad, ix.ui.Scale(8), nameColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
             draw.SimpleText(
-                "Leader: " .. (s.squadData.leaderName or "None") .. "  |  " .. s.squadData.memberCount .. " members",
-                "ixImpMenuDiag", pad, Scale(30), THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP
+                "Leader: " .. (s.squadData.leaderName or "None") .. "  |  " .. (s.squadData.memberCount or 0) .. " members",
+                "ixImpMenuDiag", pad, ix.ui.Scale(30), ix.ui.THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP
             )
         end
     end
@@ -348,10 +325,10 @@ function PANEL:RebuildSquadList()
     if (#squads == 0) then
         local lbl = self.listPanel:Add("DLabel")
         lbl:Dock(TOP)
-        lbl:SetTall(Scale(40))
-        lbl:DockMargin(Scale(8), Scale(8), 0, 0)
+        lbl:SetTall(ix.ui.Scale(40))
+        lbl:DockMargin(ix.ui.Scale(8), ix.ui.Scale(8), 0, 0)
         lbl:SetFont("ixImpMenuDiag")
-        lbl:SetTextColor(THEME.textMuted)
+        lbl:SetTextColor(ix.ui.THEME.textMuted)
         lbl:SetText("No squads in this unit.")
     end
 end
@@ -430,93 +407,34 @@ function PANEL:RebuildDetail()
 
     self.detailLabel:SetText(sq.name .. "  [#" .. sq.id .. "]")
 
-    -- Action buttons for this squad
-    local char = LocalPlayer():GetCharacter()
-    if (char) then
-        local isLeader = char:IsSquadLeader() and char:GetUsmSquadID() == sq.id
-        local isOfficer = char:IsUnitOfficer() or LocalPlayer():IsSuperAdmin()
-
-        if (isLeader) then
-            local disbandBtn = self:CreateActionButton(self.detailActions, "DISBAND", function()
-                Derma_Query("Disband " .. sq.name .. "?", "Confirm", "Yes", function()
-                    ix.usms.Request("squad_disband", {})
-                end, "No")
-            end, THEME.danger, THEME.dangerHover)
-            disbandBtn:Dock(LEFT)
-            disbandBtn:SetWide(Scale(100))
-            disbandBtn:DockMargin(0, Scale(2), Scale(4), Scale(2))
-        end
-
-        -- CO/XO/superadmin can force disband any squad
-        if (isOfficer and !isLeader) then
-            local forceDisband = self:CreateActionButton(self.detailActions, "FORCE DISBAND", function()
-                Derma_Query("Force disband " .. sq.name .. "?", "Confirm", "Yes", function()
-                    ix.usms.Request("squad_force_disband", {squadID = sq.id})
-                end, "No")
-            end, THEME.danger, THEME.dangerHover)
-            forceDisband:Dock(LEFT)
-            forceDisband:SetWide(Scale(130))
-            forceDisband:DockMargin(0, Scale(2), Scale(4), Scale(2))
-        end
-
-        -- Set description button (leader, officer, superadmin)
-        if (isLeader or isOfficer) then
-            local descBtn = self:CreateActionButton(self.detailActions, "SET DESC", function()
-                Derma_StringRequest(
-                    "Squad Description",
-                    "Enter a description for " .. sq.name .. ":",
-                    sq.description or "",
-                    function(text)
-                        ix.usms.Request("squad_set_description", {squadID = sq.id, description = text:Trim()})
-                    end,
-                    nil,
-                    "Save",
-                    "Cancel"
-                )
-            end)
-            descBtn:Dock(LEFT)
-            descBtn:SetWide(Scale(100))
-            descBtn:DockMargin(0, Scale(2), Scale(4), Scale(2))
-        end
-
-        -- Invite button (squad leader, inviter, officer, superadmin)
-        local canInvite = isOfficer or (isLeader) or (char:IsInSquad() and char:GetUsmSquadID() == sq.id and char:CanSquadInvite())
-        if (canInvite) then
-            local invBtn = self:CreateActionButton(self.detailActions, "INVITE", function()
-                self:OpenSquadInvitePicker(sq)
-            end)
-            invBtn:Dock(LEFT)
-            invBtn:SetWide(Scale(80))
-            invBtn:DockMargin(0, Scale(2), Scale(4), Scale(2))
-        end
-    end
+    -- Action buttons removed. Actions are accessible via the Squad Card right-click menu or Roster.
 
     -- Description display
     if (sq.description and sq.description != "") then
         local descContainer = self.detailScroll:Add("EditablePanel")
         descContainer:Dock(TOP)
-        descContainer:DockMargin(Scale(4), Scale(2), Scale(4), Scale(6))
+        descContainer:DockMargin(ix.ui.Scale(4), ix.ui.Scale(2), ix.ui.Scale(4), ix.ui.Scale(6))
 
         local descLabel = descContainer:Add("DLabel")
         descLabel:SetFont("ixImpMenuDiag")
-        descLabel:SetTextColor(THEME.textMuted)
+        descLabel:SetTextColor(ix.ui.THEME.textMuted)
         descLabel:SetText(sq.description)
         descLabel:SetWrap(true)
         descLabel:SetAutoStretchVertical(true)
         descLabel:Dock(TOP)
-        descLabel:DockMargin(Scale(4), Scale(2), Scale(4), Scale(2))
+        descLabel:DockMargin(ix.ui.Scale(4), ix.ui.Scale(2), ix.ui.Scale(4), ix.ui.Scale(2))
 
         -- Size the container after the label stretches
-        descContainer:SetTall(Scale(20))
+        descContainer:SetTall(ix.ui.Scale(20))
         descContainer.PerformLayout = function(s, w, h)
-            s:SetTall(descLabel:GetTall() + Scale(8))
+            s:SetTall(descLabel:GetTall() + ix.ui.Scale(8))
         end
 
         descContainer.Paint = function(s, w, h)
-            surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 20)
+            surface.SetDrawColor(ColorAlpha(ix.ui.THEME.frameSoft, 20))
             surface.DrawRect(0, 0, w, h)
-            surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 40)
-            surface.DrawRect(0, 0, Scale(2), h)
+            surface.SetDrawColor(ColorAlpha(ix.ui.THEME.frameSoft, 40))
+            surface.DrawRect(0, 0, ix.ui.Scale(2), h)
         end
     end
 
@@ -530,11 +448,11 @@ function PANEL:RebuildDetail()
     if (table.Count(classMap) > 0) then
         local loadoutHeader = self.detailScroll:Add("EditablePanel")
         loadoutHeader:Dock(TOP)
-        loadoutHeader:SetTall(Scale(20))
-        loadoutHeader:DockMargin(Scale(4), Scale(4), Scale(4), Scale(2))
+        loadoutHeader:SetTall(ix.ui.Scale(20))
+        loadoutHeader:DockMargin(ix.ui.Scale(4), ix.ui.Scale(4), ix.ui.Scale(4), ix.ui.Scale(2))
         loadoutHeader.Paint = function(s, w, h)
-            draw.SimpleText("LOADOUTS / SPECS", "ixImpMenuStatus", Scale(4), h * 0.5, THEME.accentSoft, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-            surface.SetDrawColor(THEME.frameSoft)
+            draw.SimpleText("LOADOUTS / SPECS", "ixImpMenuStatus", ix.ui.Scale(4), h * 0.5, ix.ui.THEME.accentSoft, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            surface.SetDrawColor(ix.ui.THEME.frameSoft)
             surface.DrawRect(0, h - 1, w, 1)
         end
 
@@ -548,11 +466,11 @@ function PANEL:RebuildDetail()
         for _, cls in ipairs(sorted) do
             local clsRow = self.detailScroll:Add("EditablePanel")
             clsRow:Dock(TOP)
-            clsRow:SetTall(Scale(18))
-            clsRow:DockMargin(Scale(8), 0, Scale(8), 0)
+            clsRow:SetTall(ix.ui.Scale(18))
+            clsRow:DockMargin(ix.ui.Scale(8), 0, ix.ui.Scale(8), 0)
             clsRow.Paint = function(s, w, h)
-                draw.SimpleText("• " .. cls.name, "ixImpMenuDiag", Scale(4), h * 0.5, THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-                draw.SimpleText("×" .. cls.count, "ixImpMenuDiag", w - Scale(4), h * 0.5, THEME.textMuted, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+                draw.SimpleText("• " .. cls.name, "ixImpMenuDiag", ix.ui.Scale(4), h * 0.5, ix.ui.THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+                draw.SimpleText("×" .. cls.count, "ixImpMenuDiag", w - ix.ui.Scale(4), h * 0.5, ix.ui.THEME.textMuted, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
             end
         end
     end
@@ -560,11 +478,11 @@ function PANEL:RebuildDetail()
     -- Member list header
     local memberHeader = self.detailScroll:Add("EditablePanel")
     memberHeader:Dock(TOP)
-    memberHeader:SetTall(Scale(22))
-    memberHeader:DockMargin(Scale(4), Scale(6), Scale(4), Scale(2))
+    memberHeader:SetTall(ix.ui.Scale(22))
+    memberHeader:DockMargin(ix.ui.Scale(4), ix.ui.Scale(6), ix.ui.Scale(4), ix.ui.Scale(2))
     memberHeader.Paint = function(s, w, h)
-        draw.SimpleText("MEMBERS (" .. #sq.members .. ")", "ixImpMenuStatus", Scale(4), h * 0.5, THEME.accentSoft, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-        surface.SetDrawColor(THEME.frameSoft)
+        draw.SimpleText("MEMBERS (" .. #sq.members .. ")", "ixImpMenuStatus", ix.ui.Scale(4), h * 0.5, ix.ui.THEME.accentSoft, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawRect(0, h - 1, w, 1)
     end
 
@@ -579,7 +497,7 @@ function PANEL:RebuildDetail()
     for i, member in ipairs(sq.members) do
         local row = self.detailScroll:Add("EditablePanel")
         row:Dock(TOP)
-        row:SetTall(Scale(28))
+        row:SetTall(ix.ui.Scale(28))
         row:SetMouseInputEnabled(true)
         row.memberData = member
         row.rowIndex = i
@@ -591,7 +509,7 @@ function PANEL:RebuildDetail()
             s.tooltip = CreateSquadMemberTooltip(s.memberData)
             s.tooltip:SetParent(vgui.GetWorldPanel())
             local mx, my = gui.MousePos()
-            s.tooltip:SetPos(mx + Scale(12), my + Scale(8))
+            s.tooltip:SetPos(mx + ix.ui.Scale(12), my + ix.ui.Scale(8))
         end
         row.OnCursorExited = function(s)
             s.bHovered = false
@@ -604,33 +522,33 @@ function PANEL:RebuildDetail()
         row.Paint = function(s, w, h)
             local bg
             if (s.bHovered) then
-                bg = THEME.rowHover
+                bg = ix.ui.THEME.rowHover
             elseif (s.rowIndex % 2 == 0) then
-                bg = THEME.rowEven
+                bg = ix.ui.THEME.rowEven
             else
-                bg = THEME.rowOdd
+                bg = ix.ui.THEME.rowOdd
             end
             surface.SetDrawColor(bg)
             surface.DrawRect(0, 0, w, h)
 
-            local nameColor = THEME.text
+            local nameColor = ix.ui.THEME.text
             local roleText = ""
             if (s.memberData.squadRole == USMS_SQUAD_LEADER) then
-                nameColor = THEME.accent
+                nameColor = ix.ui.THEME.accent
                 roleText = " [SL]"
             elseif (s.memberData.squadRole == USMS_SQUAD_XO) then
-                nameColor = THEME.accentSoft
+                nameColor = ix.ui.THEME.accentSoft
                 roleText = " [XO]"
             elseif (s.memberData.squadRole == USMS_SQUAD_INVITER) then
                 roleText = " [INV]"
             end
 
-            local statusColor = s.memberData.isOnline and THEME.ready or THEME.textMuted
+            local statusColor = s.memberData.isOnline and ix.ui.THEME.ready or ix.ui.THEME.textMuted
             local statusText = s.memberData.isOnline and "ONLINE" or "OFFLINE"
 
-            draw.SimpleText((s.memberData.name or "?") .. roleText, "ixImpMenuDiag", Scale(8), h * 0.5, nameColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-            draw.SimpleText(s.memberData.className or "", "ixImpMenuDiag", w * 0.5, h * 0.5, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-            draw.SimpleText(statusText, "ixImpMenuDiag", w - Scale(8), h * 0.5, statusColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+            draw.SimpleText((s.memberData.name or "?") .. roleText, "ixImpMenuDiag", ix.ui.Scale(8), h * 0.5, nameColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            draw.SimpleText(s.memberData.className or "", "ixImpMenuDiag", w * 0.5, h * 0.5, ix.ui.THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            draw.SimpleText(statusText, "ixImpMenuDiag", w - ix.ui.Scale(8), h * 0.5, statusColor, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
         end
 
         -- Right-click context menu for squad member rows
@@ -686,10 +604,10 @@ function PANEL:RebuildDetail()
     if (#sq.members == 0) then
         local lbl = self.detailScroll:Add("DLabel")
         lbl:Dock(TOP)
-        lbl:SetTall(Scale(28))
-        lbl:DockMargin(Scale(8), 0, 0, 0)
+        lbl:SetTall(ix.ui.Scale(28))
+        lbl:DockMargin(ix.ui.Scale(8), 0, 0, 0)
         lbl:SetFont("ixImpMenuDiag")
-        lbl:SetTextColor(THEME.textMuted)
+        lbl:SetTextColor(ix.ui.THEME.textMuted)
         lbl:SetText("No members.")
     end
 end
@@ -697,65 +615,6 @@ end
 function PANEL:Paint(w, h)
 end
 
---- Opens a player picker for inviting unit members to a squad.
-function PANEL:OpenSquadInvitePicker(squadData)
-    local frame = vgui.Create("DFrame")
-    frame:SetTitle("Invite to " .. (squadData.name or "Squad"))
-    frame:SetSize(Scale(280), Scale(360))
-    frame:Center()
-    frame:MakePopup()
-    frame:SetDraggable(true)
-    frame.Paint = function(s, w, h)
-        surface.SetDrawColor(12, 12, 12, 250)
-        surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
-        surface.DrawOutlinedRect(0, 0, w, h, 1)
-        draw.SimpleText(s:GetTitle(), "ixImpMenuButton", w * 0.5, Scale(12), THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-    end
-
-    local scroll = frame:Add("DScrollPanel")
-    scroll:Dock(FILL)
-    scroll:DockMargin(Scale(4), Scale(28), Scale(4), Scale(4))
-
-    -- Show unit members who are NOT in any squad
-    local roster = ix.usms.clientData.roster or {}
-    local myCharID = LocalPlayer():GetCharacter() and LocalPlayer():GetCharacter():GetID() or 0
-    local count = 0
-
-    for _, entry in ipairs(roster) do
-        if (entry.charID == myCharID) then continue end
-        if (entry.squadID and entry.squadID > 0) then continue end
-        if (!entry.isOnline) then continue end
-
-        count = count + 1
-        local btn = scroll:Add("DButton")
-        btn:SetText("")
-        btn:Dock(TOP)
-        btn:SetTall(Scale(28))
-        btn:DockMargin(0, 0, 0, Scale(2))
-
-        btn.Paint = function(s, w, h)
-            local bg = s:IsHovered() and THEME.rowHover or THEME.rowOdd
-            surface.SetDrawColor(bg)
-            surface.DrawRect(0, 0, w, h)
-            draw.SimpleText(entry.name or "Unknown", "ixImpMenuDiag", Scale(8), h * 0.5, THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-            draw.SimpleText(entry.className or "", "ixImpMenuDiag", w - Scale(8), h * 0.5, THEME.textMuted, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-        end
-        btn.DoClick = function()
-            ix.usms.Request("squad_invite", {charID = entry.charID})
-            frame:Close()
-        end
-    end
-
-    if (count == 0) then
-        local lbl = scroll:Add("DLabel")
-        lbl:Dock(TOP)
-        lbl:SetTall(Scale(32))
-        lbl:DockMargin(Scale(8), Scale(8), 0, 0)
-        lbl:SetFont("ixImpMenuDiag")
-        lbl:SetTextColor(THEME.textMuted)
-        lbl:SetText("No eligible members online.")
-    end
-end
+-- FIX: OpenSquadInvitePicker removed (dead code; invite button was removed during refactor)
 
 vgui.Register("ixUSMSSquadPanel", PANEL, "EditablePanel")

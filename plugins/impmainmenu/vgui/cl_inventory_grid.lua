@@ -19,7 +19,7 @@ function PANEL:Init()
 
 	self.headerH = Scale(22)
 	self.innerPad = Scale(6)
-	self.weightBarH = Scale(20)
+	self.weightBarH = Scale(32)
 
 	-- Weight bar at the bottom
 	local hasWeight = (ix.weight != nil)
@@ -27,7 +27,7 @@ function PANEL:Init()
 		self.weightBar = self:Add("EditablePanel")
 		self.weightBar:Dock(BOTTOM)
 		self.weightBar:SetTall(self.weightBarH)
-		self.weightBar:DockMargin(0, Scale(2), 0, 0)
+		self.weightBar:DockMargin(0, -Scale(28), 0, 0)
 		self.weightBar.Paint = function(pnl, w, h)
 			local character = LocalPlayer():GetCharacter()
 			if (!character) then return end
@@ -37,50 +37,63 @@ function PANEL:Init()
 			local imperial = ix.option and ix.option.Get("imperial", false) or false
 			local isOver = carry > maxWeight
 
-			-- Separator
-			surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 40)
-			surface.DrawRect(0, 0, w, 1)
-
-			-- Track background
-			local barPad = Scale(8)
-			local barY = Scale(5)
-			local barH = h - barY * 2
-			local barMaxW = w - barPad * 2
-
-			surface.SetDrawColor(255, 255, 255, 8)
-			surface.DrawRect(barPad, barY, barMaxW, barH)
-
-			-- Normal fill
-			local fillFrac = math.Clamp(carry / maxWeight, 0, 1)
-			local barColor = isOver and THEME.danger or THEME.accent
-			surface.SetDrawColor(barColor.r, barColor.g, barColor.b, 80)
-			surface.DrawRect(barPad, barY, barMaxW * fillFrac, barH)
-
-			-- Overweight fill
-			if (isOver) then
-				local overFrac = math.Clamp((carry - maxWeight) / maxWeight, 0, 1)
-				surface.SetDrawColor(THEME.danger.r, THEME.danger.g, THEME.danger.b, 120)
-				surface.DrawRect(barPad, barY, barMaxW * overFrac, barH)
-			end
-
 			-- Weight text
 			local weightStr
 			if (ix.weight.WeightString) then
-				weightStr = Format("WEIGHT: %s / %s",
+				weightStr = Format("%s / %s",
 					ix.weight.WeightString(carry, imperial),
 					ix.weight.WeightString(maxWeight, imperial))
 			else
-				weightStr = Format("WEIGHT: %.1f / %.1f KG", carry, maxWeight)
+				weightStr = Format("%.1f / %.1f KG", carry, maxWeight)
+			end
+			
+			weightStr = string.upper(weightStr)
+
+			surface.SetFont("ixImpMenuLabel")
+			local staticPrefix = "WEIGHT: "
+			local twPrefix, thPrefix = surface.GetTextSize(staticPrefix)
+			local twVal, thVal = surface.GetTextSize(weightStr)
+			
+			local textY = math.floor(h * 0.5 - thPrefix * 0.5)
+
+			-- Thin minimal strip on the right Side (inline style)
+			local barX = Scale(4) + twPrefix + twVal + Scale(16)
+			local barW = w - barX - Scale(4)
+			local barH = Scale(2)
+			local barY = math.floor(h * 0.5 - barH * 0.5)
+			
+			-- Draw background track line
+			surface.SetDrawColor(255, 255, 255, 8)
+			surface.DrawRect(barX, barY, barW, barH)
+
+			-- Draw fill
+			local fillFrac = math.Clamp(carry / maxWeight, 0, 1)
+			local barColor = isOver and THEME.danger or THEME.accent
+			surface.SetDrawColor(barColor.r, barColor.g, barColor.b, 90)
+			surface.DrawRect(barX, barY, barW * fillFrac, barH)
+
+			if (isOver) then
+				local overFrac = math.Clamp((carry - maxWeight) / maxWeight, 0, 1)
+				surface.SetDrawColor(THEME.danger.r, THEME.danger.g, THEME.danger.b, 120)
+				surface.DrawRect(barX, barY, barW * overFrac, barH)
 			end
 
-			draw.SimpleText(weightStr, "ixImpMenuDiag", w * 0.5, h * 0.5, THEME.text, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			-- Subtle weight text left-aligned, inline with the track
+			surface.SetTextColor(THEME.textMuted)
+			surface.SetTextPos(Scale(4), textY)
+			surface.DrawText(staticPrefix)
+			
+			surface.SetTextColor(barColor.r, barColor.g, barColor.b, 180)
+			surface.SetTextPos(Scale(4) + twPrefix, textY)
+			surface.DrawText(weightStr)
 		end
 	end
 
 	-- Canvas holds the ixInventory grid
 	self.canvas = self:Add("EditablePanel")
 	self.canvas:Dock(FILL)
-	self.canvas:DockMargin(self.innerPad, self.headerH + self.innerPad, self.innerPad, self.innerPad)
+	-- Add extra negative space below inventory rows
+	self.canvas:DockMargin(self.innerPad, self.headerH + self.innerPad, self.innerPad, Scale(32))
 	self.canvas.Paint = function() end
 end
 
@@ -103,6 +116,26 @@ function PANEL:SetupInventory(bgPanel, rightFixedW, padding)
 	panel:SetTitle(nil)
 	panel.bNoBackgroundBlur = true
 	panel.childPanels = {}
+
+	-- Custom grid drawing to reduce grid visibility
+	panel.Paint = function(pnl, w, h)
+		local iconSize = pnl.iconSize or Scale(64)
+		local gridW = math.ceil(w / iconSize)
+		local gridH = math.ceil(h / iconSize)
+
+		-- Soft internal grid lines (10-20% opacity)
+		surface.SetDrawColor(THEME.accent.r, THEME.accent.g, THEME.accent.b, 25)
+
+		for x = 0, gridW - 1 do
+			for y = 0, gridH - 1 do
+				surface.DrawOutlinedRect(x * iconSize, y * iconSize, iconSize, iconSize)
+			end
+		end
+
+		-- Draw slightly stronger outer boundary
+		surface.SetDrawColor(THEME.accent.r, THEME.accent.g, THEME.accent.b, 80)
+		surface.DrawOutlinedRect(0, 0, w, h)
+	end
 
 	self.gridPanel = panel
 

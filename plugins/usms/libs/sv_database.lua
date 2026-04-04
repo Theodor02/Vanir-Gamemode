@@ -19,12 +19,9 @@ function ix.usms.db.Load()
         ix.usms.squads = {}
         ix.usms.members = {}
         ix.usms.squadMembers = {}
-        ix.usms.missions = {}
-        ix.usms.commendations = {}
+        -- FIX: missions, commendations, nextMissionID, nextCommendationID removed (systems cut by design)
         ix.usms.nextUnitID = 1
         ix.usms.nextSquadID = 1
-        ix.usms.nextMissionID = 1
-        ix.usms.nextCommendationID = 1
         return
     end
 
@@ -59,21 +56,31 @@ function ix.usms.db.Load()
 
     ix.usms.nextUnitID = tonumber(data.nextUnitID) or 1
     ix.usms.nextSquadID = tonumber(data.nextSquadID) or 1
-    ix.usms.nextMissionID = tonumber(data.nextMissionID) or 1
-    ix.usms.nextCommendationID = tonumber(data.nextCommendationID) or 1
+    -- FIX: nextMissionID, nextCommendationID, missions, commendations load removed (systems cut by design)
 
-    ix.usms.missions = {}
-    if (istable(data.missions)) then
-        for k, v in pairs(data.missions) do
-            ix.usms.missions[tonumber(k) or k] = v
+    if (istable(data.logs)) then
+        ix.usms.logs = {}
+        for k, v in pairs(data.logs) do
+            ix.usms.logs[tonumber(k) or k] = v
+        end
+    else
+        local logData = ix.data.Get("usms_logs", {}, false, true)
+        if (istable(logData.logs)) then
+            ix.usms.logs = {}
+            for k, v in pairs(logData.logs) do
+                ix.usms.logs[tonumber(k) or k] = v
+            end
+        else
+            ix.usms.logs = ix.data.Get("usms_logs", {}, false, true)
+            if (!istable(ix.usms.logs)) then
+                ix.usms.logs = {}
+            end
         end
     end
 
-    ix.usms.commendations = {}
-    if (istable(data.commendations)) then
-        for k, v in pairs(data.commendations) do
-            ix.usms.commendations[tonumber(k) or k] = v
-        end
+    -- FIX: Guard against stage-3 fallback assigning a wrapper object instead of a flat array
+    if (istable(ix.usms.logs) and ix.usms.logs.logs) then
+        ix.usms.logs = ix.usms.logs.logs
     end
 
     -- Prune old logs on load
@@ -82,32 +89,41 @@ function ix.usms.db.Load()
     print("[USMS] Loaded " .. table.Count(ix.usms.units) .. " units, "
         .. table.Count(ix.usms.members) .. " members, "
         .. table.Count(ix.usms.squads) .. " squads, "
-        .. table.Count(ix.usms.squadMembers) .. " squad members, "
-        .. table.Count(ix.usms.missions) .. " missions, "
-        .. table.Count(ix.usms.commendations) .. " commendations.")
+        .. table.Count(ix.usms.squadMembers) .. " squad members.")
 end
 
---- Save all USMS data to the plugin data file.
--- Called from SaveData hook and on shutdown.
+ix.usms.db._dirty = false
+
+timer.Create("ixUSMSAutoSave", 10, 0, function()
+    if (ix.usms.db._dirty) then
+        ix.usms.db.ForceSave()
+        ix.usms.db._dirty = false
+    end
+end)
+
+--- Mark USMS database as dirty. Called from request handlers.
 function ix.usms.db.Save()
+    ix.usms.db._dirty = true
+end
+
+--- Actually perform the file I/O to save to disk.
+function ix.usms.db.ForceSave()
     local plugin = ix.plugin.list["usms"]
     if (!plugin) then return end
 
+    -- FIX: missions, commendations, nextMissionID, nextCommendationID removed from saved data (systems cut by design)
     local data = {
         units = ix.usms.units or {},
         squads = ix.usms.squads or {},
         members = ix.usms.members or {},
         squadMembers = ix.usms.squadMembers or {},
-        missions = ix.usms.missions or {},
-        commendations = ix.usms.commendations or {},
-        logs = ix.usms.logs or {},
+        -- logs removed from main save file
         nextUnitID = ix.usms.nextUnitID or 1,
-        nextSquadID = ix.usms.nextSquadID or 1,
-        nextMissionID = ix.usms.nextMissionID or 1,
-        nextCommendationID = ix.usms.nextCommendationID or 1
+        nextSquadID = ix.usms.nextSquadID or 1
     }
 
     plugin:SetData(data, false, true) -- ignoreMap=true
+    ix.data.Set("usms_logs", ix.usms.logs or {}, false, true)
 end
 
 --- Allocate a new unique unit ID.
@@ -126,21 +142,7 @@ function ix.usms.db.AllocSquadID()
     return id
 end
 
---- Allocate a new unique mission ID.
--- @return number The new ID
-function ix.usms.db.AllocMissionID()
-    local id = ix.usms.nextMissionID
-    ix.usms.nextMissionID = id + 1
-    return id
-end
-
---- Allocate a new unique commendation ID.
--- @return number The new ID
-function ix.usms.db.AllocCommendationID()
-    local id = ix.usms.nextCommendationID
-    ix.usms.nextCommendationID = id + 1
-    return id
-end
+-- FIX: AllocMissionID and AllocCommendationID removed (systems cut by design)
 
 --- Prune old log entries. Runs on data load.
 -- @param maxAgeDays number Days to retain (default: config value)

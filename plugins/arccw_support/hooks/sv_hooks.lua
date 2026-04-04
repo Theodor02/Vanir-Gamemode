@@ -93,26 +93,32 @@ function PLUGIN:OnPlayerUnRestricted(client)
 end
 
 -- Sync inventory ammo items with player's reserve pool after ArcCW reloads.
--- This ensures inventory_ammo item round counts reflect ammo consumed during play.
-function PLUGIN:ArcCW_PostReload(weapon)
-    local client = weapon:GetOwner()
-    if !IsValid(client) or !client:IsPlayer() or !client.TakeInventoryAmmo then return end
+-- Deprecated: Handled natively by Source Engine via the Equip-to-Pool method.
+-- See sh_arccw_ammo.lua OnEquipped / OnUnequipped.
 
-    local ammoID = game.GetAmmoName(weapon:GetPrimaryAmmoType())
-    if !isstring(ammoID) then return end
+-- Ensure equipped ammo is flushed from native pool to item data on character save/disconnect.
+-- We use virtual pools here so we don't accidentally rob the player of ammo during an auto-save while they are playing.
+function PLUGIN:CharacterPreSave(character)
+    local client = character:GetPlayer()
+    if not IsValid(client) then return end
 
-    local inventoryTotal = 0
-    for _, item in pairs(client:GetItems()) do
-        if item.ammo == ammoID and item.ammoAmount then
-            inventoryTotal = inventoryTotal + item:GetData("rounds", item.ammoAmount)
+    local equipInv = character.equipInv
+    if equipInv then
+        local virtualPools = {} 
+        for _, item in pairs(equipInv:GetItems()) do
+            if item.outfitCategory == "ammo" and item:GetData("equip") == true then
+                virtualPools[item.ammo] = virtualPools[item.ammo] or client:GetAmmoCount(item.ammo)
+                
+                local pool = virtualPools[item.ammo]
+                if pool > 0 then
+                    local amountToTake = math.min(pool, item.maxRounds or item.ammoAmount)
+                    item:SetData("rounds", amountToTake)
+                    virtualPools[item.ammo] = math.max(0, pool - amountToTake)
+                else
+                    item:SetData("rounds", 0)
+                end
+            end
         end
-    end
-
-    local poolCount = client:GetAmmoCount(ammoID)
-    local taken = inventoryTotal - poolCount
-
-    if taken > 0 then
-        client:TakeInventoryAmmo(ammoID, taken)
     end
 end
 

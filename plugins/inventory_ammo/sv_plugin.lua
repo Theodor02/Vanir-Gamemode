@@ -6,7 +6,7 @@ function playerMeta:UpdateInventoryAllAmmo()
 	local ammo = {}
 
 	for _, v in pairs(self:GetItems()) do
-		if (v.ammo and v.ammoAmount) then
+		if (v.ammo and v.ammoAmount and not v.outfitCategory) then
 			ammo[v.ammo] = (ammo[v.ammo] or 0) + v:GetData("rounds", v.ammoAmount)
 		end
 	end
@@ -27,7 +27,7 @@ function playerMeta:UpdateInventoryAmmo(ammoID)
 	local count = 0
 
 	for _, v in pairs(self:GetItems()) do
-		if (v.ammo and v.ammoAmount and v.ammo == ammoID) then
+		if (v.ammo and v.ammoAmount and v.ammo == ammoID and not v.outfitCategory) then
 			count = count + v:GetData("rounds", v.ammoAmount)
 		end
 	end
@@ -46,7 +46,7 @@ function playerMeta:TakeInventoryAmmo(ammoID, amount)
 	local clip1 = amount
 
 	for _, v in pairs(self:GetItems()) do
-		if (v.ammo and v.ammoAmount and v.ammo == ammoID) then
+		if (v.ammo and v.ammoAmount and v.ammo == ammoID and not v.outfitCategory) then
 			if (clip1 == 0) then break end
 			local rounds = v:GetData("rounds", v.ammoAmount)
 
@@ -74,7 +74,7 @@ end
 function PLUGIN:PlayerInteractItem(client, action, item)
 
 
-	if (item.ammoAmount and item.ammo and (action == "drop" or action == "take")) then
+	if (item.ammoAmount and item.ammo and (action == "drop" or action == "take") and not item.outfitCategory) then
 		client:UpdateInventoryAmmo(item.ammo)
 	end
 
@@ -91,7 +91,7 @@ function PLUGIN:InventoryItemAdded(oldInv, inventory, item, split)
 		return
 	end
 
-	if (item.ammoAmount and item.ammo) then
+	if (item.ammoAmount and item.ammo and not item.outfitCategory) then
 		local client = ix.char.loaded[inventory.owner]:GetPlayer()
 
 		if (!split) then
@@ -108,7 +108,7 @@ function PLUGIN:InventoryItemRemoved(inventory, item)
 		return
 	end
 
-	if (item.ammoAmount and item.ammo) then
+	if (item.ammoAmount and item.ammo and not item.outfitCategory) then
 		local client = ix.char.loaded[inventory.owner]:GetPlayer()
 
 		client:UpdateInventoryAmmo(item.ammo)

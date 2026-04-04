@@ -1,27 +1,6 @@
 --- USMS Unit Roster Panel
 -- Sortable member table showing all unit members.
 
-local THEME = {
-    background = Color(10, 10, 10, 255),
-    frame = Color(191, 148, 53, 255),
-    frameSoft = Color(191, 148, 53, 120),
-    text = Color(235, 235, 235, 255),
-    textMuted = Color(168, 168, 168, 140),
-    accent = Color(191, 148, 53, 255),
-    accentSoft = Color(191, 148, 53, 220),
-    buttonBg = Color(16, 16, 16, 255),
-    buttonBgHover = Color(26, 26, 26, 255),
-    rowEven = Color(14, 14, 14, 255),
-    rowOdd = Color(18, 18, 18, 255),
-    rowHover = Color(24, 22, 14, 255),
-    danger = Color(180, 60, 60, 255),
-    ready = Color(60, 170, 90, 255)
-}
-
-local function Scale(value)
-    return math.max(1, math.Round(value * (ScrH() / 900)))
-end
-
 local ROLE_NAMES = {
     [0] = "MEMBER",
     [1] = "XO",
@@ -43,22 +22,22 @@ local function CreateMemberTooltip(data)
     tip:SetDrawOnTop(true)
     tip.lines = {}
 
-    table.insert(tip.lines, {label = "Name", value = data.name or "Unknown", color = THEME.text})
-    table.insert(tip.lines, {label = "Status", value = data.isOnline and "ONLINE" or "OFFLINE", color = data.isOnline and THEME.ready or THEME.textMuted})
-    table.insert(tip.lines, {label = "Unit Role", value = ROLE_NAMES[data.role] or "MEMBER", color = (data.role or 0) >= 1 and THEME.accent or THEME.text})
-    table.insert(tip.lines, {label = "Class", value = data.className or "Unassigned", color = THEME.text})
+    table.insert(tip.lines, {label = "Name", value = data.name or "Unknown", color = ix.ui.THEME.text})
+    table.insert(tip.lines, {label = "Status", value = data.isOnline and "ONLINE" or "OFFLINE", color = data.isOnline and ix.ui.THEME.ready or ix.ui.THEME.textMuted})
+    table.insert(tip.lines, {label = "Unit Role", value = ROLE_NAMES[data.role] or "MEMBER", color = (data.role or 0) >= 1 and ix.ui.THEME.accent or ix.ui.THEME.text})
+    table.insert(tip.lines, {label = "Class", value = data.className or "Unassigned", color = ix.ui.THEME.text})
 
     if (data.squadID and data.squadID > 0) then
-        table.insert(tip.lines, {label = "Squad", value = data.squadName or ("Squad #" .. data.squadID), color = THEME.text})
-        table.insert(tip.lines, {label = "Squad Role", value = SQUAD_ROLE_NAMES[data.squadRole] or "MEMBER", color = (data.squadRole or 0) >= USMS_SQUAD_XO and THEME.accent or THEME.text})
+        table.insert(tip.lines, {label = "Squad", value = data.squadName or ("Squad #" .. data.squadID), color = ix.ui.THEME.text})
+        table.insert(tip.lines, {label = "Squad Role", value = SQUAD_ROLE_NAMES[data.squadRole] or "MEMBER", color = (data.squadRole or 0) >= USMS_SQUAD_XO and ix.ui.THEME.accent or ix.ui.THEME.text})
     else
-        table.insert(tip.lines, {label = "Squad", value = "None", color = THEME.textMuted})
+        table.insert(tip.lines, {label = "Squad", value = "None", color = ix.ui.THEME.textMuted})
     end
 
-    local lineH = Scale(18)
-    local padX = Scale(10)
-    local padY = Scale(6)
-    local tipW = Scale(220)
+    local lineH = ix.ui.Scale(18)
+    local padX = ix.ui.Scale(10)
+    local padY = ix.ui.Scale(6)
+    local tipW = ix.ui.Scale(220)
     local tipH = padY * 2 + #tip.lines * lineH
 
     tip:SetSize(tipW, tipH)
@@ -66,12 +45,12 @@ local function CreateMemberTooltip(data)
     tip.Paint = function(s, w, h)
         surface.SetDrawColor(10, 10, 10, 240)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
 
         local y = padY
         for _, line in ipairs(s.lines) do
-            draw.SimpleText(line.label .. ":", "ixImpMenuDiag", padX, y, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+            draw.SimpleText(line.label .. ":", "ixImpMenuDiag", padX, y, ix.ui.THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
             draw.SimpleText(line.value, "ixImpMenuDiag", w - padX, y, line.color, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
             y = y + lineH
         end
@@ -94,8 +73,8 @@ function PANEL:Init()
     -- Action bar (invite button for CO/XO)
     self.actionBar = self:Add("EditablePanel")
     self.actionBar:Dock(TOP)
-    self.actionBar:SetTall(Scale(32))
-    self.actionBar:DockMargin(0, 0, 0, Scale(4))
+    self.actionBar:SetTall(ix.ui.Scale(32))
+    self.actionBar:DockMargin(0, 0, 0, ix.ui.Scale(4))
     self.actionBar.Paint = function() end
 
     local char = LocalPlayer():GetCharacter()
@@ -105,36 +84,57 @@ function PANEL:Init()
         self.inviteBtn = self.actionBar:Add("DButton")
         self.inviteBtn:SetText("")
         self.inviteBtn:Dock(LEFT)
-        self.inviteBtn:SetWide(Scale(140))
-        self.inviteBtn:DockMargin(0, 0, Scale(4), 0)
+        self.inviteBtn:SetWide(ix.ui.Scale(140))
+        self.inviteBtn:DockMargin(0, 0, ix.ui.Scale(4), 0)
         self.inviteBtn.DoClick = function()
             self:OpenInvitePlayerPicker()
         end
         self.inviteBtn.Paint = function(s, w, h)
-            local bg = s:IsHovered() and THEME.buttonBgHover or THEME.buttonBg
+            local bg = s:IsHovered() and ix.ui.THEME.buttonBgHover or ix.ui.THEME.buttonBg
             surface.SetDrawColor(bg)
             surface.DrawRect(0, 0, w, h)
-            surface.SetDrawColor(THEME.frameSoft)
+            surface.SetDrawColor(ix.ui.THEME.frameSoft)
             surface.DrawOutlinedRect(0, 0, w, h, 1)
-            draw.SimpleText("INVITE PLAYER", "ixImpMenuStatus", w * 0.5, h * 0.5, THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("INVITE PLAYER", "ixImpMenuStatus", w * 0.5, h * 0.5, ix.ui.THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
 
         -- Unit edit button
         self.editBtn = self.actionBar:Add("DButton")
         self.editBtn:SetText("")
         self.editBtn:Dock(LEFT)
-        self.editBtn:SetWide(Scale(120))
-        self.editBtn:DockMargin(0, 0, Scale(4), 0)
+        self.editBtn:SetWide(ix.ui.Scale(120))
+        self.editBtn:DockMargin(0, 0, ix.ui.Scale(4), 0)
         self.editBtn.DoClick = function()
             self:OpenUnitEditDialog()
         end
         self.editBtn.Paint = function(s, w, h)
-            local bg = s:IsHovered() and THEME.buttonBgHover or THEME.buttonBg
+            local bg = s:IsHovered() and ix.ui.THEME.buttonBgHover or ix.ui.THEME.buttonBg
             surface.SetDrawColor(bg)
             surface.DrawRect(0, 0, w, h)
-            surface.SetDrawColor(THEME.frameSoft)
+            surface.SetDrawColor(ix.ui.THEME.frameSoft)
             surface.DrawOutlinedRect(0, 0, w, h, 1)
-            draw.SimpleText("EDIT UNIT", "ixImpMenuStatus", w * 0.5, h * 0.5, THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+            draw.SimpleText("EDIT UNIT", "ixImpMenuStatus", w * 0.5, h * 0.5, ix.ui.THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        end
+
+        -- Refresh button
+        self.refreshBtn = self.actionBar:Add("DButton")
+        self.refreshBtn:SetText("")
+        self.refreshBtn:Dock(LEFT)
+        self.refreshBtn:SetWide(ix.ui.Scale(120))
+        self.refreshBtn:DockMargin(0, 0, ix.ui.Scale(4), 0)
+        self.refreshBtn.DoClick = function()
+            local char = LocalPlayer():GetCharacter()
+            if (char) then
+                ix.usms.Request("roster_request", {unitID = char:GetUsmUnitID()})
+            end
+        end
+        self.refreshBtn.Paint = function(s, w, h)
+            local bg = s:IsHovered() and ix.ui.THEME.buttonBgHover or ix.ui.THEME.buttonBg
+            surface.SetDrawColor(bg)
+            surface.DrawRect(0, 0, w, h)
+            surface.SetDrawColor(ix.ui.THEME.frameSoft)
+            surface.DrawOutlinedRect(0, 0, w, h, 1)
+            draw.SimpleText("REFRESH", "ixImpMenuStatus", w * 0.5, h * 0.5, ix.ui.THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
         end
     else
         self.actionBar:SetTall(0)
@@ -143,18 +143,18 @@ function PANEL:Init()
     -- Search bar
     self.searchBar = self:Add("DTextEntry")
     self.searchBar:Dock(TOP)
-    self.searchBar:SetTall(Scale(28))
-    self.searchBar:DockMargin(0, 0, 0, Scale(4))
+    self.searchBar:SetTall(ix.ui.Scale(28))
+    self.searchBar:DockMargin(0, 0, 0, ix.ui.Scale(4))
     self.searchBar:SetFont("ixImpMenuDiag")
-    self.searchBar:SetTextColor(THEME.text)
+    self.searchBar:SetTextColor(ix.ui.THEME.text)
     self.searchBar:SetPlaceholderText("Search roster...")
     self.searchBar:SetDrawBackground(false)
     self.searchBar.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.buttonBg)
+        surface.SetDrawColor(ix.ui.THEME.buttonBg)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawRect(0, h - 1, w, 1)
-        s:DrawTextEntryText(THEME.text, THEME.accent, THEME.text)
+        s:DrawTextEntryText(ix.ui.THEME.text, ix.ui.THEME.accent, ix.ui.THEME.text)
     end
     self.searchBar.OnChange = function(s)
         self.filter = s:GetValue():lower()
@@ -164,30 +164,29 @@ function PANEL:Init()
     -- Column headers
     self.headerBar = self:Add("EditablePanel")
     self.headerBar:Dock(TOP)
-    self.headerBar:SetTall(Scale(24))
-    self.headerBar:DockMargin(0, 0, 0, Scale(2))
+    self.headerBar:SetTall(ix.ui.Scale(24))
+    self.headerBar:DockMargin(0, 0, 0, ix.ui.Scale(2))
 
     self.columns = {
-        {key = "name", label = "NAME", fraction = 0.25},
-        {key = "role", label = "ROLE", fraction = 0.10},
-        {key = "className", label = "CLASS", fraction = 0.20},
-        {key = "squadID", label = "SQUAD", fraction = 0.15},
-        {key = "isOnline", label = "STATUS", fraction = 0.10},
-        {key = "joinedAt", label = "JOINED", fraction = 0.20}
+    {key = "name", label = "NAME", fraction = 0.40},
+    {key = "role", label = "ROLE", fraction = 0.15},
+    {key = "className", label = "CLASS", fraction = 0.20},
+    {key = "squadID", label = "SQUAD", fraction = 0.15},
+    {key = "isOnline", label = "STATUS", fraction = 0.10}
     }
 
     self.headerBar.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.buttonBg)
+        surface.SetDrawColor(ix.ui.THEME.buttonBg)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawRect(0, h - 1, w, 1)
 
         local x = 0
         for _, col in ipairs(self.columns) do
             local colW = w * col.fraction
-            local textColor = (self.sortKey == col.key) and THEME.accent or THEME.textMuted
+            local textColor = (self.sortKey == col.key) and ix.ui.THEME.accent or ix.ui.THEME.textMuted
 
-            draw.SimpleText(col.label, "ixImpMenuStatus", x + Scale(6), h * 0.5, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            draw.SimpleText(col.label, "ixImpMenuStatus", x + ix.ui.Scale(6), h * 0.5, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
             x = x + colW
         end
     end
@@ -219,12 +218,12 @@ function PANEL:Init()
     self.scroll:Dock(FILL)
 
     local sbar = self.scroll:GetVBar()
-    sbar:SetWide(Scale(4))
+    sbar:SetWide(ix.ui.Scale(4))
     sbar.Paint = function() end
     sbar.btnUp.Paint = function() end
     sbar.btnDown.Paint = function() end
     sbar.btnGrip.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawRect(0, 0, w, h)
     end
 
@@ -287,7 +286,7 @@ function PANEL:RebuildRows()
     for i, entry in ipairs(filtered) do
         local row = self.scroll:Add("ixUSMSRosterRow")
         row:Dock(TOP)
-        row:SetTall(Scale(32))
+        row:SetTall(ix.ui.Scale(32))
         row.rowIndex = i
         row.columns = self.columns
         row:SetMemberData(entry)
@@ -302,16 +301,16 @@ end
 function PANEL:OpenInvitePlayerPicker()
     local frame = vgui.Create("DFrame")
     frame:SetTitle("Invite Player to Unit")
-    frame:SetSize(Scale(300), Scale(400))
+    frame:SetSize(ix.ui.Scale(300), ix.ui.Scale(400))
     frame:Center()
     frame:MakePopup()
     frame:SetDraggable(true)
     frame.Paint = function(s, w, h)
         surface.SetDrawColor(12, 12, 12, 250)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        draw.SimpleText(s:GetTitle(), "ixImpMenuButton", w * 0.5, Scale(12), THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        draw.SimpleText(s:GetTitle(), "ixImpMenuButton", w * 0.5, ix.ui.Scale(12), ix.ui.THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
 
     -- Build list of online players not in the viewer's unit
@@ -324,7 +323,7 @@ function PANEL:OpenInvitePlayerPicker()
 
     local scroll = frame:Add("DScrollPanel")
     scroll:Dock(FILL)
-    scroll:DockMargin(Scale(4), Scale(28), Scale(4), Scale(4))
+    scroll:DockMargin(ix.ui.Scale(4), ix.ui.Scale(28), ix.ui.Scale(4), ix.ui.Scale(4))
 
     local count = 0
     for _, ply in ipairs(player.GetAll()) do
@@ -336,8 +335,8 @@ function PANEL:OpenInvitePlayerPicker()
         local btn = scroll:Add("DButton")
         btn:SetText("")
         btn:Dock(TOP)
-        btn:SetTall(Scale(32))
-        btn:DockMargin(0, 0, 0, Scale(2))
+        btn:SetTall(ix.ui.Scale(32))
+        btn:DockMargin(0, 0, 0, ix.ui.Scale(2))
 
         local plyName = char:GetName()
         local factionName = ""
@@ -345,11 +344,11 @@ function PANEL:OpenInvitePlayerPicker()
         if (faction) then factionName = faction.name end
 
         btn.Paint = function(s, w, h)
-            local bg = s:IsHovered() and THEME.rowHover or THEME.rowOdd
+            local bg = s:IsHovered() and ix.ui.THEME.rowHover or ix.ui.THEME.rowOdd
             surface.SetDrawColor(bg)
             surface.DrawRect(0, 0, w, h)
-            draw.SimpleText(plyName, "ixImpMenuDiag", Scale(8), h * 0.3, THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-            draw.SimpleText(factionName, "ixImpMenuDiag", Scale(8), h * 0.7, THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            draw.SimpleText(plyName, "ixImpMenuDiag", ix.ui.Scale(8), h * 0.3, ix.ui.THEME.text, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+            draw.SimpleText(factionName, "ixImpMenuDiag", ix.ui.Scale(8), h * 0.7, ix.ui.THEME.textMuted, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
         end
         btn.DoClick = function()
             ix.usms.Request("unit_invite", {charID = char:GetID()})
@@ -360,10 +359,10 @@ function PANEL:OpenInvitePlayerPicker()
     if (count == 0) then
         local lbl = scroll:Add("DLabel")
         lbl:Dock(TOP)
-        lbl:SetTall(Scale(32))
-        lbl:DockMargin(Scale(8), Scale(8), 0, 0)
+        lbl:SetTall(ix.ui.Scale(32))
+        lbl:DockMargin(ix.ui.Scale(8), ix.ui.Scale(8), 0, 0)
         lbl:SetFont("ixImpMenuDiag")
-        lbl:SetTextColor(THEME.textMuted)
+        lbl:SetTextColor(ix.ui.THEME.textMuted)
         lbl:SetText("No eligible players online.")
     end
 end
@@ -375,75 +374,75 @@ function PANEL:OpenUnitEditDialog()
 
     local frame = vgui.Create("DFrame")
     frame:SetTitle("Edit Unit")
-    frame:SetSize(Scale(360), Scale(280))
+    frame:SetSize(ix.ui.Scale(360), ix.ui.Scale(280))
     frame:Center()
     frame:MakePopup()
     frame:SetDraggable(true)
     frame.Paint = function(s, w, h)
         surface.SetDrawColor(12, 12, 12, 250)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        draw.SimpleText(s:GetTitle(), "ixImpMenuButton", w * 0.5, Scale(12), THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+        draw.SimpleText(s:GetTitle(), "ixImpMenuButton", w * 0.5, ix.ui.Scale(12), ix.ui.THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
 
     local content = frame:Add("EditablePanel")
     content:Dock(FILL)
-    content:DockMargin(Scale(8), Scale(28), Scale(8), Scale(8))
+    content:DockMargin(ix.ui.Scale(8), ix.ui.Scale(28), ix.ui.Scale(8), ix.ui.Scale(8))
 
     -- Name field
     local nameLbl = content:Add("DLabel")
     nameLbl:Dock(TOP)
-    nameLbl:SetTall(Scale(18))
+    nameLbl:SetTall(ix.ui.Scale(18))
     nameLbl:SetFont("ixImpMenuDiag")
-    nameLbl:SetTextColor(THEME.textMuted)
+    nameLbl:SetTextColor(ix.ui.THEME.textMuted)
     nameLbl:SetText("Unit Name:")
 
     local nameEntry = content:Add("DTextEntry")
     nameEntry:Dock(TOP)
-    nameEntry:SetTall(Scale(28))
-    nameEntry:DockMargin(0, 0, 0, Scale(8))
+    nameEntry:SetTall(ix.ui.Scale(28))
+    nameEntry:DockMargin(0, 0, 0, ix.ui.Scale(8))
     nameEntry:SetFont("ixImpMenuDiag")
-    nameEntry:SetTextColor(THEME.text)
+    nameEntry:SetTextColor(ix.ui.THEME.text)
     nameEntry:SetText(unitData.name or "")
     nameEntry:SetDrawBackground(false)
     nameEntry.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.buttonBg)
+        surface.SetDrawColor(ix.ui.THEME.buttonBg)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        s:DrawTextEntryText(THEME.text, THEME.accent, THEME.text)
+        s:DrawTextEntryText(ix.ui.THEME.text, ix.ui.THEME.accent, ix.ui.THEME.text)
     end
 
     -- Description field
     local descLbl = content:Add("DLabel")
     descLbl:Dock(TOP)
-    descLbl:SetTall(Scale(18))
+    descLbl:SetTall(ix.ui.Scale(18))
     descLbl:SetFont("ixImpMenuDiag")
-    descLbl:SetTextColor(THEME.textMuted)
+    descLbl:SetTextColor(ix.ui.THEME.textMuted)
     descLbl:SetText("Description:")
 
     local descEntry = content:Add("DTextEntry")
     descEntry:Dock(TOP)
-    descEntry:SetTall(Scale(60))
-    descEntry:DockMargin(0, 0, 0, Scale(8))
+    descEntry:SetTall(ix.ui.Scale(60))
+    descEntry:DockMargin(0, 0, 0, ix.ui.Scale(8))
     descEntry:SetFont("ixImpMenuDiag")
-    descEntry:SetTextColor(THEME.text)
+    descEntry:SetTextColor(ix.ui.THEME.text)
     descEntry:SetText(unitData.description or "")
     descEntry:SetMultiline(true)
     descEntry:SetDrawBackground(false)
     descEntry.Paint = function(s, w, h)
-        surface.SetDrawColor(THEME.buttonBg)
+        surface.SetDrawColor(ix.ui.THEME.buttonBg)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        s:DrawTextEntryText(THEME.text, THEME.accent, THEME.text)
+        s:DrawTextEntryText(ix.ui.THEME.text, ix.ui.THEME.accent, ix.ui.THEME.text)
     end
 
     -- Save button
     local saveBtn = content:Add("DButton")
     saveBtn:Dock(TOP)
-    saveBtn:SetTall(Scale(32))
+    saveBtn:SetTall(ix.ui.Scale(32))
     saveBtn:SetText("")
     saveBtn.DoClick = function()
         ix.usms.Request("unit_edit", {
@@ -453,12 +452,12 @@ function PANEL:OpenUnitEditDialog()
         frame:Close()
     end
     saveBtn.Paint = function(s, w, h)
-        local bg = s:IsHovered() and THEME.buttonBgHover or THEME.buttonBg
+        local bg = s:IsHovered() and ix.ui.THEME.buttonBgHover or ix.ui.THEME.buttonBg
         surface.SetDrawColor(bg)
         surface.DrawRect(0, 0, w, h)
-        surface.SetDrawColor(THEME.frameSoft)
+        surface.SetDrawColor(ix.ui.THEME.frameSoft)
         surface.DrawOutlinedRect(0, 0, w, h, 1)
-        draw.SimpleText("SAVE CHANGES", "ixImpMenuStatus", w * 0.5, h * 0.5, THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+        draw.SimpleText("SAVE CHANGES", "ixImpMenuStatus", w * 0.5, h * 0.5, ix.ui.THEME.accent, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     end
 end
 
@@ -490,7 +489,7 @@ function ROW:OnCursorEntered()
     self.tooltip:SetParent(vgui.GetWorldPanel())
 
     local mx, my = gui.MousePos()
-    self.tooltip:SetPos(mx + Scale(12), my + Scale(8))
+    self.tooltip:SetPos(mx + ix.ui.Scale(12), my + ix.ui.Scale(8))
 end
 
 function ROW:OnCursorExited()
@@ -510,16 +509,16 @@ end
 function ROW:Paint(w, h)
     local bg
     if (self.bHovered) then
-        bg = THEME.rowHover
+        bg = ix.ui.THEME.rowHover
     elseif (self.rowIndex % 2 == 0) then
-        bg = THEME.rowEven
+        bg = ix.ui.THEME.rowEven
     else
-        bg = THEME.rowOdd
+        bg = ix.ui.THEME.rowOdd
     end
 
     surface.SetDrawColor(bg)
     surface.DrawRect(0, 0, w, h)
-    surface.SetDrawColor(THEME.frameSoft.r, THEME.frameSoft.g, THEME.frameSoft.b, 30)
+    surface.SetDrawColor(ColorAlpha(ix.ui.THEME.frameSoft, 30))
     surface.DrawRect(0, h - 1, w, 1)
 
     -- Draw column values
@@ -527,20 +526,20 @@ function ROW:Paint(w, h)
     for _, col in ipairs(self.columns) do
         local colW = w * col.fraction
         local text = ""
-        local textColor = THEME.text
+        local textColor = ix.ui.THEME.text
 
         if (col.key == "name") then
             text = self.data.name or "Unknown"
         elseif (col.key == "role") then
             text = ROLE_NAMES[self.data.role] or "MEMBER"
             if (self.data.role == 2) then
-                textColor = THEME.accent
+                textColor = ix.ui.THEME.accent
             elseif (self.data.role == 1) then
-                textColor = THEME.accentSoft
+                textColor = ix.ui.THEME.accentSoft
             end
         elseif (col.key == "className") then
             text = self.data.className or "Unassigned"
-            textColor = THEME.textMuted
+            textColor = ix.ui.THEME.textMuted
         elseif (col.key == "squadID") then
             if (self.data.squadID and self.data.squadID > 0) then
                 text = self.data.squadName or ("Squad #" .. self.data.squadID)
@@ -552,15 +551,15 @@ function ROW:Paint(w, h)
                 text = text .. (squadRoleTags[self.data.squadRole] or "")
             else
                 text = "-"
-                textColor = THEME.textMuted
+                textColor = ix.ui.THEME.textMuted
             end
         elseif (col.key == "isOnline") then
             if (self.data.isOnline) then
                 text = "ONLINE"
-                textColor = THEME.ready
+                textColor = ix.ui.THEME.ready
             else
                 text = "OFFLINE"
-                textColor = THEME.textMuted
+                textColor = ix.ui.THEME.textMuted
             end
         elseif (col.key == "joinedAt") then
             local ts = self.data.joinedAt
@@ -569,20 +568,16 @@ function ROW:Paint(w, h)
             else
                 text = "-"
             end
-            textColor = THEME.textMuted
+            textColor = ix.ui.THEME.textMuted
         end
 
-        draw.SimpleText(text, "ixImpMenuDiag", x + Scale(6), h * 0.5, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+        draw.SimpleText(text, "ixImpMenuDiag", x + ix.ui.Scale(6), h * 0.5, textColor, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
         x = x + colW
     end
 end
 
 function ROW:OnMousePressed(code)
     if (code == MOUSE_LEFT) then
-        local recordPanel = vgui.Create("ixUSMSServiceRecord")
-        if (IsValid(recordPanel)) then
-            recordPanel:SetTargetCharID(self.data.charID)
-        end
         return
     end
 
@@ -595,10 +590,13 @@ function ROW:OnMousePressed(code)
     local isOfficer = char:IsUnitOfficer() or LocalPlayer():IsSuperAdmin()
     local canInviteSquad = char:CanSquadInvite() or LocalPlayer():IsSuperAdmin()
 
-    -- Only show menu if there's something to show
-    if (!isOfficer and !canInviteSquad) then return end
-
     local menu = DermaMenu()
+
+    -- Only show the rest if there's something to show
+    if (!isOfficer and !canInviteSquad) then
+        menu:Open()
+        return
+    end
 
     -- Role management (CO or superadmin)
     if (char:IsUnitCO() or LocalPlayer():IsSuperAdmin()) then
@@ -629,15 +627,6 @@ function ROW:OnMousePressed(code)
         end):SetIcon("icon16/user_delete.png")
     end
 
-    -- CO Transfer (CO only, target must not be CO)
-    if ((char:IsUnitCO() or LocalPlayer():IsSuperAdmin()) and (self.data.role or 0) < USMS_ROLE_CO) then
-        menu:AddOption("Transfer CO", function()
-            Derma_Query("Transfer CO to " .. (self.data.name or "this member") .. "? You will be demoted to Member.", "Confirm Transfer", "Yes", function()
-                ix.usms.Request("co_transfer", {charID = self.data.charID})
-            end, "No")
-        end):SetIcon("icon16/shield.png")
-    end
-
     -- Class assignment (CO/XO)
     if (isOfficer) then
         local classMenu = menu:AddSubMenu("Assign Class")
@@ -651,32 +640,28 @@ function ROW:OnMousePressed(code)
         end
     end
 
-    -- Class whitelist management (CO/XO)
-    if (isOfficer) then
-        local wlMenu = menu:AddSubMenu("Manage Class Whitelist")
-        local factionID = char:GetFaction()
-        local targetWhitelist = self.data.classWhitelist or {}
-
-        for key, classData in pairs(ix.class.list or {}) do
-            if (classData.faction == factionID and classData.uniqueID and !classData.isDefault) then
-                local isWhitelisted = table.HasValue(targetWhitelist, classData.uniqueID)
-                local label = (isWhitelisted and "[X] " or "[ ] ") .. (classData.name or classData.uniqueID)
-                wlMenu:AddOption(label, function()
-                    if (isWhitelisted) then
-                        ix.usms.Request("class_whitelist_remove", {charID = self.data.charID, classUID = classData.uniqueID})
-                    else
-                        ix.usms.Request("class_whitelist_add", {charID = self.data.charID, classUID = classData.uniqueID})
-                    end
-                end)
+    -- FIX: Squad invite allows unit officers even when not personally in a squad (item 3)
+    -- Target must not already be in a squad
+    if (!self.data.squadID or self.data.squadID == 0) then
+        if (canInviteSquad and char:IsInSquad()) then
+            -- Regular squad member path
+            menu:AddOption("Invite to Squad", function()
+                ix.usms.Request("squad_invite", {charID = self.data.charID})
+            end):SetIcon("icon16/group_add.png")
+        elseif (isOfficer) then
+            -- Officer path: show submenu of unit squads to pick target squad
+            local squads = ix.usms.clientData and ix.usms.clientData.squads or {}
+            if (next(squads) != nil) then
+                local inviteMenu = menu:AddSubMenu("Invite to Squad")
+                for sqID, sqData in pairs(squads) do
+                    local sqIDCopy = sqID
+                    local sqName = sqData.name or ("Squad #" .. sqID)
+                    inviteMenu:AddOption(sqName, function()
+                        ix.usms.Request("squad_invite", {charID = self.data.charID, squadID = sqIDCopy})
+                    end)
+                end
             end
         end
-    end
-
-    -- Squad invite (anyone with invite permissions, target must not already be in a squad)
-    if (canInviteSquad and char:IsInSquad() and (!self.data.squadID or self.data.squadID == 0)) then
-        menu:AddOption("Invite to Squad", function()
-            ix.usms.Request("squad_invite", {charID = self.data.charID})
-        end):SetIcon("icon16/group_add.png")
     end
 
     -- Force remove from squad (CO/XO/superadmin, target must be in a squad)
@@ -686,34 +671,14 @@ function ROW:OnMousePressed(code)
         end):SetIcon("icon16/group_delete.png")
     end
 
-    -- Force add to squad (CO/XO/superadmin, target must NOT be in a squad)
-    if (isOfficer and (!self.data.squadID or self.data.squadID == 0)) then
-        local squadData = ix.usms.clientData.squads or {}
-        local hasSquads = false
-        for _ in pairs(squadData) do hasSquads = true break end
-
-        if (hasSquads) then
-            local addMenu = menu:AddSubMenu("Add to Squad")
-            for squadID, sq in pairs(squadData) do
-                addMenu:AddOption(sq.name or ("Squad #" .. squadID), function()
-                    ix.usms.Request("squad_force_add", {charID = self.data.charID, squadID = squadID})
-                end)
-            end
-        end
-    end
-
-    -- Set squad role (CO/XO/superadmin, target must be in a squad)
-    if (isOfficer and self.data.squadID and self.data.squadID > 0) then
-        local sqRoleMenu = menu:AddSubMenu("Set Squad Role")
-        sqRoleMenu:AddOption("Member", function()
-            ix.usms.Request("squad_set_role", {charID = self.data.charID, role = USMS_SQUAD_MEMBER})
-        end)
-        sqRoleMenu:AddOption("Inviter", function()
-            ix.usms.Request("squad_set_role", {charID = self.data.charID, role = USMS_SQUAD_INVITER})
-        end)
-        sqRoleMenu:AddOption("XO", function()
-            ix.usms.Request("squad_set_role", {charID = self.data.charID, role = USMS_SQUAD_XO})
-        end)
+    -- FIX: Transfer CO moved to bottom with visual separator to reduce misclick risk (item 12)
+    if ((char:IsUnitCO() or LocalPlayer():IsSuperAdmin()) and (self.data.role or 0) < USMS_ROLE_CO) then
+        menu:AddSpacer()
+        menu:AddOption("Transfer CO", function()
+            Derma_Query("Transfer CO to " .. (self.data.name or "this member") .. "? You will be demoted to Member.", "Confirm Transfer", "Yes", function()
+                ix.usms.Request("co_transfer", {charID = self.data.charID})
+            end, "No")
+        end):SetIcon("icon16/shield.png")
     end
 
     menu:Open()

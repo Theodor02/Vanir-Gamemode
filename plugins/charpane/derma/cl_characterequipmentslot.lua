@@ -86,7 +86,10 @@ function PANEL:PaintDragPreview(w, sz, itemPanel)
     if (not item) then return end
 
     local canUse = hook.Run("CharPanelCanUse", LocalPlayer())
-    local match  = item.outfitCategory == string.lower(self.category)
+    local catExpected = string.lower(self.category or "")
+    local actualCat = string.lower(item.outfitCategory or "")
+    
+    local match = (actualCat == catExpected) or (string.StartsWith(catExpected, "ammo") and actualCat == "ammo")
 
     if (match and canUse != false) then
         -- Green tint if empty slot matches, yellow if it would replace
@@ -106,27 +109,58 @@ function PANEL:ReceiveDrop(panels, bDropped, menuIndex, x, y)
         return
     end
 
-    if (bDropped) then
-        local item  = panel.itemTable
-        local ctrl  = ix.gui.charPanel
+    local catExpected = string.lower(self.category or "")
 
+    if (bDropped) then
+        local item = panel.itemTable
         if (not item) then return false end
-        if (item.outfitCategory != string.lower(self.category)) then return false, "notAllowed" end
-        if (hook.Run("CharPanelCanUse", LocalPlayer()) == false) then return false, "noAccess" end
+
+        local actualCat = string.lower(item.outfitCategory or "")
+        local match = (actualCat == catExpected) or (string.StartsWith(catExpected, "ammo") and actualCat == "ammo")
+
+        if (not match) then 
+            return false, "notAllowed" 
+        end
+        
+        if (hook.Run("CharPanelCanUse", LocalPlayer()) == false) then 
+            return false, "noAccess" 
+        end
 
         if (item.dropSound and ix.option.Get("toggleInventorySound", false)) then
             local snd = item.dropSound
             surface.PlaySound(istable(snd) and snd[math.random(#snd)] or snd)
         end
 
-        local invID   = LocalPlayer():GetCharacter():GetInventory():GetID()
-        local panelID = (ctrl and ctrl.panelID) or 0
+        local character = LocalPlayer():GetCharacter()
+        if (not character) then
+            return false
+        end
 
-        net.Start("ixCharPanelReceiveItem")
-            net.WriteUInt(item.id,  32)
-            net.WriteUInt(invID,    32)
-            net.WriteUInt(panelID,  32)
-            net.WriteTable({})
+        local equipInvID = character:GetData("equipInv")
+        if (!equipInvID) then 
+            return false 
+        end
+
+        local slotData = ix.charPane.slots[self.category]
+        if (not slotData) then
+            return false
+        end
+
+        local targetX = slotData.gridX or 1
+        local targetY = slotData.gridY or 1
+        
+        -- Fallback to item:GetData("gridX") if panel.gridX doesn't exist
+        local oldX = panel.gridX or (item and item:GetData("gridX")) or 1
+        local oldY = panel.gridY or (item and item:GetData("gridY")) or 1
+        local oldInvID = panel.inventoryID or (item and item.invID) or 0
+
+        net.Start("ixInventoryMove")
+            net.WriteUInt(oldX, 6)
+            net.WriteUInt(oldY, 6)
+            net.WriteUInt(targetX, 6)
+            net.WriteUInt(targetY, 6)
+            net.WriteUInt(oldInvID, 32)
+            net.WriteUInt(equipInvID, 32)
         net.SendToServer()
 
         self.previewPanel = nil

@@ -30,3 +30,12 @@ function PLUGIN:OnLoaded()
         GetConVar("arccw_autosave"):SetBool(false)
     end
 end
+
+function PLUGIN:InitializedItems()
+    for _, v in pairs(ix.item.list) do
+        -- Link arccw weapon category to outfit category so they can be equipped in charpane
+        if (v.isArcCWWeapon and v.weaponCategory) then
+            v.outfitCategory = string.lower(v.weaponCategory)
+        end
+    end
+end

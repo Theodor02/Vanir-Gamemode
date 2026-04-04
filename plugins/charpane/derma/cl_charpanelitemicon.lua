@@ -32,6 +32,16 @@ local PANEL = {}
 AccessorFunc(PANEL, "itemTable", "ItemTable")
 AccessorFunc(PANEL, "panelID",   "PanelID")
 
+function PANEL:SetItemTable(item)
+    self.itemTable = item
+    
+    if (item) then
+        self:SetTooltip(false)
+        self.gridW = item.width or 1
+        self.gridH = item.height or 1
+    end
+end
+
 function PANEL:Init()
     self:Droppable(RECEIVER_NAME)
     local sz = Scale(58)
@@ -41,6 +51,14 @@ end
 function PANEL:OnMousePressed(code)
     if (code == MOUSE_LEFT and self:IsDraggable()) then
         self:MouseCapture(true)
+        
+        -- Temporarily upscale the panel so the dragging model looks identical 
+        -- to full-size grid items, matching Helix UI scaling.
+        local iconSize = ix.config.Get("iconSize", 64) * (ix.ui.Scale and ix.ui.Scale(1) or 1)
+        if (self.gridW and self.gridH) then
+            self:SetSize(self.gridW * iconSize, self.gridH * iconSize)
+        end
+        
         self:DragMousePress(code)
         self.clickX, self.clickY = input.GetCursorPos()
     elseif (code == MOUSE_RIGHT) then
@@ -70,24 +88,62 @@ function PANEL:OnDrop(bDragging, inventoryPanel, inventory, gridX, gridY)
         invID = inventoryPanel.invID
     end
 
+
     if (item.dropSound and ix.option.Get("toggleInventorySound", false)) then
         local snd = item.dropSound
         surface.PlaySound(istable(snd) and snd[math.random(#snd)] or snd)
     end
 
-    net.Start("ixCharPanelTransfer")
-        net.WriteUInt(item.id,         32)
-        net.WriteUInt(invID,           32)
-        net.WriteUInt(self:GetPanelID(), 32)
-        net.WriteUInt(gridX or 0,      6)
-        net.WriteUInt(gridY or 0,      6)
-    net.SendToServer()
+    local character = LocalPlayer():GetCharacter()
+    local equipInvID = character:GetData("equipInv")
+    if (!equipInvID) then 
+        return 
+    end
+
+    -- Fix: Default to known slot pos if available. Fallback to item.grid values.
+    -- This prevents Helix server rejecting the transfer if oldX/oldY resolve incorrectly.
+    local originSlot = self.slotPanel
+    local oldX = item.gridX or 1
+    local oldY = item.gridY or 1
+    
+    if (IsValid(originSlot) and originSlot.category and ix.charPane.slots[originSlot.category]) then
+        oldX = ix.charPane.slots[originSlot.category].gridX or 1
+        oldY = ix.charPane.slots[originSlot.category].gridY or 1
+    end
+
+    if (invID > 0) then
+        
+-- Temporarily prevents Helix UI caching from rebuilding the icon in its old slot before the server acknowledges the inventory move
+        item.bPendingEquipmentTransfer = true
+        timer.Simple(1, function() if (item) then item.bPendingEquipmentTransfer = nil end end)
+        
+        net.Start("ixInventoryMove")
+            net.WriteUInt(oldX, 6)
+            net.WriteUInt(oldY, 6)
+            net.WriteUInt(gridX or 1, 6)
+            net.WriteUInt(gridY or 1, 6)
+            net.WriteUInt(equipInvID, 32)
+            net.WriteUInt(invID, 32)
+        net.SendToServer()
+    else
+        net.Start("ixInventoryAction")
+            net.WriteString("drop")
+            net.WriteUInt(item.id, 32)
+            net.WriteUInt(equipInvID, 32)
+            net.WriteTable({})
+        net.SendToServer()
+    end
 
     -- Immediately mark the parent slot as empty so the visual responds
-    local slot = self:GetParent()
-    if (IsValid(slot) and slot.isEmpty != nil) then
-        slot.item    = nil
-        slot.isEmpty = true
+    local originSlot = self.slotPanel
+    if (IsValid(originSlot) and originSlot.isEmpty != nil) then
+        originSlot.item    = nil
+        originSlot.isEmpty = true
+    end
+
+    if (invID > 0) then
+        -- Delete the charpane item icon. The main inventory UI will spawn a proper inventory item icon when it processes the move.
+        self:Remove()
     end
 end
 

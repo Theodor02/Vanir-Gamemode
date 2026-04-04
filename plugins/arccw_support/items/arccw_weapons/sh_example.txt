@@ -1,3 +1,5 @@
+ITEM.base = "base_arccw_weapons"
+
 ITEM.name = "ArcCW Weapon Example"
 ITEM.description = "This is an example item weapon with a preset attachment loadout."
 ITEM.model = "models/weapons/arccw/c_ur_ak.mdl"

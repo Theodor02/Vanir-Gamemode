@@ -136,11 +136,8 @@ function PANEL:Init()
     self.rightSlots:Setup("right", self.charPaneCtrl)
     self.charPaneCtrl:SetupController(self.leftSlots, self.rightSlots)
 
-    -- Load currently equipped items from the synced charPanel data.
-    local charPanel = char:GetCharPanel()
-    if (charPanel) then
-        self.charPaneCtrl:SetupFromCharPanel(charPanel)
-    end
+    -- Load currently equipped items from the synced inventory
+    self.charPaneCtrl:SetupFromCharPanel()
 end
 
 function PANEL:PaintOver(w, h)

@@ -5,9 +5,7 @@ ix.usms.clientData = ix.usms.clientData or {
     unit = nil,
     roster = {},
     squads = {},
-    logs = {},
-    missions = {},
-    intelUnits = {}
+    logs = {}
 }
 
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -61,27 +59,45 @@ net.Receive("ixUSMSRosterSync", function()
     local roster = util.JSONToTable(decompressed)
     if (!istable(roster)) then return end
 
-    if (ix.usms.clientData.unit and ix.usms.clientData.unit.id == unitID) then
+    if (!ix.usms.clientData.unit or ix.usms.clientData.unit.id == unitID) then
+        ix.usms.clientData.unit = ix.usms.clientData.unit or {id = unitID}
         ix.usms.clientData.roster = roster
-    end
-
-    -- Also extract squads from roster data
-    local squads = {}
-    for _, entry in ipairs(roster) do
-        if (entry.squadID and entry.squadID > 0) then
-            if (!squads[entry.squadID]) then
-                squads[entry.squadID] = {
-                    name = entry.squadName or "",
-                    description = entry.squadDescription or "",
-                    members = {}
-                }
+        
+        -- Cache local whitelist for loadout panel
+        local char = LocalPlayer():GetCharacter()
+        local myCharID = char and char:GetID() or 0
+        ix.usms.clientData.myWhitelist = {}
+        for _, entry in ipairs(roster) do
+            if (entry.charID == myCharID and entry.classWhitelist) then
+                ix.usms.clientData.myWhitelist = entry.classWhitelist
+                break
             end
-            table.insert(squads[entry.squadID].members, entry)
         end
     end
-    ix.usms.clientData.squads = squads
+
+
 
     hook.Run("USMSRosterUpdated", unitID, roster)
+end)
+
+--- Full squad metadata sync.
+net.Receive("ixUSMSSquadSync", function()
+    local unitID = net.ReadUInt(32)
+    local dataLen = net.ReadUInt(32)
+    local compressed = net.ReadData(dataLen)
+
+    local decompressed = util.Decompress(compressed)
+    if (!decompressed) then return end
+
+    local squads = util.JSONToTable(decompressed)
+    if (!istable(squads)) then return end
+
+    if (!ix.usms.clientData.unit or ix.usms.clientData.unit.id == unitID) then
+        ix.usms.clientData.unit = ix.usms.clientData.unit or {id = unitID}
+        ix.usms.clientData.squads = squads
+    end
+
+    hook.Run("USMSSquadsUpdated", unitID, squads)
 end)
 
 --- Single roster entry update.
@@ -144,63 +160,7 @@ net.Receive("ixUSMSLogSync", function()
     hook.Run("USMSLogsUpdated", unitID, ix.usms.clientData.logs)
 end)
 
---- Intel sync (cross-faction unit data).
-net.Receive("ixUSMSIntelSync", function()
-    local unitID = net.ReadUInt(32)
-    local name = net.ReadString()
-    local resources = net.ReadUInt(32)
-    local cap = net.ReadUInt(32)
-    local memberCount = net.ReadUInt(16)
-
-    ix.usms.clientData.intelUnits[unitID] = {
-        id = unitID,
-        name = name,
-        resources = resources,
-        resourceCap = cap,
-        memberCount = memberCount
-    }
-
-    hook.Run("USMSIntelUpdated", unitID)
-end)
-
--- ═══════════════════════════════════════════════════════════════════════════════
--- MISSION SYNC
--- ═══════════════════════════════════════════════════════════════════════════════
-
---- Receive full mission list for the unit.
-net.Receive("ixUSMSMissionSync", function()
-    local unitID = net.ReadUInt(32)
-    local dataLen = net.ReadUInt(32)
-    local compressed = net.ReadData(dataLen)
-
-    local decompressed = util.Decompress(compressed)
-    if (!decompressed) then return end
-
-    local missions = util.JSONToTable(decompressed)
-    if (!istable(missions)) then return end
-
-    ix.usms.clientData.missions = missions
-
-    hook.Run("USMSMissionsUpdated", unitID, missions)
-end)
-
--- ═══════════════════════════════════════════════════════════════════════════════
--- SERVICE RECORD SYNC
--- ═══════════════════════════════════════════════════════════════════════════════
-
---- Receive a service record for a specific character.
-net.Receive("ixUSMSServiceRecord", function()
-    local dataLen = net.ReadUInt(32)
-    local compressed = net.ReadData(dataLen)
-
-    local decompressed = util.Decompress(compressed)
-    if (!decompressed) then return end
-
-    local record = util.JSONToTable(decompressed)
-    if (!istable(record)) then return end
-
-    hook.Run("USMSServiceRecordReceived", record)
-end)
+-- FIX: ixUSMSServiceRecord net.Receive removed (service record system cut by design)
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- CLIENT-SIDE HELPER: Send Request to Server

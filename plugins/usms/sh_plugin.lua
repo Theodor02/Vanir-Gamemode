@@ -37,10 +37,15 @@ ix.config.Add("usmsHUDSyncInterval", 3, "Seconds between HUD squad sync updates.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 ix.util.Include("libs/sh_usms.lua")
-ix.util.Include("libs/sh_catalogs.lua")
 ix.util.Include("libs/sv_database.lua")
 ix.util.Include("libs/sv_logging.lua")
-ix.util.Include("libs/sv_usms.lua")
+ix.util.Include("libs/sv_networking.lua")
+ix.util.Include("libs/sv_invites.lua")
+ix.util.Include("libs/sv_units.lua")
+ix.util.Include("libs/sv_squads.lua")
+ix.util.Include("libs/sv_resources.lua")
+ix.util.Include("libs/sv_loadout.lua")
+ix.util.Include("libs/sv_requests.lua")
 ix.util.Include("sv_plugin.lua")
 ix.util.Include("cl_plugin.lua")
 ix.util.Include("meta/sh_character.lua")
