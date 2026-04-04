@@ -64,7 +64,7 @@ end
 ix.unlocks.RegisterNode(TREE_ID, "force_attunement", {
     name = "Force Attunement",
     description = "Awaken your connection to the Force. Required before learning any abilities.",
-    icon = "icon16/star.png",
+    icon = "sith/vanguard.png",
     position = {x = 0, y = 0},
     cost = {money = 0},
     requirements = {

@@ -2437,20 +2437,20 @@ function EDITOR:ExportTree()
 		lines[#lines + 1] = "\ticon = \"" .. (node.icon or "icon16/brick.png") .. "\","
 		lines[#lines + 1] = "\tposition = {x = " .. node.position.x .. ", y = " .. node.position.y .. "},"
 
-		if (node.cost and node.cost.money and node.cost.money > 0) then
+		if (node.cost and type(node.cost.money) == "number" and node.cost.money > 0) then
 			lines[#lines + 1] = "\tcost = {money = " .. node.cost.money .. "},"
 		end
 
 		if (node.repeatable) then
 			lines[#lines + 1] = "\trepeatable = true,"
-			lines[#lines + 1] = "\tmaxLevel = " .. (node.maxLevel or 1) .. ","
+			lines[#lines + 1] = "\tmaxLevel = " .. (type(node.maxLevel) == "number" and node.maxLevel or 1) .. ","
 		end
 
 		if (node.category and node.category != "") then
 			lines[#lines + 1] = "\tcategory = \"" .. node.category .. "\","
 		end
 
-		if (node.cooldown and node.cooldown > 0) then
+		if (type(node.cooldown) == "number" and node.cooldown > 0) then
 			lines[#lines + 1] = "\tcooldown = " .. node.cooldown .. ","
 		end
 
